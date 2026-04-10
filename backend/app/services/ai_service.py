@@ -14,49 +14,293 @@ from typing import Any
 
 
 # Data konten Tilawati (dummy)
-TILAWATI_CONTENT = {
     1: {
         "title": "Jilid 1 - Huruf Hijaiyah",
-        "description": "Pengenalan huruf hijaiyah dan harakat dasar",
+        "description": "Pengenalan huruf hijaiyah dan harakat fathah",
         "icon": "menu_book",
         "color": "#1B5E20",
         "lessons": [
             {
-                "lesson_number": 1,
-                "title": "Huruf Alif - Ba - Ta",
-                "arabic_text": "أَ بَ تَ أِ بِ تِ أُ بُ تُ",
-                "transliteration": "A BA TA I BI TI U BU TU",
-                "description": "Belajar membaca huruf Alif, Ba, dan Ta dengan harakat fathah, kasrah, dan dhammah",
+                        "lesson_number": 1,
+                        "title": "Hal 1 - Huruf Alif & Ba",
+                        "arabic_text": "اَ بَ   اَ بَ   اَ بَ",
+                        "transliteration": "A BA   A BA   A BA",
+                        "description": "Latihan Tilawati Jilid 1 Halaman 1"
             },
             {
-                "lesson_number": 2,
-                "title": "Huruf Tsa - Jim - Ha",
-                "arabic_text": "ثَ جَ حَ ثِ جِ حِ ثُ جُ حُ",
-                "transliteration": "TSA JA HA TSI JI HI TSU JU HU",
-                "description": "Belajar membaca huruf Tsa, Jim, dan Ha dengan harakat dasar",
+                        "lesson_number": 2,
+                        "title": "Hal 2 - Huruf Ta",
+                        "arabic_text": "بَ تَ   بَ تَ   بَ تَ",
+                        "transliteration": "BA TA   BA TA   BA TA",
+                        "description": "Latihan Tilawati Jilid 1 Halaman 2"
             },
             {
-                "lesson_number": 3,
-                "title": "Huruf Kha - Dal - Dzal",
-                "arabic_text": "خَ دَ ذَ خِ دِ ذِ خُ دُ ذُ",
-                "transliteration": "KHA DA DZA KHI DI DZI KHU DU DZU",
-                "description": "Belajar membaca huruf Kha, Dal, dan Dzal dengan harakat dasar",
+                        "lesson_number": 3,
+                        "title": "Hal 3 - Huruf Tsa",
+                        "arabic_text": "تَ ثَ   تَ ثَ   تَ ثَ",
+                        "transliteration": "TA TSA   TA TSA   TA TSA",
+                        "description": "Latihan Tilawati Jilid 1 Halaman 3"
             },
             {
-                "lesson_number": 4,
-                "title": "Huruf Ra - Za - Sin",
-                "arabic_text": "رَ زَ سَ رِ زِ سِ رُ زُ سُ",
-                "transliteration": "RA ZA SA RI ZI SI RU ZU SU",
-                "description": "Belajar membaca huruf Ra, Za, dan Sin dengan harakat dasar",
+                        "lesson_number": 4,
+                        "title": "Hal 4 - Huruf Jim & Ha",
+                        "arabic_text": "جَ حَ   جَ حَ   جَ حَ",
+                        "transliteration": "JA HA   JA HA   JA HA",
+                        "description": "Latihan Tilawati Jilid 1 Halaman 4"
             },
             {
-                "lesson_number": 5,
-                "title": "Huruf Syin - Shad - Dhad",
-                "arabic_text": "شَ صَ ضَ شِ صِ ضِ شُ صُ ضُ",
-                "transliteration": "SYA SHA DHA SYI SHI DHI SYU SHU DHU",
-                "description": "Belajar membaca huruf Syin, Shad, dan Dhad dengan harakat dasar",
+                        "lesson_number": 5,
+                        "title": "Hal 5 - Huruf Kha",
+                        "arabic_text": "خَ بَ ثَ   خَ بَ ثَ   خَ بَ ثَ",
+                        "transliteration": "KHA BA TSA   KHA BA TSA   KHA BA TSA",
+                        "description": "Latihan Tilawati Jilid 1 Halaman 5"
             },
-        ],
+            {
+                        "lesson_number": 6,
+                        "title": "Hal 6 - Huruf Dal & Dzal",
+                        "arabic_text": "دَ ذَ   دَ ذَ   دَ ذَ",
+                        "transliteration": "DA DZA   DA DZA   DA DZA",
+                        "description": "Latihan Tilawati Jilid 1 Halaman 6"
+            },
+            {
+                        "lesson_number": 7,
+                        "title": "Hal 7 - Huruf Ra & Za",
+                        "arabic_text": "رَ زَ   رَ زَ   رَ زَ",
+                        "transliteration": "RA ZA   RA ZA   RA ZA",
+                        "description": "Latihan Tilawati Jilid 1 Halaman 7"
+            },
+            {
+                        "lesson_number": 8,
+                        "title": "Hal 8 - Huruf Sin",
+                        "arabic_text": "سَ رَ زَ   سَ رَ زَ   سَ رَ زَ",
+                        "transliteration": "SA RA ZA   SA RA ZA   SA RA ZA",
+                        "description": "Latihan Tilawati Jilid 1 Halaman 8"
+            },
+            {
+                        "lesson_number": 9,
+                        "title": "Hal 9 - Huruf Syin",
+                        "arabic_text": "شَ رَ حَ   شَ رَ حَ   شَ رَ حَ",
+                        "transliteration": "SYA RA HA   SYA RA HA   SYA RA HA",
+                        "description": "Latihan Tilawati Jilid 1 Halaman 9"
+            },
+            {
+                        "lesson_number": 10,
+                        "title": "Hal 10 - Huruf Shad",
+                        "arabic_text": "صَ حَ بَ   صَ حَ بَ   صَ حَ بَ",
+                        "transliteration": "SHA HA BA   SHA HA BA   SHA HA BA",
+                        "description": "Latihan Tilawati Jilid 1 Halaman 10"
+            },
+            {
+                        "lesson_number": 11,
+                        "title": "Hal 11 - Huruf Dhad",
+                        "arabic_text": "ضَ رَ بَ   ضَ رَ بَ   ضَ رَ بَ",
+                        "transliteration": "DHA RA BA   DHA RA BA   DHA RA BA",
+                        "description": "Latihan Tilawati Jilid 1 Halaman 11"
+            },
+            {
+                        "lesson_number": 12,
+                        "title": "Hal 12 - Huruf Tha",
+                        "arabic_text": "طَ بَ خَ   طَ بَ خَ   طَ بَ خَ",
+                        "transliteration": "THA BA KHA   THA BA KHA   THA BA KHA",
+                        "description": "Latihan Tilawati Jilid 1 Halaman 12"
+            },
+            {
+                        "lesson_number": 13,
+                        "title": "Hal 13 - Huruf Zha",
+                        "arabic_text": "ظَ صَ   ظَ صَ   ظَ صَ",
+                        "transliteration": "ZHA SHA   ZHA SHA   ZHA SHA",
+                        "description": "Latihan Tilawati Jilid 1 Halaman 13"
+            },
+            {
+                        "lesson_number": 14,
+                        "title": "Hal 14 - Huruf 'Ain",
+                        "arabic_text": "عَ طَ بَ   عَ طَ بَ   عَ طَ بَ",
+                        "transliteration": "'A THA BA   'A THA BA   'A THA BA",
+                        "description": "Latihan Tilawati Jilid 1 Halaman 14"
+            },
+            {
+                        "lesson_number": 15,
+                        "title": "Hal 15 - Huruf Ghain",
+                        "arabic_text": "غَ عَ   غَ عَ   غَ عَ",
+                        "transliteration": "GHA 'A   GHA 'A   GHA 'A",
+                        "description": "Latihan Tilawati Jilid 1 Halaman 15"
+            },
+            {
+                        "lesson_number": 16,
+                        "title": "Hal 16 - Huruf Fa",
+                        "arabic_text": "فَ قَ   فَ قَ   فَ قَ",
+                        "transliteration": "FA QA   FA QA   FA QA",
+                        "description": "Latihan Tilawati Jilid 1 Halaman 16"
+            },
+            {
+                        "lesson_number": 17,
+                        "title": "Hal 17 - Huruf Qaf",
+                        "arabic_text": "قَ فَ   قَ فَ   قَ فَ",
+                        "transliteration": "QA FA   QA FA   QA FA",
+                        "description": "Latihan Tilawati Jilid 1 Halaman 17"
+            },
+            {
+                        "lesson_number": 18,
+                        "title": "Hal 18 - Huruf Kaf",
+                        "arabic_text": "كَ   كَ   كَ",
+                        "transliteration": "KA   KA   KA",
+                        "description": "Latihan Tilawati Jilid 1 Halaman 18"
+            },
+            {
+                        "lesson_number": 19,
+                        "title": "Hal 19 - Huruf Lam",
+                        "arabic_text": "لَ   لَ   لَ",
+                        "transliteration": "LA   LA   LA",
+                        "description": "Latihan Tilawati Jilid 1 Halaman 19"
+            },
+            {
+                        "lesson_number": 20,
+                        "title": "Hal 20 - Huruf Mim",
+                        "arabic_text": "مَ نَ   مَ نَ   مَ نَ",
+                        "transliteration": "MA NA   MA NA   MA NA",
+                        "description": "Latihan Tilawati Jilid 1 Halaman 20"
+            },
+            {
+                        "lesson_number": 21,
+                        "title": "Hal 21 - Huruf Nun",
+                        "arabic_text": "نَ   نَ   نَ",
+                        "transliteration": "NA   NA   NA",
+                        "description": "Latihan Tilawati Jilid 1 Halaman 21"
+            },
+            {
+                        "lesson_number": 22,
+                        "title": "Hal 22 - Huruf Wawu",
+                        "arabic_text": "وَ هَ   وَ هَ   وَ هَ",
+                        "transliteration": "WA HA   WA HA   WA HA",
+                        "description": "Latihan Tilawati Jilid 1 Halaman 22"
+            },
+            {
+                        "lesson_number": 23,
+                        "title": "Hal 23 - Huruf Ha",
+                        "arabic_text": "هَ   هَ   هَ",
+                        "transliteration": "HA   HA   HA",
+                        "description": "Latihan Tilawati Jilid 1 Halaman 23"
+            },
+            {
+                        "lesson_number": 24,
+                        "title": "Hal 24 - Huruf Ya",
+                        "arabic_text": "يَ اَ   يَ اَ   يَ اَ",
+                        "transliteration": "YA A   YA A   YA A",
+                        "description": "Latihan Tilawati Jilid 1 Halaman 24"
+            },
+            {
+                        "lesson_number": 25,
+                        "title": "Hal 25 - Latihan 1",
+                        "arabic_text": "اَ بَ تَ ثَ   اَ بَ تَ ثَ   اَ بَ تَ ثَ",
+                        "transliteration": "A BA TA TSA   A BA TA TSA   A BA TA TSA",
+                        "description": "Latihan Tilawati Jilid 1 Halaman 25"
+            },
+            {
+                        "lesson_number": 26,
+                        "title": "Hal 26 - Latihan 2",
+                        "arabic_text": "اَ بَ تَ ثَ   اَ بَ تَ ثَ   اَ بَ تَ ثَ",
+                        "transliteration": "A BA TA TSA   A BA TA TSA   A BA TA TSA",
+                        "description": "Latihan Tilawati Jilid 1 Halaman 26"
+            },
+            {
+                        "lesson_number": 27,
+                        "title": "Hal 27 - Latihan 3",
+                        "arabic_text": "اَ بَ تَ ثَ   اَ بَ تَ ثَ   اَ بَ تَ ثَ",
+                        "transliteration": "A BA TA TSA   A BA TA TSA   A BA TA TSA",
+                        "description": "Latihan Tilawati Jilid 1 Halaman 27"
+            },
+            {
+                        "lesson_number": 28,
+                        "title": "Hal 28 - Latihan 4",
+                        "arabic_text": "اَ بَ تَ ثَ   اَ بَ تَ ثَ   اَ بَ تَ ثَ",
+                        "transliteration": "A BA TA TSA   A BA TA TSA   A BA TA TSA",
+                        "description": "Latihan Tilawati Jilid 1 Halaman 28"
+            },
+            {
+                        "lesson_number": 29,
+                        "title": "Hal 29 - Latihan 5",
+                        "arabic_text": "اَ بَ تَ ثَ   اَ بَ تَ ثَ   اَ بَ تَ ثَ",
+                        "transliteration": "A BA TA TSA   A BA TA TSA   A BA TA TSA",
+                        "description": "Latihan Tilawati Jilid 1 Halaman 29"
+            },
+            {
+                        "lesson_number": 30,
+                        "title": "Hal 30 - Latihan 6",
+                        "arabic_text": "اَ بَ تَ ثَ   اَ بَ تَ ثَ   اَ بَ تَ ثَ",
+                        "transliteration": "A BA TA TSA   A BA TA TSA   A BA TA TSA",
+                        "description": "Latihan Tilawati Jilid 1 Halaman 30"
+            },
+            {
+                        "lesson_number": 31,
+                        "title": "Hal 31 - Latihan 7",
+                        "arabic_text": "اَ بَ تَ ثَ   اَ بَ تَ ثَ   اَ بَ تَ ثَ",
+                        "transliteration": "A BA TA TSA   A BA TA TSA   A BA TA TSA",
+                        "description": "Latihan Tilawati Jilid 1 Halaman 31"
+            },
+            {
+                        "lesson_number": 32,
+                        "title": "Hal 32 - Latihan 8",
+                        "arabic_text": "اَ بَ تَ ثَ   اَ بَ تَ ثَ   اَ بَ تَ ثَ",
+                        "transliteration": "A BA TA TSA   A BA TA TSA   A BA TA TSA",
+                        "description": "Latihan Tilawati Jilid 1 Halaman 32"
+            },
+            {
+                        "lesson_number": 33,
+                        "title": "Hal 33 - Latihan 9",
+                        "arabic_text": "اَ بَ تَ ثَ   اَ بَ تَ ثَ   اَ بَ تَ ثَ",
+                        "transliteration": "A BA TA TSA   A BA TA TSA   A BA TA TSA",
+                        "description": "Latihan Tilawati Jilid 1 Halaman 33"
+            },
+            {
+                        "lesson_number": 34,
+                        "title": "Hal 34 - Latihan 10",
+                        "arabic_text": "اَ بَ تَ ثَ   اَ بَ تَ ثَ   اَ بَ تَ ثَ",
+                        "transliteration": "A BA TA TSA   A BA TA TSA   A BA TA TSA",
+                        "description": "Latihan Tilawati Jilid 1 Halaman 34"
+            },
+            {
+                        "lesson_number": 35,
+                        "title": "Hal 35 - Latihan 11",
+                        "arabic_text": "اَ بَ تَ ثَ   اَ بَ تَ ثَ   اَ بَ تَ ثَ",
+                        "transliteration": "A BA TA TSA   A BA TA TSA   A BA TA TSA",
+                        "description": "Latihan Tilawati Jilid 1 Halaman 35"
+            },
+            {
+                        "lesson_number": 36,
+                        "title": "Hal 36 - Latihan 12",
+                        "arabic_text": "اَ بَ تَ ثَ   اَ بَ تَ ثَ   اَ بَ تَ ثَ",
+                        "transliteration": "A BA TA TSA   A BA TA TSA   A BA TA TSA",
+                        "description": "Latihan Tilawati Jilid 1 Halaman 36"
+            },
+            {
+                        "lesson_number": 37,
+                        "title": "Hal 37 - Latihan 13",
+                        "arabic_text": "اَ بَ تَ ثَ   اَ بَ تَ ثَ   اَ بَ تَ ثَ",
+                        "transliteration": "A BA TA TSA   A BA TA TSA   A BA TA TSA",
+                        "description": "Latihan Tilawati Jilid 1 Halaman 37"
+            },
+            {
+                        "lesson_number": 38,
+                        "title": "Hal 38 - Latihan 14",
+                        "arabic_text": "اَ بَ تَ ثَ   اَ بَ تَ ثَ   اَ بَ تَ ثَ",
+                        "transliteration": "A BA TA TSA   A BA TA TSA   A BA TA TSA",
+                        "description": "Latihan Tilawati Jilid 1 Halaman 38"
+            },
+            {
+                        "lesson_number": 39,
+                        "title": "Hal 39 - Latihan 15",
+                        "arabic_text": "اَ بَ تَ ثَ   اَ بَ تَ ثَ   اَ بَ تَ ثَ",
+                        "transliteration": "A BA TA TSA   A BA TA TSA   A BA TA TSA",
+                        "description": "Latihan Tilawati Jilid 1 Halaman 39"
+            },
+            {
+                        "lesson_number": 40,
+                        "title": "Hal 40 - Latihan 16",
+                        "arabic_text": "اَ بَ تَ ثَ   اَ بَ تَ ثَ   اَ بَ تَ ثَ",
+                        "transliteration": "A BA TA TSA   A BA TA TSA   A BA TA TSA",
+                        "description": "Latihan Tilawati Jilid 1 Halaman 40"
+            }
+]
     },
     2: {
         "title": "Jilid 2 - Huruf Sambung",

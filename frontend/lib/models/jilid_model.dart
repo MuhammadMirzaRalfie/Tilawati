@@ -41,6 +41,7 @@ class LessonModel {
   final String transliteration;
   final String description;
   final String? audioReferenceUrl;
+  final String? imagePath;
 
   LessonModel({
     required this.lessonNumber,
@@ -49,16 +50,18 @@ class LessonModel {
     required this.transliteration,
     required this.description,
     this.audioReferenceUrl,
+    this.imagePath,
   });
 
   factory LessonModel.fromJson(Map<String, dynamic> json) {
     return LessonModel(
-      lessonNumber: json['lesson_number'],
+      lessonNumber: json['lesson_number'] ?? json['number'], // handle both json and local map keys
       title: json['title'],
-      arabicText: json['arabic_text'],
-      transliteration: json['transliteration'],
-      description: json['description'],
+      arabicText: json['arabic_text'] ?? json['arabic'] ?? '',
+      transliteration: json['transliteration'] ?? '',
+      description: json['description'] ?? json['desc'] ?? '',
       audioReferenceUrl: json['audio_reference_url'],
+      imagePath: json['imagePath'],
     );
   }
 }

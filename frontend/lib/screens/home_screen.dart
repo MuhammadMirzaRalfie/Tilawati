@@ -441,7 +441,7 @@ class _JilidTab extends StatelessWidget {
                     'Gharib & Musykilat',
                   ];
                   final descriptions = [
-                    'Pengenalan huruf hijaiyah dan harakat dasar',
+                    'Pengenalan huruf hijaiyah dan harakat fathah',
                     'Membaca huruf sambung dan kata sederhana',
                     'Hukum mad (panjang) dan sukun',
                     'Idzhar, Idgham, Ikhfa, dan Iqlab',
