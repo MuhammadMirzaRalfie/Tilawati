@@ -44,71 +44,193 @@ BA A BA         A BA BA''',
         {
                 'number': 2,
                 'title': 'Hal 2 - Huruf Ta',
-                'arabic': 'بَ تَ   بَ تَ   بَ تَ',
-                'transliteration': 'BA TA   BA TA   BA TA',
+                'arabic': '''بَ تَ
+بَ تَ   تَ بَ   اَ تَ
+تَ تَ   تَ بَ   تَ اَ
+تَ بَ تَ         بَ تَ تَ
+تَ اَ بَ         بَ اَ تَ
+اَ تَ بَ         اَ بَ تَ
+تَ تَ بَ         بَ بَ تَ''',
+                'transliteration': '''BA TA
+A TA     TA BA     BA TA
+TA A     TA BA     TA TA
+BA TA TA         TA BA TA
+BA A TA         TA A BA
+A BA TA         A TA BA
+BA BA TA         TA TA BA''',
                 'desc': 'Latihan Tilawati Jilid 1 Halaman 2'
         },
         {
                 'number': 3,
                 'title': 'Hal 3 - Huruf Tsa',
-                'arabic': 'تَ ثَ   تَ ثَ   تَ ثَ',
-                'transliteration': 'TA TSA   TA TSA   TA TSA',
+                'arabic': '''تَ ثَ
+ثَ ثَ   ثَ ثَ   ثَ بَ
+ثَ تَ   ثَ اَ   ثَ بَ
+تَ ثَ   اَ ثَ   بَ ثَ
+ثَ ثَ بَ         بَ تَ ثَ
+ثَ بَ تَ         تَ ثَ تَ
+تَ اَ ثَ         بَ اَ ثَ
+ثَ اَ بَ   تَ ثَ اَ   بَ تَ ثَ''',
+                'transliteration': '''TA TSA
+TSA BA     TSA TSA     TSA TSA
+TSA BA     TSA A     TSA TA
+BA TSA     A TSA     TA TSA
+BA TA TSA         TSA TSA BA
+TA TSA TA         TSA BA TA
+BA A TSA         TA A TSA
+BA TA TSA     TA TSA A     TSA A BA''',
                 'desc': 'Latihan Tilawati Jilid 1 Halaman 3'
         },
         {
                 'number': 4,
                 'title': 'Hal 4 - Huruf Jim & Ha',
-                'arabic': 'جَ حَ   جَ حَ   جَ حَ',
-                'transliteration': 'JA HA   JA HA   JA HA',
+                'arabic': '''جَ حَ
+جَ جَ   حَ حَ   جَ حَ
+ثَ جَ   بَ جَ   تَ حَ
+حَ تَ   جَ حَ   ثَ حَ
+حَ جَ بَ         اَ حَ حَ
+بَ حَ تَ         حَ تَ ثَ
+جَ بَ حَ         حَ ثَ جَ''',
+                'transliteration': '''JA HA
+JA HA     HA HA     JA JA
+TA HA     BA JA     TSA JA
+TSA HA     JA HA     HA TA
+A HA HA         HA JA BA
+HA TA TSA         BA HA TA
+HA TSA JA         JA BA HA''',
                 'desc': 'Latihan Tilawati Jilid 1 Halaman 4'
         },
         {
                 'number': 5,
                 'title': 'Hal 5 - Huruf Kha',
-                'arabic': 'خَ بَ ثَ   خَ بَ ثَ   خَ بَ ثَ',
-                'transliteration': 'KHA BA TSA   KHA BA TSA   KHA BA TSA',
+                'arabic': '''خَ بَ ثَ
+خَ خَ   خَ بَ   بَ خَ
+جَ خَ   حَ خَ   خَ خَ
+بَ تَ خَ         ثَ خَ تَ
+بَ حَ ثَ         حَ خَ ثَ
+خَ خَ جَ         خَ جَ حَ
+خَ بَ جَ         بَ خَ ثَ''',
+                'transliteration': '''KHA BA TSA
+BA KHA     KHA BA     KHA KHA
+KHA KHA     HA KHA     JA KHA
+TSA KHA TA         BA TA KHA
+HA KHA TSA         BA HA TSA
+KHA JA HA         KHA KHA JA
+BA KHA TSA         KHA BA JA''',
                 'desc': 'Latihan Tilawati Jilid 1 Halaman 5'
         },
         {
                 'number': 6,
-                'title': 'Hal 6 - Huruf Dal & Dzal',
-                'arabic': 'دَ ذَ   دَ ذَ   دَ ذَ',
-                'transliteration': 'DA DZA   DA DZA   DA DZA',
+                'title': 'Hal 6 - Latihan',
+                'arabic': '''خَ جَ بَ   تَ جَ ثَ   اَ تَ جَ
+ثَ جَ حَ   بَ خَ ثَ   ثَ حَ جَ
+جَ جَ تَ   ثَ خَ ثَ   حَ جَ بَ
+بَ جَ ثَ   جَ خَ تَ   اَ جَ خَ
+بَ خَ جَ   خَ ثَ حَ   جَ اَ بَ
+بَ خَ جَ   جَ ثَ تَ   تَ اَ خَ
+خَ جَ بَ   اَ حَ بَ   بَ حَ ثَ''',
+                'transliteration': '''A TA JA     TA JA TSA     KHA JA BA
+TSA HA JA     BA KHA TSA     TSA JA HA
+HA JA BA     TSA KHA TSA     JA JA TA
+A JA KHA     JA KHA TA     BA JA TSA
+JA A BA     KHA TSA HA     BA KHA JA
+TA A KHA     JA TSA TA     BA KHA JA
+BA HA TSA     A HA BA     KHA JA BA''',
                 'desc': 'Latihan Tilawati Jilid 1 Halaman 6'
         },
         {
                 'number': 7,
-                'title': 'Hal 7 - Huruf Ra & Za',
-                'arabic': 'رَ زَ   رَ زَ   رَ زَ',
-                'transliteration': 'RA ZA   RA ZA   RA ZA',
+                'title': 'Hal 7 - Huruf Dal',
+                'arabic': '''حَ خَ دَ
+دَ دَ   حَ دَ   خَ دَ
+دَ حَ   دَ خَ   دَ جَ
+ثَ دَ   خَ دَ   تَ دَ
+دَ دَ خَ         دَ دَ جَ
+حَ دَ خَ         خَ دَ حَ
+ثَ دَ خَ         تَ دَ حَ''',
+                'transliteration': '''HA KHA DA
+KHA DA     HA DA     DA DA
+DA JA     DA KHA     DA HA
+TA DA     KHA DA     TSA DA
+DA DA JA         DA DA KHA
+HA DA KHA         KHA DA HA
+TA DA HA         TSA DA KHA''',
                 'desc': 'Latihan Tilawati Jilid 1 Halaman 7'
         },
         {
                 'number': 8,
-                'title': 'Hal 8 - Huruf Sin',
-                'arabic': 'سَ رَ زَ   سَ رَ زَ   سَ رَ زَ',
-                'transliteration': 'SA RA ZA   SA RA ZA   SA RA ZA',
+                'title': 'Hal 8 - Huruf Dzal',
+                'arabic': '''خَ دَ ذَ
+ذَ ذَ   ذَ دَ   ذَ خَ
+حَ ذَ   خَ ذَ   جَ ذَ
+ذَ ثَ   بَ ذَ   ذَ تَ
+ذَ دَ حَ         دَ ذَ حَ
+حَ بَ ذَ         خَ ذَ ثَ
+تَ خَ ذَ         ثَ جَ ذَ''',
+                'transliteration': '''KHA DA DZA
+DZA KHA     DZA DA     DZA DZA
+JA DZA     KHA DZA     HA DZA
+DZA TA     BA DZA     DZA TSA
+DA DZA HA         DZA DA HA
+KHA DZA TSA         HA BA DZA
+TSA JA DZA         TA KHA DZA''',
                 'desc': 'Latihan Tilawati Jilid 1 Halaman 8'
         },
         {
                 'number': 9,
-                'title': 'Hal 9 - Huruf Syin',
-                'arabic': 'شَ رَ حَ   شَ رَ حَ   شَ رَ حَ',
-                'transliteration': 'SYA RA HA   SYA RA HA   SYA RA HA',
+                'title': 'Hal 9 - Huruf Ra & Za',
+                'arabic': '''رَ زَ
+رَ زَ   ذَ رَ   زَ رَ
+حَ زَ   دَ زَ   خَ زَ
+رَ رَ   جَ رَ   ذَ زَ
+ذَ رَ زَ         زَ رَ دَ
+ذَ حَ زَ         زَ خَ رَ
+خَ زَ رَ         حَ ذَ رَ''',
+                'transliteration': '''RA ZA
+ZA RA     DZA RA     RA ZA
+KHA ZA     DA ZA     HA ZA
+DZA ZA     JA RA     RA RA
+ZA RA DA         DZA RA ZA
+ZA KHA RA         DZA HA ZA
+HA DZA RA         KHA ZA RA''',
                 'desc': 'Latihan Tilawati Jilid 1 Halaman 9'
         },
         {
                 'number': 10,
-                'title': 'Hal 10 - Huruf Shad',
-                'arabic': 'صَ حَ بَ   صَ حَ بَ   صَ حَ بَ',
-                'transliteration': 'SHA HA BA   SHA HA BA   SHA HA BA',
+                'title': 'Hal 10 - Huruf Sin',
+                'arabic': '''زَ سَ
+سَ سَ   سَ رَ   سَ زَ
+دَ سَ   ذَ سَ   زَ سَ
+سَ جَ   سَ حَ   سَ خَ
+سَ رَ دَ         سَ جَ دَ
+خَ سَ رَ         حَ سَ دَ
+دَ رَ سَ         تَ خَ سَ''',
+                'transliteration': '''ZA SA
+SA ZA     SA RA     SA SA
+ZA SA     DZA SA     DA SA
+SA KHA     SA HA     SA JA
+SA JA DA         SA RA DA
+HA SA DA         KHA SA RA
+TA KHA SA         DA RA SA''',
                 'desc': 'Latihan Tilawati Jilid 1 Halaman 10'
         },
         {
                 'number': 11,
-                'title': 'Hal 11 - Huruf Dhad',
-                'arabic': 'ضَ رَ بَ   ضَ رَ بَ   ضَ رَ بَ',
-                'transliteration': 'DHA RA BA   DHA RA BA   DHA RA BA',
+                'title': 'Hal 11 - Huruf Syin',
+                'arabic': '''شَ رَ حَ
+شَ شَ   شَ رَ   شَ حَ
+دَ سَ   ذَ شَ   حَ شَ
+شَ خَ   سَ زَ   شَ ذَ
+شَ جَ سَ         شَ سَ خَ
+خَ سَ رَ         شَ خَ رَ
+شَ جَ رَ         شَ رَ حَ''',
+                'transliteration': '''SYA RA HA
+SYA HA     SYA RA     SYA SYA
+HA SYA     DZA SYA     DA SA
+SYA DZA     SA ZA     SYA KHA
+SYA SA KHA         SYA JA SA
+SYA KHA RA         KHA SA RA
+SYA RA HA         SYA JA RA''',
                 'desc': 'Latihan Tilawati Jilid 1 Halaman 11'
         },
         {

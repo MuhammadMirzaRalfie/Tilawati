@@ -30,71 +30,71 @@ from typing import Any
             {
                         "lesson_number": 2,
                         "title": "Hal 2 - Huruf Ta",
-                        "arabic_text": "بَ تَ   بَ تَ   بَ تَ",
-                        "transliteration": "BA TA   BA TA   BA TA",
+                        "arabic_text": "بَ تَ\nبَ تَ   تَ بَ   اَ تَ\nتَ تَ   تَ بَ   تَ اَ\nتَ بَ تَ         بَ تَ تَ\nتَ اَ بَ         بَ اَ تَ\nاَ تَ بَ         اَ بَ تَ\nتَ تَ بَ         بَ بَ تَ",
+                        "transliteration": "BA TA\nA TA     TA BA     BA TA\nTA A     TA BA     TA TA\nBA TA TA         TA BA TA\nBA A TA         TA A BA\nA BA TA         A TA BA\nBA BA TA         TA TA BA",
                         "description": "Latihan Tilawati Jilid 1 Halaman 2"
             },
             {
                         "lesson_number": 3,
                         "title": "Hal 3 - Huruf Tsa",
-                        "arabic_text": "تَ ثَ   تَ ثَ   تَ ثَ",
-                        "transliteration": "TA TSA   TA TSA   TA TSA",
+                        "arabic_text": "تَ ثَ\nثَ ثَ   ثَ ثَ   ثَ بَ\nثَ تَ   ثَ اَ   ثَ بَ\nتَ ثَ   اَ ثَ   بَ ثَ\nثَ ثَ بَ         بَ تَ ثَ\nثَ بَ تَ         تَ ثَ تَ\nتَ اَ ثَ         بَ اَ ثَ\nثَ اَ بَ   تَ ثَ اَ   بَ تَ ثَ",
+                        "transliteration": "TA TSA\nTSA BA     TSA TSA     TSA TSA\nTSA BA     TSA A     TSA TA\nBA TSA     A TSA     TA TSA\nBA TA TSA         TSA TSA BA\nTA TSA TA         TSA BA TA\nBA A TSA         TA A TSA\nBA TA TSA     TA TSA A     TSA A BA",
                         "description": "Latihan Tilawati Jilid 1 Halaman 3"
             },
             {
                         "lesson_number": 4,
                         "title": "Hal 4 - Huruf Jim & Ha",
-                        "arabic_text": "جَ حَ   جَ حَ   جَ حَ",
-                        "transliteration": "JA HA   JA HA   JA HA",
+                        "arabic_text": "جَ حَ\nجَ جَ   حَ حَ   جَ حَ\nثَ جَ   بَ جَ   تَ حَ\nحَ تَ   جَ حَ   ثَ حَ\nحَ جَ بَ         اَ حَ حَ\nبَ حَ تَ         حَ تَ ثَ\nجَ بَ حَ         حَ ثَ جَ",
+                        "transliteration": "JA HA\nJA HA     HA HA     JA JA\nTA HA     BA JA     TSA JA\nTSA HA     JA HA     HA TA\nA HA HA         HA JA BA\nHA TA TSA         BA HA TA\nHA TSA JA         JA BA HA",
                         "description": "Latihan Tilawati Jilid 1 Halaman 4"
             },
             {
                         "lesson_number": 5,
                         "title": "Hal 5 - Huruf Kha",
-                        "arabic_text": "خَ بَ ثَ   خَ بَ ثَ   خَ بَ ثَ",
-                        "transliteration": "KHA BA TSA   KHA BA TSA   KHA BA TSA",
+                        "arabic_text": "خَ بَ ثَ\nخَ خَ   خَ بَ   بَ خَ\nجَ خَ   حَ خَ   خَ خَ\nبَ تَ خَ         ثَ خَ تَ\nبَ حَ ثَ         حَ خَ ثَ\nخَ خَ جَ         خَ جَ حَ\nخَ بَ جَ         بَ خَ ثَ",
+                        "transliteration": "KHA BA TSA\nBA KHA     KHA BA     KHA KHA\nKHA KHA     HA KHA     JA KHA\nTSA KHA TA         BA TA KHA\nHA KHA TSA         BA HA TSA\nKHA JA HA         KHA KHA JA\nBA KHA TSA         KHA BA JA",
                         "description": "Latihan Tilawati Jilid 1 Halaman 5"
             },
             {
                         "lesson_number": 6,
-                        "title": "Hal 6 - Huruf Dal & Dzal",
-                        "arabic_text": "دَ ذَ   دَ ذَ   دَ ذَ",
-                        "transliteration": "DA DZA   DA DZA   DA DZA",
+                        "title": "Hal 6 - Latihan",
+                        "arabic_text": "خَ جَ بَ   تَ جَ ثَ   اَ تَ جَ\nثَ جَ حَ   بَ خَ ثَ   ثَ حَ جَ\nجَ جَ تَ   ثَ خَ ثَ   حَ جَ بَ\nبَ جَ ثَ   جَ خَ تَ   اَ جَ خَ\nبَ خَ جَ   خَ ثَ حَ   جَ اَ بَ\nبَ خَ جَ   جَ ثَ تَ   تَ اَ خَ\nخَ جَ بَ   اَ حَ بَ   بَ حَ ثَ",
+                        "transliteration": "A TA JA     TA JA TSA     KHA JA BA\nTSA HA JA     BA KHA TSA     TSA JA HA\nHA JA BA     TSA KHA TSA     JA JA TA\nA JA KHA     JA KHA TA     BA JA TSA\nJA A BA     KHA TSA HA     BA KHA JA\nTA A KHA     JA TSA TA     BA KHA JA\nBA HA TSA     A HA BA     KHA JA BA",
                         "description": "Latihan Tilawati Jilid 1 Halaman 6"
             },
             {
                         "lesson_number": 7,
-                        "title": "Hal 7 - Huruf Ra & Za",
-                        "arabic_text": "رَ زَ   رَ زَ   رَ زَ",
-                        "transliteration": "RA ZA   RA ZA   RA ZA",
+                        "title": "Hal 7 - Huruf Dal",
+                        "arabic_text": "حَ خَ دَ\nدَ دَ   حَ دَ   خَ دَ\nدَ حَ   دَ خَ   دَ جَ\nثَ دَ   خَ دَ   تَ دَ\nدَ دَ خَ         دَ دَ جَ\nحَ دَ خَ         خَ دَ حَ\nثَ دَ خَ         تَ دَ حَ",
+                        "transliteration": "HA KHA DA\nKHA DA     HA DA     DA DA\nDA JA     DA KHA     DA HA\nTA DA     KHA DA     TSA DA\nDA DA JA         DA DA KHA\nHA DA KHA         KHA DA HA\nTA DA HA         TSA DA KHA",
                         "description": "Latihan Tilawati Jilid 1 Halaman 7"
             },
             {
                         "lesson_number": 8,
-                        "title": "Hal 8 - Huruf Sin",
-                        "arabic_text": "سَ رَ زَ   سَ رَ زَ   سَ رَ زَ",
-                        "transliteration": "SA RA ZA   SA RA ZA   SA RA ZA",
+                        "title": "Hal 8 - Huruf Dzal",
+                        "arabic_text": "خَ دَ ذَ\nذَ ذَ   ذَ دَ   ذَ خَ\nحَ ذَ   خَ ذَ   جَ ذَ\nذَ ثَ   بَ ذَ   ذَ تَ\nذَ دَ حَ         دَ ذَ حَ\nحَ بَ ذَ         خَ ذَ ثَ\nتَ خَ ذَ         ثَ جَ ذَ",
+                        "transliteration": "KHA DA DZA\nDZA KHA     DZA DA     DZA DZA\nJA DZA     KHA DZA     HA DZA\nDZA TA     BA DZA     DZA TSA\nDA DZA HA         DZA DA HA\nKHA DZA TSA         HA BA DZA\nTSA JA DZA         TA KHA DZA",
                         "description": "Latihan Tilawati Jilid 1 Halaman 8"
             },
             {
                         "lesson_number": 9,
-                        "title": "Hal 9 - Huruf Syin",
-                        "arabic_text": "شَ رَ حَ   شَ رَ حَ   شَ رَ حَ",
-                        "transliteration": "SYA RA HA   SYA RA HA   SYA RA HA",
+                        "title": "Hal 9 - Huruf Ra & Za",
+                        "arabic_text": "رَ زَ\nرَ زَ   ذَ رَ   زَ رَ\nحَ زَ   دَ زَ   خَ زَ\nرَ رَ   جَ رَ   ذَ زَ\nذَ رَ زَ         زَ رَ دَ\nذَ حَ زَ         زَ خَ رَ\nخَ زَ رَ         حَ ذَ رَ",
+                        "transliteration": "RA ZA\nZA RA     DZA RA     RA ZA\nKHA ZA     DA ZA     HA ZA\nDZA ZA     JA RA     RA RA\nZA RA DA         DZA RA ZA\nZA KHA RA         DZA HA ZA\nHA DZA RA         KHA ZA RA",
                         "description": "Latihan Tilawati Jilid 1 Halaman 9"
             },
             {
                         "lesson_number": 10,
-                        "title": "Hal 10 - Huruf Shad",
-                        "arabic_text": "صَ حَ بَ   صَ حَ بَ   صَ حَ بَ",
-                        "transliteration": "SHA HA BA   SHA HA BA   SHA HA BA",
+                        "title": "Hal 10 - Huruf Sin",
+                        "arabic_text": "زَ سَ\nسَ سَ   سَ رَ   سَ زَ\nدَ سَ   ذَ سَ   زَ سَ\nسَ جَ   سَ حَ   سَ خَ\nسَ رَ دَ         سَ جَ دَ\nخَ سَ رَ         حَ سَ دَ\nدَ رَ سَ         تَ خَ سَ",
+                        "transliteration": "ZA SA\nSA ZA     SA RA     SA SA\nZA SA     DZA SA     DA SA\nSA KHA     SA HA     SA JA\nSA JA DA         SA RA DA\nHA SA DA         KHA SA RA\nTA KHA SA         DA RA SA",
                         "description": "Latihan Tilawati Jilid 1 Halaman 10"
             },
             {
                         "lesson_number": 11,
-                        "title": "Hal 11 - Huruf Dhad",
-                        "arabic_text": "ضَ رَ بَ   ضَ رَ بَ   ضَ رَ بَ",
-                        "transliteration": "DHA RA BA   DHA RA BA   DHA RA BA",
+                        "title": "Hal 11 - Huruf Syin",
+                        "arabic_text": "شَ رَ حَ\nشَ شَ   شَ رَ   شَ حَ\nدَ سَ   ذَ شَ   حَ شَ\nشَ خَ   سَ زَ   شَ ذَ\nشَ جَ سَ         شَ سَ خَ\nخَ سَ رَ         شَ خَ رَ\nشَ جَ رَ         شَ رَ حَ",
+                        "transliteration": "SYA RA HA\nSYA HA     SYA RA     SYA SYA\nHA SYA     DZA SYA     DA SA\nSYA DZA     SA ZA     SYA KHA\nSYA SA KHA         SYA JA SA\nSYA KHA RA         KHA SA RA\nSYA RA HA         SYA JA RA",
                         "description": "Latihan Tilawati Jilid 1 Halaman 11"
             },
             {
