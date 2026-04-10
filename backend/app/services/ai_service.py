@@ -23,8 +23,8 @@ from typing import Any
             {
                         "lesson_number": 1,
                         "title": "Hal 1 - Huruf Alif & Ba",
-                        "arabic_text": "اَ بَ   اَ بَ   اَ بَ",
-                        "transliteration": "A BA   A BA   A BA",
+                        "arabic_text": "اَ بَ\nاَ اَ   بَ بَ   اَ بَ\nبَ اَ   اَ بَ   اَ بَ\nاَ اَ اَ         بَ بَ بَ\nبَ بَ اَ         اَ بَ اَ\nاَ بَ بَ         بَ اَ بَ",
+                        "transliteration": "A BA\nA BA     BA BA     A A\nA BA     A BA     BA A\nBA BA BA         A A A\nA BA A         BA BA A\nBA A BA         A BA BA",
                         "description": "Latihan Tilawati Jilid 1 Halaman 1"
             },
             {

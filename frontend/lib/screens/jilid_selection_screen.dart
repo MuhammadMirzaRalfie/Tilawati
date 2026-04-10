@@ -27,8 +27,18 @@ class _JilidSelectionScreenState extends State<JilidSelectionScreen> {
         {
                 'number': 1,
                 'title': 'Hal 1 - Huruf Alif & Ba',
-                'arabic': 'اَ بَ   اَ بَ   اَ بَ',
-                'transliteration': 'A BA   A BA   A BA',
+                'arabic': '''اَ بَ
+اَ اَ   بَ بَ   اَ بَ
+بَ اَ   اَ بَ   اَ بَ
+اَ اَ اَ         بَ بَ بَ
+بَ بَ اَ         اَ بَ اَ
+اَ بَ بَ         بَ اَ بَ''',
+                'transliteration': '''A BA
+A BA     BA BA     A A
+A BA     A BA     BA A
+BA BA BA         A A A
+A BA A         BA BA A
+BA A BA         A BA BA''',
                 'desc': 'Latihan Tilawati Jilid 1 Halaman 1'
         },
         {
