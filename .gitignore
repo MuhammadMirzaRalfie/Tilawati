@@ -1,30 +1,61 @@
-# Python
+# ─── Python / Backend ────────────────────────────────────────────────────────
 __pycache__/
 *.py[cod]
 *$py.class
 *.so
+*.egg-info/
+dist/
+.eggs/
+
+# Virtual environments
 venv/
+.venv/
+env/
+.env/
+
+# Environment variables (keep .env.example)
 .env
+.env.local
+.env.*.local
+
+# Uploads & generated files
 uploads/
+*.log
 
-# Flutter
-frontend/.dart_tool/
-frontend/build/
-frontend/.flutter-plugins
-frontend/.flutter-plugins-dependencies
+# Test & lint cache
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
 
-# IDE
+# ─── Flutter / Dart ───────────────────────────────────────────────────────────
+# Handled by frontend/.gitignore, but also covered here for safety
+.dart_tool/
+.pub-cache/
+.pub/
+**/build/
+*.iml
+.flutter-plugins
+.flutter-plugins-dependencies
+analyze_output.txt
+
+# ─── Database ─────────────────────────────────────────────────────────────────
+pgdata/
+*.sqlite3
+*.db
+
+# ─── Docker ───────────────────────────────────────────────────────────────────
+docker-compose.override.yml
+
+# ─── IDE ──────────────────────────────────────────────────────────────────────
 .idea/
 .vscode/
-*.iml
+*.ipr
+*.iws
 *.swp
+*.swo
 
-# OS
+# ─── OS ───────────────────────────────────────────────────────────────────────
 .DS_Store
 Thumbs.db
-
-# Analysis output
-frontend/analyze_output.txt
-
-# Docker volumes
-pgdata/
+desktop.ini
+ehthumbs.db
