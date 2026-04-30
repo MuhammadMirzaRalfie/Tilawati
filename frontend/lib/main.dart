@@ -13,6 +13,8 @@ import 'screens/jilid_selection_screen.dart';
 import 'screens/lesson_screen.dart';
 import 'screens/evaluation_screen.dart';
 import 'screens/progress_screen.dart';
+import 'screens/glossary_screen.dart';
+import 'screens/glossary_detail_screen.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -51,6 +53,8 @@ class TilawatiApp extends StatelessWidget {
           '/lesson': (context) => const LessonScreen(),
           '/evaluation': (context) => const EvaluationScreen(),
           '/progress': (context) => const ProgressScreen(),
+          '/glossary': (context) => const GlossaryScreen(),
+          '/glossary-detail': (context) => const GlossaryDetailScreen(),
         },
       ),
     );

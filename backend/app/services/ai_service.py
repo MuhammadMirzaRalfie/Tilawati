@@ -10,10 +10,12 @@ For now, it generates mock evaluation scores for development purposes.
 
 import random
 import uuid
+import re
 from typing import Any
 
 
 # Data konten Tilawati (dummy)
+TILAWATI_CONTENT = {
     1: {
         "title": "Jilid 1 - Huruf Hijaiyah",
         "description": "Pengenalan huruf hijaiyah dan harakat fathah",
@@ -485,39 +487,106 @@ def get_lesson(jilid: int, lesson_number: int) -> dict | None:
     return None
 
 
+def _tokenize_transliteration(text: str) -> list[str]:
+    """Extract hijaiyah word tokens from a transliteration string (uppercase words only)."""
+    return [w for w in re.split(r"[\s\n\r]+", text.upper()) if re.match(r"^[A-Z']+$", w)]
+
+
+def _word_match_rate(predicted: list[str], expected: list[str]) -> float:
+    """Compute token-level match rate (order-insensitive, caps-normalized)."""
+    if not expected:
+        return 0.0
+    pred_lower = [w.lower() for w in predicted]
+    exp_lower = [w.lower() for w in expected]
+    matched = sum(1 for w in exp_lower if w in pred_lower)
+    return matched / len(exp_lower)
+
+
+async def _call_asr_service(audio_path: str) -> list[str] | None:
+    """
+    Transkripsi audio menggunakan model ASR lokal (HPT-D).
+    Fallback ke HF Spaces jika ASR_MODEL_DIR tidak tersedia dan ASR_SERVICE_URL diisi.
+    """
+    # Coba lokal dulu
+    try:
+        from app.services.asr_inference import transcribe_file
+        result = transcribe_file(audio_path)
+        words = result.get("words", [])
+        return [w.upper() for w in words]
+    except RuntimeError:
+        pass  # model belum dimuat, coba HF Spaces
+    except Exception as e:
+        print(f"[ai_service] Local ASR error: {e}", flush=True)
+
+    # Fallback ke HF Spaces jika URL tersedia
+    from app.config import settings
+    if not settings.ASR_SERVICE_URL:
+        return None
+
+    try:
+        import httpx
+        url = settings.ASR_SERVICE_URL.rstrip("/") + "/transcribe"
+        async with httpx.AsyncClient(timeout=30.0) as client:
+            with open(audio_path, "rb") as f:
+                response = await client.post(url, files={"audio": f})
+        response.raise_for_status()
+        data = response.json()
+        words = data.get("words", [])
+        return [w.upper() for w in words]
+    except Exception as e:
+        print(f"[ai_service] HF Spaces ASR error: {e}", flush=True)
+        return None
+
+
 async def evaluate_audio(audio_path: str, jilid: int, lesson_number: int) -> dict:
     """
-    Evaluate audio recording against reference.
-
-    TODO: Replace with actual AI model integration:
-    1. Forced Alignment for phoneme-level analysis
-    2. Contrastive Learning for quality comparison
-
-    Currently returns mock scores for development.
+    Evaluate audio recording using HPT-D ASR model.
+    Calls HF Spaces /transcribe, compares result against expected transliteration.
+    Falls back to mock scores if ASR_SERVICE_URL is not configured.
     """
     lesson = get_lesson(jilid, lesson_number)
     if lesson is None:
         return {"error": "Lesson not found"}
 
-    # Generate realistic mock scores
-    base_score = random.uniform(60, 95)
+    expected_tokens = _tokenize_transliteration(lesson["transliteration"])
+    predicted_tokens = await _call_asr_service(audio_path)
 
-    makharijul_huruf = min(100, max(0, base_score + random.uniform(-10, 10)))
-    tajwid = min(100, max(0, base_score + random.uniform(-15, 15)))
-    kelancaran = min(100, max(0, base_score + random.uniform(-8, 8)))
-    overall = (makharijul_huruf * 0.4 + tajwid * 0.35 + kelancaran * 0.25)
+    if predicted_tokens is not None and expected_tokens:
+        wmr = _word_match_rate(predicted_tokens, expected_tokens)
 
-    # Generate phoneme feedback
-    phoneme_feedback = _generate_phoneme_feedback(lesson["arabic_text"])
+        n_pred = len(predicted_tokens)
+        n_exp = len(expected_tokens)
+        length_penalty = 1.0 - abs(n_pred - n_exp) / max(n_exp, 1)
+        length_penalty = max(0.0, min(1.0, length_penalty))
 
-    # Generate text feedback
+        makharijul_huruf = round(wmr * 90, 1)
+        tajwid = round(wmr * 85, 1)
+        kelancaran = round(length_penalty * 100, 1)
+        overall = round(makharijul_huruf * 0.4 + tajwid * 0.35 + kelancaran * 0.25, 1)
+
+        phoneme_feedback = {
+            "asr_transcript": " ".join(predicted_tokens),
+            "expected": " ".join(expected_tokens),
+            "matched_tokens": [w for w in [t.lower() for t in expected_tokens]
+                               if w in [p.lower() for p in predicted_tokens]],
+        }
+    else:
+        # Fallback: mock scores when ASR service is unavailable
+        print("[ai_service] Using mock scores (ASR service not available)", flush=True)
+        base = random.uniform(60, 95)
+        makharijul_huruf = round(min(100, max(0, base + random.uniform(-10, 10))), 1)
+        tajwid = round(min(100, max(0, base + random.uniform(-15, 15))), 1)
+        kelancaran = round(min(100, max(0, base + random.uniform(-8, 8))), 1)
+        overall = round(makharijul_huruf * 0.4 + tajwid * 0.35 + kelancaran * 0.25, 1)
+        phoneme_feedback = {}
+
     feedback = _generate_feedback(overall, makharijul_huruf, tajwid, kelancaran)
 
     return {
-        "overall_score": round(overall, 1),
-        "makharijul_huruf_score": round(makharijul_huruf, 1),
-        "tajwid_score": round(tajwid, 1),
-        "kelancaran_score": round(kelancaran, 1),
+        "overall_score": overall,
+        "makharijul_huruf_score": makharijul_huruf,
+        "tajwid_score": tajwid,
+        "kelancaran_score": kelancaran,
         "feedback_json": feedback,
         "phoneme_details": phoneme_feedback,
     }

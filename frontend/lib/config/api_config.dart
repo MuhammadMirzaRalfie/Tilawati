@@ -25,4 +25,8 @@ class ApiConfig {
   // Progress endpoints
   static const String dashboard = '$apiUrl/progress/dashboard';
   static String jilidProgress(int id) => '$apiUrl/progress/jilid/$id';
+
+  // Glossary endpoints
+  static const String glossaryLetters = '$apiUrl/glossary/letters';
+  static const String glossaryClassify = '$apiUrl/glossary/classify';
 }

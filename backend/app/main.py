@@ -4,7 +4,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.config import settings
 from app.database import init_db
-from app.routers import auth, lessons, evaluation, progress
+from app.routers import auth, lessons, evaluation, progress, glossary
 
 
 @asynccontextmanager
@@ -13,6 +13,15 @@ async def lifespan(app: FastAPI):
     os.makedirs(settings.UPLOAD_DIR, exist_ok=True)
     await init_db()
     print("✅ Database tables created")
+
+    # Load AI models
+    import asyncio
+    from app.services.asr_inference import load_asr_model
+    from app.services.classification_inference import load_classification_model
+    loop = asyncio.get_event_loop()
+    await loop.run_in_executor(None, load_asr_model)
+    await loop.run_in_executor(None, load_classification_model)
+
     print("✅ Tilawati API is ready!")
     yield
     # Shutdown
@@ -40,6 +49,7 @@ app.include_router(auth.router)
 app.include_router(lessons.router)
 app.include_router(evaluation.router)
 app.include_router(progress.router)
+app.include_router(glossary.router)
 
 
 @app.get("/")
