@@ -5,6 +5,7 @@ import 'config/theme.dart';
 import 'providers/auth_provider.dart';
 import 'providers/lesson_provider.dart';
 import 'providers/evaluation_provider.dart';
+import 'providers/progress_provider.dart';
 import 'screens/splash_screen.dart';
 import 'screens/login_screen.dart';
 import 'screens/register_screen.dart';
@@ -15,6 +16,8 @@ import 'screens/evaluation_screen.dart';
 import 'screens/progress_screen.dart';
 import 'screens/glossary_screen.dart';
 import 'screens/glossary_detail_screen.dart';
+import 'screens/history_screen.dart';
+import 'screens/free_inference_screen.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -38,6 +41,7 @@ class TilawatiApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => AuthProvider()),
         ChangeNotifierProvider(create: (_) => LessonProvider()),
         ChangeNotifierProvider(create: (_) => EvaluationProvider()),
+        ChangeNotifierProvider(create: (_) => ProgressProvider()),
       ],
       child: MaterialApp(
         title: 'Tilawati',
@@ -55,6 +59,8 @@ class TilawatiApp extends StatelessWidget {
           '/progress': (context) => const ProgressScreen(),
           '/glossary': (context) => const GlossaryScreen(),
           '/glossary-detail': (context) => const GlossaryDetailScreen(),
+          '/riwayat': (context) => const HistoryScreen(),
+          '/free-inference': (context) => const FreeInferenceScreen(),
         },
       ),
     );

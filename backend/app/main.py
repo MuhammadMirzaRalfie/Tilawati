@@ -14,13 +14,23 @@ async def lifespan(app: FastAPI):
     await init_db()
     print("✅ Database tables created")
 
-    # Load AI models
+    # Load AI models — wrap each load supaya satu kegagalan tidak mematikan server.
     import asyncio
-    from app.services.asr_inference import load_asr_model
+    from app.services.asr_inference import load_asr_model, warmup_asr_model
     from app.services.classification_inference import load_classification_model
     loop = asyncio.get_event_loop()
-    await loop.run_in_executor(None, load_asr_model)
-    await loop.run_in_executor(None, load_classification_model)
+
+    try:
+        await loop.run_in_executor(None, load_asr_model)
+        # Warm-up: dummy forward pass agar inferensi pertama user tidak lambat
+        await loop.run_in_executor(None, warmup_asr_model)
+    except Exception as e:
+        print(f"⚠️  ASR model load failed: {e}. Evaluation akan fallback ke mock.", flush=True)
+
+    try:
+        await loop.run_in_executor(None, load_classification_model)
+    except Exception as e:
+        print(f"⚠️  Classification model load failed: {e}. Endpoint /api/glossary/classify akan return error.", flush=True)
 
     print("✅ Tilawati API is ready!")
     yield

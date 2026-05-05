@@ -30,9 +30,12 @@ class _GlossaryScreenState extends State<GlossaryScreen> {
         _letters = list.map((e) => Map<String, dynamic>.from(e)).toList();
         _isLoading = false;
       });
-    } catch (e) {
+    } catch (e, stack) {
+      // Print ke logcat supaya `adb logcat | grep flutter` bisa diagnosa.
+      // ignore: avoid_print
+      print('[GlossaryScreen] fetch error: $e\n$stack');
       setState(() {
-        _error = e.toString();
+        _error = 'Gagal memuat glosarium: $e';
         _isLoading = false;
       });
     }

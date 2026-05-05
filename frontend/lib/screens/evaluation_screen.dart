@@ -252,6 +252,12 @@ class _EvaluationScreenState extends State<EvaluationScreen>
               duration: const Duration(milliseconds: 500),
               child: Column(
                 children: [
+                  // ASR Transcript Card
+                  if (eval.asrTranscript != null) ...[
+                    _buildAsrCard(eval),
+                    const SizedBox(height: 16),
+                  ],
+
                   // Score breakdown
                   Container(
                     padding: const EdgeInsets.all(20),
@@ -399,6 +405,83 @@ class _EvaluationScreenState extends State<EvaluationScreen>
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildAsrCard(EvaluationModel eval) {
+    final transcript = eval.asrTranscript!.toLowerCase();
+    final expected = eval.asrExpected;
+
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(24),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.04),
+            blurRadius: 12,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              const Icon(Icons.hearing_rounded,
+                  color: AppColors.primary, size: 20),
+              const SizedBox(width: 8),
+              Text(
+                'Transkripsi ASR',
+                style: GoogleFonts.poppins(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                  color: AppColors.textPrimary,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          _buildTranscriptRow('Model mendengar', '"$transcript"',
+              AppColors.info),
+          if (expected != null) ...[
+            const SizedBox(height: 8),
+            _buildTranscriptRow('Yang diharapkan', '"${expected.toUpperCase()}"',
+                AppColors.textSecondary),
+          ],
+        ],
+      ),
+    );
+  }
+
+  Widget _buildTranscriptRow(String label, String value, Color valueColor) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        SizedBox(
+          width: 118,
+          child: Text(
+            label,
+            style: GoogleFonts.poppins(
+              fontSize: 12,
+              color: AppColors.textSecondary,
+            ),
+          ),
+        ),
+        const Text(': ', style: TextStyle(color: AppColors.textLight)),
+        Expanded(
+          child: Text(
+            value,
+            style: GoogleFonts.poppins(
+              fontSize: 13,
+              fontWeight: FontWeight.w500,
+              color: valueColor,
+            ),
+          ),
+        ),
+      ],
     );
   }
 

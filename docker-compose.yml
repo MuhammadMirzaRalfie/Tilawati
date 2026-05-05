@@ -30,6 +30,7 @@ services:
       ASR_MODEL_DIR: /models/asr
       CLASSIFICATION_MODEL_DIR: /models/classification
     volumes:
+      - ./backend:/app                                                           # source code live reload
       - ../Model/Deploy/api/model:/models/asr:ro
       - ../Model/Model Klasifikasi(Anas-Wav2Vec2)/final-anas-wav2vec2-large-xlsr-arabic:/models/classification:ro
     depends_on:

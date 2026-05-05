@@ -43,8 +43,10 @@ class _SplashScreenState extends State<SplashScreen>
     final isAuthenticated = await authProvider.checkAuth();
 
     if (mounted) {
-      // ALWAYS GO TO HOME SCREEN FOR TESTING UI WITHOUT BACKEND
-      Navigator.pushReplacementNamed(context, '/home');
+      Navigator.pushReplacementNamed(
+        context,
+        isAuthenticated ? '/home' : '/login',
+      );
     }
   }
 

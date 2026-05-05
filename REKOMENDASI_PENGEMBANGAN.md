@@ -1,7 +1,8 @@
 # Rekomendasi Pengembangan Selanjutnya — TilawatiApp
 
 **Tanggal:** 2026-04-30  
-**Status Saat Ini:** Backend lokal + Flutter siap, evaluasi dengan HPT-D, glosarium dengan model klasifikasi anas.
+**Terakhir diperbarui:** 2026-04-30  
+**Status Saat Ini:** Backend lokal + Flutter siap, evaluasi dengan HPT-D, glosarium dengan model klasifikasi anas, konten Jilid 1 lengkap 44 halaman, transkripsi ASR tampil di evaluation screen.
 
 ---
 
@@ -22,27 +23,39 @@
 
 ## Prioritas 1 — Wajib untuk Demo TA
 
-### 1.1 Perbaiki Konten Jilid (Halaman 12–40)
+### ✅ 1.1 Perbaiki Konten Jilid (Halaman 12–44) — SELESAI (2026-04-30)
 **Problem:** Konten lesson 12–40 di Jilid 1 (`ai_service.py`) masih placeholder (`"اَ بَ تَ ثَ"`). Halaman 1–11 sudah benar.
 
-**Solusi:** Isi teks Arab dan transliterasi yang sesuai buku Tilawati Jilid 1. Ini data, bukan kode — cukup update dict `TILAWATI_CONTENT`.
-
-**Impact:** Langsung meningkatkan kualitas demo dan akurasi evaluasi ASR.
-
----
-
-### 1.2 Alur Evaluasi Lebih Akurat — Scoring per Baris
-**Problem:** Model HPT-D dilatih untuk 2–4 huruf sekaligus, tapi konten lesson bisa punya banyak baris. Jika user merekam seluruh halaman, evaluasi jadi tidak akurat.
-
-**Solusi:** Bagi rekaman per baris atau per kelompok huruf (misal 2–4 huruf per rekaman), sesuai cara model dilatih.
-
-Opsi implementasi:
-- Flutter menampilkan **satu baris** teks per rekaman (bukan satu halaman penuh)
-- User rekam baris per baris, skor per baris diakumulasi
+**Implementasi:**
+- Konten hal 12–44 diisi sesuai kurikulum Tilawati Jilid 1 (sumber: `jilid_selection_screen.dart`)
+- Total lesson Jilid 1 di backend naik dari 40 → **44 halaman**
+- Semua teks Arab + transliterasi kini akurat per halaman (SHA, DHA, THA, ZHA, 'A, GHA, FA, QA, KA, LA, MA, NA, WA, HA, Hamzah, Ya, dan latihan kombinasi)
+- Transliterasi bersih dari artefak angka abjad — token ASR akurat
 
 ---
 
-### 1.3 Tampilan Konfirmasi ASR di Evaluation Screen
+### ✅ 1.2 Evaluasi Per Kata dengan Instant Feedback — SELESAI (2026-04-30)
+**Problem:** Model HPT-D dilatih untuk 2–4 huruf sekaligus, tapi sebelumnya user merekam seluruh halaman penuh — evaluasi tidak akurat.
+
+**Solusi Diimplementasikan:**
+- `lesson_screen.dart` direfactor sepenuhnya: transliterasi diparse jadi token individual (misal `["A", "BA", "TA"]`)
+- Tiap token ditampilkan sebagai chip interaktif dengan status warna:
+  - Abu-abu: belum direkam
+  - Border biru + underline: sedang aktif
+  - Hijau + centang: benar
+  - Merah + silang: salah
+- Alur rekaman: tap mikrofon → ucapkan satu kata → tap stop → evaluasi otomatis → pindah ke kata berikutnya
+- Setelah semua kata: tampilkan ringkasan skor (X/N kata benar, grade)
+
+**Backend Baru:**
+- Endpoint `POST /api/evaluation/submit_word` di `evaluation.py`
+- Menerima `expected_word` + audio WAV; memanggil HPT-D via `transcribe_word()` di `ai_service.py`
+- Fallback mock 70% correct jika ASR tidak tersedia (untuk demo)
+- `ApiConfig.submitWord` ditambahkan di `api_config.dart`
+
+---
+
+### ✅ 1.3 Tampilan Konfirmasi ASR di Evaluation Screen — SELESAI (2026-04-30)
 **Problem:** User tidak tahu apakah model ASR berhasil mendengar atau tidak.
 
 **Solusi:** Tampilkan transkripsi HPT-D di `evaluation_screen.dart`:
@@ -50,6 +63,11 @@ Opsi implementasi:
 Model mendengar: "ba ta tsa"
 Yang diharapkan: "BA TA TSA"
 ```
+
+**Implementasi:**
+- Getter `asrTranscript` & `asrExpected` ditambah ke `EvaluationModel` (baca dari `phoneme_details`)
+- Card "Transkripsi ASR" ditambah di atas "Detail Penilaian" di `evaluation_screen.dart`
+- Card hanya muncul saat ASR aktif (tidak muncul di mock mode)
 
 ---
 
@@ -75,18 +93,28 @@ Implementasi:
 
 ---
 
-### 2.3 Riwayat Evaluasi di Flutter
+### ✅ 2.3 Riwayat Evaluasi di Flutter — SELESAI (2026-04-30)
 **Problem:** Menu "Riwayat" di HomeScreen masih kosong (onTap: `() {}`).
 
-**Solusi:** Buat `history_screen.dart` yang memanggil `GET /api/evaluation/history` dan menampilkan daftar hasil evaluasi dengan tanggal, jilid, lesson, dan skor.
+**Implementasi:**
+- `history_screen.dart` dibuat: tampilkan daftar evaluasi dengan jilid badge, judul lesson, skor, grade, tanggal
+- `EvaluationProvider.fetchHistory()` dipanggil di `initState`, pull-to-refresh tersedia
+- Route `/riwayat` ditambahkan ke `main.dart`
+- Tombol Riwayat di `home_screen.dart` sekarang navigasi ke `/riwayat`
 
 ---
 
-### 2.4 Progress Screen yang Lebih Informatif
-`progress_screen.dart` perlu disambungkan ke `GET /api/progress/dashboard`. Tambahkan:
-- Grafik progres skor per minggu (gunakan `fl_chart` yang sudah ada di pubspec)
-- Streak latihan harian
-- Badge pencapaian per jilid
+### ✅ 2.4 Progress Screen yang Lebih Informatif — SELESAI (2026-04-30)
+`progress_screen.dart` sudah disambungkan ke `GET /api/progress/dashboard`.
+
+**Implementasi:**
+- `progress_provider.dart` dibuat: fetch `ProgressDashboard` dari backend, expose `completedLessons(jilid)` + `totalLessons(jilid)`
+- `ProgressProvider` didaftarkan di `MultiProvider` di `main.dart`
+- `progress_screen.dart` direfactor ke `StatefulWidget`, gunakan `Consumer<ProgressProvider>`
+- Stat cards (total latihan, rata-rata, tertinggi, streak) menampilkan data nyata
+- Progress bar per jilid menggunakan data dari `jilid_progress` (fallback ke total hardcode jika belum ada data)
+- Aktivitas terbaru ditampilkan dari `recent_evaluations` (10 terakhir)
+- Pull-to-refresh + tombol refresh di AppBar
 
 ---
 
@@ -146,13 +174,13 @@ File audio rekaman di `uploads/` menumpuk dan tidak pernah dihapus. Tambahkan cl
 
 ```
 [Segera / Demo TA]
-  1. Lengkapi konten Jilid 1 hal 12–40
-  2. Tampilkan transkripsi ASR di evaluation screen
-  3. Pertimbangkan rekaman per baris (bukan per halaman)
+  1. ✅ Lengkapi konten Jilid 1 hal 12–44  ← SELESAI
+  2. ✅ Tampilkan transkripsi ASR di evaluation screen  ← SELESAI
+  3. ✅ Rekaman per kata dengan instant feedback  ← SELESAI (2026-04-30)
 
 [Minggu ini]
-  4. Sambungkan menu Riwayat
-  5. Lengkapi Progress screen dengan chart
+  4. ✅ Sambungkan menu Riwayat  ← SELESAI (2026-04-30)
+  5. ✅ Lengkapi Progress screen dengan data nyata  ← SELESAI (2026-04-30)
   6. Tambahkan audio referensi huruf
 
 [Setelah TA / Pengembangan Lanjut]

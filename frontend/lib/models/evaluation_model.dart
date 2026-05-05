@@ -67,4 +67,18 @@ class EvaluationModel {
     }
     return [];
   }
+
+  String? get asrTranscript {
+    if (phonemeDetails != null && phonemeDetails!['asr_transcript'] != null) {
+      return phonemeDetails!['asr_transcript'] as String;
+    }
+    return null;
+  }
+
+  String? get asrExpected {
+    if (phonemeDetails != null && phonemeDetails!['expected'] != null) {
+      return phonemeDetails!['expected'] as String;
+    }
+    return null;
+  }
 }

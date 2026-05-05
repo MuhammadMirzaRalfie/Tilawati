@@ -56,6 +56,29 @@ def load_asr_model():
     print(f"[asr_inference] Model HPT-D siap. Device: {_device}", flush=True)
 
 
+def warmup_asr_model():
+    """
+    Jalankan satu dummy forward pass setelah model dimuat.
+    Ini memaksa PyTorch mengalokasikan buffer memory, mengkompilasi CPU kernels,
+    dan menginisialisasi thread pool — sehingga inferensi pertama user tidak lambat.
+    """
+    if _model is None:
+        return
+    try:
+        # Buat audio sintetis 0.5 detik (8000 sampel) berisi silence
+        dummy_speech = np.zeros(8000, dtype=np.float32)
+        inputs = _processor(
+            dummy_speech, sampling_rate=SAMPLE_RATE, return_tensors="pt", padding=True
+        )
+        input_values = inputs.input_values.to(_device)
+        attention_mask = inputs.attention_mask.to(_device)
+        with torch.inference_mode():
+            _ = _model(input_values, attention_mask=attention_mask).logits
+        print("[asr_inference] ✅ Warm-up selesai — model siap tanpa cold start.", flush=True)
+    except Exception as e:
+        print(f"[asr_inference] ⚠️  Warm-up gagal (tidak kritis): {e}", flush=True)
+
+
 def _decode_ctc(pred_ids: np.ndarray) -> str:
     prev = None
     words = []
@@ -91,7 +114,7 @@ def transcribe_file(audio_path: str) -> dict:
     input_values = inputs.input_values.to(_device)
     attention_mask = inputs.attention_mask.to(_device)
 
-    with torch.no_grad():
+    with torch.inference_mode():
         logits = _model(input_values, attention_mask=attention_mask).logits
 
     pred_ids = torch.argmax(logits, dim=-1)[0].cpu().numpy()

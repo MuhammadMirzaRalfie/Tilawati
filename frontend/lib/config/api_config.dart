@@ -1,8 +1,18 @@
 class ApiConfig {
-  // Change this to your backend URL
-  static const String baseUrl = 'http://10.0.2.2:8000'; // Android emulator
-  // static const String baseUrl = 'http://localhost:8000'; // iOS simulator
-  // static const String baseUrl = 'http://192.168.x.x:8000'; // Real device
+  // Pilih sesuai konfigurasi:
+  //
+  // 1) USB device (recommended): jalankan dulu di host:
+  //      adb reverse tcp:8000 tcp:8000
+  //    lalu pakai baris 'localhost' di bawah.
+  //
+  // 2) Android emulator: 'http://10.0.2.2:8000'
+  //
+  // 3) Real device via Wi-Fi LAN: 'http://192.168.x.x:8000'
+  //    (cari IP host dengan `ipconfig` di Windows / `ifconfig` di Mac/Linux,
+  //     dan pastikan firewall mengizinkan port 8000)
+  static const String baseUrl = 'http://localhost:8000';
+  // static const String baseUrl = 'http://10.0.2.2:8000'; // Android emulator
+  // static const String baseUrl = 'http://192.168.x.x:8000'; // LAN Wi-Fi
 
   static const String apiUrl = '$baseUrl/api';
 
@@ -19,6 +29,8 @@ class ApiConfig {
 
   // Evaluation endpoints
   static const String submitEvaluation = '$apiUrl/evaluation/submit';
+  static const String submitWord = '$apiUrl/evaluation/submit_word';
+  static const String transcribeFree = '$apiUrl/evaluation/transcribe_free';
   static const String evaluationHistory = '$apiUrl/evaluation/history';
   static String evaluationDetail(String id) => '$apiUrl/evaluation/$id';
 
