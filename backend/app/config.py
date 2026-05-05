@@ -19,6 +19,9 @@ class Settings:
         os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES", "1440")
     )
     UPLOAD_DIR: str = os.getenv("UPLOAD_DIR", "./uploads")
+    ASR_SERVICE_URL: str = os.getenv("ASR_SERVICE_URL", "")
+    ASR_MODEL_DIR: str = os.getenv("ASR_MODEL_DIR", "")
+    CLASSIFICATION_MODEL_DIR: str = os.getenv("CLASSIFICATION_MODEL_DIR", "")
 
 
 settings = Settings()

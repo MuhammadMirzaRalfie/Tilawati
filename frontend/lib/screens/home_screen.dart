@@ -22,7 +22,9 @@ class _HomeScreenState extends State<HomeScreen> {
         index: _currentIndex,
         children: const [
           _HomeTab(),
-          _JilidTab(),
+          // Tab "Jilid" tidak punya konten in-place — tap langsung push
+          // ke /jilid-selection (lihat onTap BottomNavigationBar di bawah).
+          SizedBox.shrink(),
           _ProgressTab(),
           _ProfileTab(),
         ],
@@ -40,7 +42,15 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
         child: BottomNavigationBar(
           currentIndex: _currentIndex,
-          onTap: (index) => setState(() => _currentIndex = index),
+          onTap: (index) {
+            if (index == 1) {
+              // Tab Jilid: langsung ke halaman pilih jilid, jangan ubah _currentIndex
+              // supaya saat user kembali (back), tab tetap di Beranda.
+              Navigator.pushNamed(context, '/jilid-selection');
+              return;
+            }
+            setState(() => _currentIndex = index);
+          },
           items: const [
             BottomNavigationBarItem(
               icon: Icon(Icons.home_rounded),
@@ -250,21 +260,36 @@ class _HomeTab extends StatelessWidget {
               children: [
                 _buildMenuCard(
                   context,
-                  icon: Icons.history_rounded,
-                  title: 'Riwayat',
-                  subtitle: 'Hasil evaluasi',
-                  color: const Color(0xFF7B1FA2),
-                  onTap: () {},
+                  icon: Icons.abc_rounded,
+                  title: 'Glosarium',
+                  subtitle: 'Latihan per huruf',
+                  color: const Color(0xFF00695C),
+                  onTap: () => Navigator.pushNamed(context, '/glossary'),
                 ),
                 const SizedBox(width: 12),
                 _buildMenuCard(
                   context,
-                  icon: Icons.info_outline_rounded,
-                  title: 'Panduan',
-                  subtitle: 'Cara pakai',
-                  color: const Color(0xFFF57C00),
-                  onTap: () {},
+                  icon: Icons.spatial_audio_rounded,
+                  title: 'Uji ASR',
+                  subtitle: 'Inferensi bebas',
+                  color: const Color(0xFF0D47A1),
+                  onTap: () => Navigator.pushNamed(context, '/free-inference'),
                 ),
+              ],
+            ),
+            const SizedBox(height: 12),
+            Row(
+              children: [
+                _buildMenuCard(
+                  context,
+                  icon: Icons.history_rounded,
+                  title: 'Riwayat',
+                  subtitle: 'Hasil evaluasi',
+                  color: const Color(0xFF7B1FA2),
+                  onTap: () => Navigator.pushNamed(context, '/riwayat'),
+                ),
+                const SizedBox(width: 12),
+                Expanded(child: SizedBox()),
               ],
             ),
             const SizedBox(height: 28),
@@ -393,152 +418,6 @@ class _HomeTab extends StatelessWidget {
             ),
           ),
         ],
-      ),
-    );
-  }
-}
-
-// ========== JILID TAB ==========
-class _JilidTab extends StatelessWidget {
-  const _JilidTab();
-
-  @override
-  Widget build(BuildContext context) {
-    return SafeArea(
-      child: Padding(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const SizedBox(height: 8),
-            Text(
-              'Pilih Jilid',
-              style: GoogleFonts.poppins(
-                fontSize: 22,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const SizedBox(height: 4),
-            Text(
-              'Pilih jilid Tilawati untuk mulai berlatih',
-              style: GoogleFonts.poppins(
-                fontSize: 14,
-                color: AppColors.textSecondary,
-              ),
-            ),
-            const SizedBox(height: 20),
-            Expanded(
-              child: ListView.builder(
-                itemCount: 6,
-                itemBuilder: (context, index) {
-                  final jilid = index + 1;
-                  final titles = [
-                    'Huruf Hijaiyah',
-                    'Huruf Sambung',
-                    'Mad & Sukun',
-                    'Hukum Nun & Mim',
-                    'Waqaf & Ibtida',
-                    'Gharib & Musykilat',
-                  ];
-                  final descriptions = [
-                    'Pengenalan huruf hijaiyah dan harakat fathah',
-                    'Membaca huruf sambung dan kata sederhana',
-                    'Hukum mad (panjang) dan sukun',
-                    'Idzhar, Idgham, Ikhfa, dan Iqlab',
-                    'Tanda berhenti dan cara memulai bacaan',
-                    'Bacaan-bacaan asing dan sulit',
-                  ];
-                  return _buildJilidCard(
-                    context,
-                    jilid: jilid,
-                    title: titles[index],
-                    description: descriptions[index],
-                    color: AppColors.jilidColors[index],
-                  );
-                },
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildJilidCard(
-    BuildContext context, {
-    required int jilid,
-    required String title,
-    required String description,
-    required Color color,
-  }) {
-    return GestureDetector(
-      onTap: () {
-        Navigator.pushNamed(context, '/jilid-selection', arguments: jilid);
-      },
-      child: Container(
-        margin: const EdgeInsets.only(bottom: 12),
-        padding: const EdgeInsets.all(18),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(20),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.04),
-              blurRadius: 12,
-              offset: const Offset(0, 4),
-            ),
-          ],
-        ),
-        child: Row(
-          children: [
-            Container(
-              width: 56,
-              height: 56,
-              decoration: BoxDecoration(
-                color: color.withOpacity(0.1),
-                borderRadius: BorderRadius.circular(16),
-              ),
-              child: Center(
-                child: Text(
-                  '$jilid',
-                  style: GoogleFonts.poppins(
-                    fontSize: 22,
-                    fontWeight: FontWeight.bold,
-                    color: color,
-                  ),
-                ),
-              ),
-            ),
-            const SizedBox(width: 16),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Jilid $jilid - $title',
-                    style: GoogleFonts.poppins(
-                      fontSize: 15,
-                      fontWeight: FontWeight.w600,
-                      color: AppColors.textPrimary,
-                    ),
-                  ),
-                  const SizedBox(height: 2),
-                  Text(
-                    description,
-                    style: GoogleFonts.poppins(
-                      fontSize: 12,
-                      color: AppColors.textSecondary,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            Icon(
-              Icons.chevron_right_rounded,
-              color: color,
-            ),
-          ],
-        ),
       ),
     );
   }

@@ -9,7 +9,7 @@ Aplikasi Flutter + FastAPI untuk membantu pengguna belajar dan mengevaluasi baca
 **Tugas Akhir:** Tilawati Hijaiyah ASR — pengenalan dan evaluasi ucapan huruf hijaiyah.
 **Target Platform:** Android (prioritas), iOS, Web.
 **Stack:** Flutter (frontend) + FastAPI + PostgreSQL (backend).
-**Status AI:** Evaluasi masih **mock** (skor acak). Integrasi model AI nyata belum dilakukan.
+**Status AI:** Evaluasi terhubung ke model HPT-D lokal via `asr_inference.py`; fallback ke mock jika model tidak tersedia. Transkripsi ASR ditampilkan di `evaluation_screen.dart`.
 
 ---
 
@@ -114,7 +114,7 @@ Response submit:
   "tajwid_score": 74.1,
   "kelancaran_score": 79.8,
   "feedback_json": { "grade": "...", "message": "...", "tips": [...] },
-  "phoneme_details": { "phonemes": [...], "correct_count": 12, ... }
+  "phoneme_details": { "asr_transcript": "ba ta tsa", "expected": "BA TA TSA ...", "matched_tokens": [...] }
 }
 ```
 
@@ -159,22 +159,29 @@ librosa, numpy                      # audio processing (belum dipakai aktif)
 ## Status Progress
 
 ### Selesai
-- [x] Semua screen Flutter: splash, login, register, home, jilid-selection, lesson, evaluation, progress
+- [x] Semua screen Flutter: splash, login, register, home, jilid-selection, lesson, evaluation, progress, history
 - [x] Rekaman audio 16kHz mono WAV di `lesson_screen.dart` (bukan screen terpisah)
 - [x] `api_service.dart` — HTTP client dengan JWT + multipart support
 - [x] Backend FastAPI: auth (JWT), lesson router, evaluation router, progress router
-- [x] Konten Jilid 1: **40 halaman** — hal 1–11 lengkap (teks Arab + transliterasi), hal 12–40 placeholder
+- [x] Konten Jilid 1: **44 halaman** — semua halaman lengkap (teks Arab + transliterasi sesuai kurikulum Tilawati)
 - [x] Konten Jilid 2–6: data minimal/dummy (2–4 pelajaran per jilid)
-- [x] Evaluasi mock: skor acak realistis + feedback teks di `ai_service.py`
+- [x] `evaluation_screen.dart` terhubung ke `POST /api/evaluation/submit` via `EvaluationProvider`
+- [x] Transkripsi ASR ditampilkan di `evaluation_screen.dart` (card "Transkripsi ASR", muncul saat ASR aktif)
+- [x] `evaluate_audio()` di `ai_service.py` terhubung ke model HPT-D lokal + fallback mock
+- [x] Glosarium per-huruf dengan model klasifikasi anas
+- [x] PostgreSQL + Docker Compose sudah berjalan
+- [x] **Per-kata recording + instant feedback** — `lesson_screen.dart` parse transliterasi jadi token, evaluasi per kata, UI dinamis (pending/active/correct/incorrect)
+- [x] **`history_screen.dart`** — riwayat evaluasi terhubung ke `GET /api/evaluation/history`
+- [x] **`progress_screen.dart` disambungkan** ke `GET /api/progress/dashboard` — stat card + progress bar per jilid aktif
+- [x] **`progress_provider.dart`** — provider baru fetch progres, expose totalEvaluations, averageScore, jilidProgress, recentEvaluations
+- [x] **Endpoint `/api/evaluation/submit_word`** — evaluasi per kata, return `{matched, asr_transcript, expected}`
+- [x] **Fungsi `transcribe_word()` di `ai_service.py`** — wrapper HPT-D lokal
 
 ### Belum Selesai / Perlu Dilanjutkan
-- [ ] **`evaluation_screen.dart` belum konek API** — masih pakai skor hardcoded, perlu panggil `POST /api/evaluation/submit`
-- [ ] **Integrasi AI nyata** — `evaluate_audio()` di `ai_service.py` masih mock, perlu ganti dengan model ASR/Forced Alignment
-- [ ] Konten Jilid 1 hal 12–40 masih placeholder (teks Arab generik)
-- [ ] Konten Jilid 2–6 masih sangat minimal
-- [ ] Setup database: PostgreSQL belum dijalankan, Alembic migrations belum diinisialisasi
-- [ ] `docker-compose.yml` belum dibuat
-- [ ] Testing end-to-end belum dilakukan
+- [ ] Konten Jilid 2–6 masih sangat minimal (2–4 pelajaran per jilid)
+- [ ] Testing end-to-end belum dilakukan secara menyeluruh (membutuhkan docker compose + flutter run)
+- [ ] Audio referensi per huruf (Prioritas 3.2 Rekomendasi)
+- [ ] Deploy ke HuggingFace Spaces (Prioritas 3.4 Rekomendasi)
 
 ---
 
@@ -187,3 +194,51 @@ librosa, numpy                      # audio processing (belum dipakai aktif)
 - Grade: Mumtaz ≥85, Jayyid Jiddan ≥70, Jayyid ≥55, Maqbul <55.
 - Backend butuh PostgreSQL — jalankan dulu sebelum `uvicorn app.main:app --reload`.
 - CORS sudah `allow_origins=["*"]`, Flutter Web tidak perlu proxy.
+
+---
+
+## Session Log
+
+### 2026-04-30 — Per-Kata Recording, History, dan Progress Dashboard
+
+**✅ Selesai (target semua tercapai):**
+- **Per-kata recording** — `lesson_screen.dart` diperbaharui: parse transliterasi ke token, tracking status per kata (pending/active/correct/incorrect), animasi smooth, UI Chip interaktif dengan warna
+- **Endpoint backend** — `POST /api/evaluation/submit_word` + `transcribe_word()` di `ai_service.py` untuk evaluasi per kata dengan fallback 70% mock
+- **History screen baru** — `frontend/lib/screens/history_screen.dart` (StatefulWidget, pull-to-refresh, loading/error/empty state) terhubung ke `GET /api/evaluation/history`
+- **Progress screen live** — `progress_screen.dart` refactor ke StatefulWidget, stat card (total latihan, rata-rata, tertinggi, streak), progress bar per jilid dari API
+- **Progress provider baru** — `frontend/lib/providers/progress_provider.dart` (fetch `/api/progress/dashboard`, expose metrics & recent evals)
+- **Route & navigasi** — tambah `/riwayat` route di `main.dart`, tombol Riwayat di `home_screen.dart` sekarang aktif
+- **API config** — tambah `submitWord` endpoint ke `api_config.dart`
+
+**Verifikasi:**
+- `flutter analyze` — **No issues found** ✅
+- Semua file baru & modifikasi mengikuti pattern existing (Provider, models, screens)
+- Fallback mock ada di backend untuk kedua endpoint (ASR + Evaluasi)
+
+**⏳ Tidak selesai / ditunda:**
+- Testing end-to-end (perlu docker compose up + emulator + flutter run) — ditunda hingga sesi berikutnya
+- Konten Jilid 2–6 tetap minimal (bukan prioritas utama bulan ini)
+
+**🚧 Blocker / Risiko:**
+- Tidak ada blocker teknis; semua endpoint & provider sudah ready
+- Testing E2E harus dilakukan sebelum release (perlu validasi flow user lengkap: register → pilih jilid → rekam → lihat progres → lihat history)
+
+**🎯 Prioritas sesi berikutnya:**
+1. **Testing E2E end-to-end** — backend + frontend, coba full flow dengan emulator/device real (3–4 jam)
+2. **Deploy ke HuggingFace Spaces** — FastAPI + model HPT-D (Priority 3.4 REKOMENDASI) (4–6 jam)
+3. **Audio referensi per huruf** — `glosarium_screen.dart` sudah ada, tinggal generate & host audio (Priority 3.2) (2–3 jam)
+4. **Konten Jilid 2–6** — enrich dari minimal ke ~20 halaman per jilid (saat ada bandwidth)
+5. **Bug fix & polish** — UI tweaks, error messages, validasi input
+
+**📝 Notes teknis:**
+- `lesson_screen.dart`: token parsing via `RegExp(r"[\s\n\r=]+")`, fallback untuk non-token characters (digit, simbol)
+- `/api/evaluation/submit_word` fallback mock: `70% + random(-5,+5)` untuk realism
+- Progress bar calculated via `completedLessons / totalLessons` per jilid (enum mapping jilid → lesson count)
+- History screen batch load 20 item per page dengan pagination support
+
+**📁 File berubah:**
+- Backend: `routers/evaluation.py` (endpoint baru), `services/ai_service.py` (fungsi baru)
+- Frontend config: `config/api_config.dart`
+- Frontend screens: `screens/lesson_screen.dart`, `screens/home_screen.dart`, `screens/progress_screen.dart` 
+- Frontend providers: `providers/progress_provider.dart` (baru), `main.dart`
+- Docs: `REKOMENDASI_PENGEMBANGAN.md` (updated priorities)

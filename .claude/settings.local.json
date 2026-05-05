@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python -c ' *)",
+      "Bash(python -c \"from app.services.ai_service import get_lesson; l=get_lesson\\(1,21\\); print\\('L21:', l['transliteration'][:50]\\); l33=get_lesson\\(1,33\\); print\\('L33 title:', l33['title']\\); l44=get_lesson\\(1,44\\); print\\('L44 title:', l44['title']\\)\")",
+      "Bash(git -C \"D:\\\\TA\\\\TilawatiApp\\\\Tilawati\" log --oneline -10)",
+      "Bash(git *)",
+      "Bash(python -c \"from app.routers.evaluation import router; from app.services.ai_service import transcribe_word; print\\('Backend imports OK'\\)\")",
+      "Bash(python *)",
+      "Bash(flutter analyze *)",
+      "PowerShell(python -c \"import docx; print\\('python-docx', docx.__version__\\)\" 2>&1)"
+    ]
+  }
+}

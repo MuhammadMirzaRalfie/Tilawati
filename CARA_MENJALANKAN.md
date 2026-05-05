@@ -1,92 +1,3 @@
-# Tilawati 📖
-
-**Aplikasi Pembelajaran dan Evaluasi Bacaan Al-Qur'an Berbasis AI**
-
-Tilawati adalah aplikasi mobile yang membantu pengguna meningkatkan kualitas bacaan Al-Qur'an melalui evaluasi berbasis AI menggunakan teknologi Contrastive Learning dan Forced Alignment.
-
-## 🏗️ Arsitektur
-
-| Layer | Teknologi |
-|-------|-----------|
-| Frontend | Flutter (Dart) |
-| Backend | FastAPI (Python) |
-| Database | PostgreSQL |
-| AI | Contrastive Learning + Forced Alignment |
-
-## 📂 Struktur Proyek
-
-```
-Tilawati/
-├── frontend/          # Flutter mobile app
-│   ├── lib/
-│   │   ├── config/    # Theme & API config
-│   │   ├── models/    # Data models
-│   │   ├── providers/ # State management
-│   │   ├── screens/   # UI screens
-│   │   ├── services/  # API services
-│   │   └── main.dart  # Entry point
-│   └── pubspec.yaml
-├── backend/           # FastAPI server
-│   ├── app/
-│   │   ├── models/    # SQLAlchemy models
-│   │   ├── schemas/   # Pydantic schemas
-│   │   ├── routers/   # API endpoints
-│   │   ├── services/  # Business logic
-│   │   └── main.py    # Entry point
-│   └── requirements.txt
-└── docker-compose.yml # PostgreSQL
-```
-
-## 🚀 Cara Menjalankan
-
-### 1. Database (PostgreSQL)
-
-```bash
-docker-compose up -d
-```
-
-### 2. Backend (FastAPI)
-
-```bash
-cd backend
-python -m venv venv
-venv\Scripts\activate        # Windows
-pip install -r requirements.txt
-uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
-```
-
-API docs: http://localhost:8000/docs
-
-### 3. Frontend (Flutter)
-
-```bash
-cd frontend
-flutter pub get
-flutter run
-```
-
-## 📱 Fitur
-
-- ✅ Registrasi & Login (JWT)
-- ✅ Pemilihan Jilid (1-6)
-- ✅ Latihan Interaktif dengan teks Arab
-- ✅ Rekaman Suara
-- ✅ Evaluasi AI (makharijul huruf, tajwid, kelancaran)
-- ✅ Dashboard Progres
-
-## 🔌 API Endpoints
-
-| Method | Endpoint | Deskripsi |
-|--------|----------|-----------|
-| POST | `/api/auth/register` | Registrasi |
-| POST | `/api/auth/login` | Login |
-| GET | `/api/auth/me` | Data user |
-| GET | `/api/lessons/jilids` | Daftar jilid |
-| GET | `/api/lessons/jilids/{id}` | Detail jilid |
-| POST | `/api/evaluation/submit` | Submit evaluasi |
-| GET | `/api/evaluation/history` | Riwayat evaluasi |
-| GET | `/api/progress/dashboard` | Dashboard progres |
-
 # Cara Menjalankan TilawatiApp
 
 **Stack:** Flutter (frontend Android) + FastAPI + PostgreSQL (backend)
@@ -256,9 +167,19 @@ File APK ada di: `build/app/outputs/flutter-apk/app-release.apk`
 
 ---
 
-## Bagian 3 — Konfigurasi Evaluasi AI (Opsional)
+## Bagian 3 — Evaluasi AI (Model Lokal)
 
-Secara default, evaluasi menggunakan **mock score** (skor acak yang realistis). Untuk menggunakan model HPT-D yang sesungguhnya, deploy ASR service ke HuggingFace Spaces terlebih dahulu.
+Evaluasi menggunakan **model HPT-D** (ASR) dan **model anas** (klasifikasi per huruf) yang dimuat langsung di backend saat startup — tidak perlu internet.
+
+Model dimuat otomatis oleh Docker via volume mount. Tidak ada konfigurasi tambahan yang dibutuhkan.
+
+> **Catatan:** Model pertama kali dimuat saat `docker compose up` — proses ini memakan waktu ~30–60 detik. Tunggu hingga log menampilkan `✅ Tilawati API is ready!` sebelum membuka Flutter app.
+
+---
+
+## Bagian 4 — Deploy ke HuggingFace Spaces (Opsional)
+
+Hanya diperlukan jika ingin akses online (demo tanpa laptop). Untuk development lokal, bagian ini bisa dilewati.
 
 ### Deploy ASR ke HuggingFace Spaces
 
@@ -378,8 +299,3 @@ flutter build apk --release     # build APK
 | `flutter pub get` gagal | Jalankan `flutter doctor` untuk cek instalasi |
 | Backend crash saat startup | Cek log: `docker compose logs backend` — biasanya DB belum siap |
 | Evaluasi hanya mengembalikan skor acak | `ASR_SERVICE_URL` belum diisi di `.env`, deploy HF Spaces dulu |
-
-
-## 📝 Catatan
-
-Model AI saat ini menggunakan **mock/placeholder**. Untuk integrasi model sebenarnya, edit `backend/app/services/ai_service.py`.

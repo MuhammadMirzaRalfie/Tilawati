@@ -29,8 +29,13 @@ class ApiService {
         if (_token != null) 'Authorization': 'Bearer $_token',
       };
 
+  static const Duration _defaultTimeout = Duration(seconds: 10);
+  static const Duration _uploadTimeout = Duration(seconds: 30);
+
   static Future<Map<String, dynamic>> get(String url) async {
-    final response = await http.get(Uri.parse(url), headers: _headers);
+    final response = await http
+        .get(Uri.parse(url), headers: _headers)
+        .timeout(_defaultTimeout);
     return _handleResponse(response);
   }
 
@@ -38,19 +43,24 @@ class ApiService {
     String url, {
     Map<String, dynamic>? body,
   }) async {
-    final response = await http.post(
-      Uri.parse(url),
-      headers: _headers,
-      body: body != null ? jsonEncode(body) : null,
-    );
+    final response = await http
+        .post(
+          Uri.parse(url),
+          headers: _headers,
+          body: body != null ? jsonEncode(body) : null,
+        )
+        .timeout(_defaultTimeout);
     return _handleResponse(response);
   }
+
+  static const Duration wordEvalTimeout = Duration(seconds: 12);
 
   static Future<Map<String, dynamic>> postMultipart(
     String url, {
     required Map<String, String> fields,
     required String filePath,
     required String fileField,
+    Duration? timeout,
   }) async {
     final request = http.MultipartRequest('POST', Uri.parse(url));
     request.headers.addAll({
@@ -59,7 +69,9 @@ class ApiService {
     request.fields.addAll(fields);
     request.files.add(await http.MultipartFile.fromPath(fileField, filePath));
 
-    final streamedResponse = await request.send();
+    final streamedResponse = await request
+        .send()
+        .timeout(timeout ?? _uploadTimeout);
     final response = await http.Response.fromStream(streamedResponse);
     return _handleResponse(response);
   }
