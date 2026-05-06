@@ -53,6 +53,34 @@ class ApiService {
     return _handleResponse(response);
   }
 
+  static Future<Map<String, dynamic>> patch(
+    String url, {
+    Map<String, dynamic>? body,
+  }) async {
+    final response = await http
+        .patch(
+          Uri.parse(url),
+          headers: _headers,
+          body: body != null ? jsonEncode(body) : null,
+        )
+        .timeout(_defaultTimeout);
+    return _handleResponse(response);
+  }
+
+  static Future<Map<String, dynamic>> postForm(
+    String url, {
+    required Map<String, String> fields,
+  }) async {
+    final request = http.MultipartRequest('POST', Uri.parse(url));
+    request.headers.addAll({
+      if (_token != null) 'Authorization': 'Bearer $_token',
+    });
+    request.fields.addAll(fields);
+    final streamedResponse = await request.send().timeout(_defaultTimeout);
+    final response = await http.Response.fromStream(streamedResponse);
+    return _handleResponse(response);
+  }
+
   static const Duration wordEvalTimeout = Duration(seconds: 12);
 
   static Future<Map<String, dynamic>> postMultipart(

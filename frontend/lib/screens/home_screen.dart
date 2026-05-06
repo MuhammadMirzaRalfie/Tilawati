@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../config/theme.dart';
 import '../providers/auth_provider.dart';
 
@@ -549,8 +550,256 @@ class _ProgressTab extends StatelessWidget {
 }
 
 // ========== PROFILE TAB ==========
-class _ProfileTab extends StatelessWidget {
+class _ProfileTab extends StatefulWidget {
   const _ProfileTab();
+
+  @override
+  State<_ProfileTab> createState() => _ProfileTabState();
+}
+
+class _ProfileTabState extends State<_ProfileTab> {
+  bool _notificationsEnabled = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadNotificationPref();
+  }
+
+  Future<void> _loadNotificationPref() async {
+    final prefs = await SharedPreferences.getInstance();
+    if (mounted) {
+      setState(() {
+        _notificationsEnabled = prefs.getBool('notifications_enabled') ?? true;
+      });
+    }
+  }
+
+  Future<void> _saveNotificationPref(bool value) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('notifications_enabled', value);
+  }
+
+  void _showEditProfile() {
+    final authProvider = context.read<AuthProvider>();
+    final nameController = TextEditingController(text: authProvider.user?.name ?? '');
+    final formKey = GlobalKey<FormState>();
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      ),
+      builder: (ctx) {
+        return Padding(
+          padding: EdgeInsets.only(
+            left: 24,
+            right: 24,
+            top: 24,
+            bottom: MediaQuery.of(ctx).viewInsets.bottom + 24,
+          ),
+          child: Form(
+            key: formKey,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Center(
+                  child: Container(
+                    width: 40,
+                    height: 4,
+                    decoration: BoxDecoration(
+                      color: Colors.grey.shade300,
+                      borderRadius: BorderRadius.circular(2),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 20),
+                Text(
+                  'Edit Profil',
+                  style: GoogleFonts.poppins(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.textPrimary,
+                  ),
+                ),
+                const SizedBox(height: 20),
+                TextFormField(
+                  controller: nameController,
+                  autofocus: true,
+                  decoration: InputDecoration(
+                    labelText: 'Nama',
+                    prefixIcon: const Icon(Icons.person_outline_rounded),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                  validator: (v) =>
+                      (v == null || v.trim().isEmpty) ? 'Nama tidak boleh kosong' : null,
+                ),
+                const SizedBox(height: 20),
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    onPressed: () async {
+                      if (!formKey.currentState!.validate()) return;
+                      final newName = nameController.text.trim();
+                      Navigator.pop(ctx);
+                      final ok = await authProvider.updateProfile(newName);
+                      if (mounted) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(ok ? 'Profil berhasil diperbarui' : 'Gagal memperbarui profil'),
+                            backgroundColor: ok ? AppColors.primary : AppColors.error,
+                          ),
+                        );
+                      }
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.primary,
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(vertical: 14),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                    ),
+                    child: Text('Simpan', style: GoogleFonts.poppins(fontWeight: FontWeight.w600)),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  void _showNotificationSettings() {
+    showDialog(
+      context: context,
+      builder: (ctx) => StatefulBuilder(
+        builder: (ctx, setDialogState) => AlertDialog(
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+          title: Text('Notifikasi', style: GoogleFonts.poppins(fontWeight: FontWeight.w600)),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              SwitchListTile(
+                title: Text('Pengingat latihan harian',
+                    style: GoogleFonts.poppins(fontSize: 14)),
+                subtitle: Text('Ingatkan saya untuk berlatih setiap hari',
+                    style: GoogleFonts.poppins(fontSize: 12, color: AppColors.textSecondary)),
+                value: _notificationsEnabled,
+                activeColor: AppColors.primary,
+                onChanged: (val) {
+                  setDialogState(() {});
+                  setState(() => _notificationsEnabled = val);
+                  _saveNotificationPref(val);
+                },
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(ctx),
+              child: Text('Tutup', style: GoogleFonts.poppins()),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _showBantuan() {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        title: Text('Bantuan', style: GoogleFonts.poppins(fontWeight: FontWeight.w600)),
+        content: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              _buildFaqItem('Bagaimana cara merekam bacaan?',
+                  'Buka menu Jilid, pilih pelajaran, lalu tekan tombol mikrofon. Ucapkan kata Arab yang disorot hijau dengan jelas, kemudian tekan stop.'),
+              _buildFaqItem('Kenapa evaluasi tidak akurat?',
+                  'Pastikan merekam di tempat tenang, ucapkan dengan jelas dan tidak terlalu cepat. Jarak mikrofon yang ideal adalah 15-20 cm dari mulut.'),
+              _buildFaqItem('Apa arti nilai Mumtaz, Jayyid, dll?',
+                  'Mumtaz (≥85%): Istimewa\nJayyid Jiddan (≥70%): Sangat Baik\nJayyid (≥55%): Baik\nMaqbul (<55%): Cukup'),
+              _buildFaqItem('Bagaimana melihat riwayat latihan?',
+                  'Buka menu Riwayat dari halaman utama atau tab Progres untuk melihat statistik lengkap.'),
+            ],
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: Text('Tutup', style: GoogleFonts.poppins()),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showTentangTilawati() {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        title: Text('Tentang Tilawati', style: GoogleFonts.poppins(fontWeight: FontWeight.w600)),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              width: 72,
+              height: 72,
+              decoration: BoxDecoration(
+                gradient: const LinearGradient(colors: [AppColors.primary, AppColors.primaryLight]),
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: const Icon(Icons.menu_book_rounded, color: Colors.white, size: 36),
+            ),
+            const SizedBox(height: 16),
+            Text('Tilawati',
+                style: GoogleFonts.poppins(fontSize: 20, fontWeight: FontWeight.bold, color: AppColors.textPrimary)),
+            Text('v1.0.0',
+                style: GoogleFonts.poppins(fontSize: 13, color: AppColors.textSecondary)),
+            const SizedBox(height: 16),
+            Text(
+              'Aplikasi pembelajaran bacaan Al-Qur\'an berbasis AI menggunakan metode Tilawati. Membantu pengguna belajar dan mengevaluasi bacaan huruf hijaiyah dengan teknologi pengenalan suara.',
+              style: GoogleFonts.poppins(fontSize: 13, color: AppColors.textSecondary, height: 1.6),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 12),
+            Text('Tugas Akhir — 2025',
+                style: GoogleFonts.poppins(fontSize: 12, color: AppColors.textLight)),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: Text('Tutup', style: GoogleFonts.poppins()),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildFaqItem(String question, String answer) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 12),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(question,
+              style: GoogleFonts.poppins(fontSize: 13, fontWeight: FontWeight.w600, color: AppColors.textPrimary)),
+          const SizedBox(height: 4),
+          Text(answer,
+              style: GoogleFonts.poppins(fontSize: 12, color: AppColors.textSecondary, height: 1.5)),
+        ],
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -581,9 +830,7 @@ class _ProfileTab extends StatelessWidget {
               ),
               child: Center(
                 child: Text(
-                  user?.name.isNotEmpty == true
-                      ? user!.name[0].toUpperCase()
-                      : 'U',
+                  user?.name.isNotEmpty == true ? user!.name[0].toUpperCase() : 'U',
                   style: GoogleFonts.poppins(
                     fontSize: 32,
                     fontWeight: FontWeight.bold,
@@ -603,10 +850,7 @@ class _ProfileTab extends StatelessWidget {
             ),
             Text(
               user?.email ?? '',
-              style: GoogleFonts.poppins(
-                fontSize: 14,
-                color: AppColors.textSecondary,
-              ),
+              style: GoogleFonts.poppins(fontSize: 14, color: AppColors.textSecondary),
             ),
             const SizedBox(height: 32),
 
@@ -614,22 +858,23 @@ class _ProfileTab extends StatelessWidget {
             _buildProfileMenuItem(
               icon: Icons.person_outlined,
               title: 'Edit Profil',
-              onTap: () {},
+              onTap: _showEditProfile,
             ),
             _buildProfileMenuItem(
               icon: Icons.notifications_outlined,
               title: 'Notifikasi',
-              onTap: () {},
+              subtitle: _notificationsEnabled ? 'Aktif' : 'Nonaktif',
+              onTap: _showNotificationSettings,
             ),
             _buildProfileMenuItem(
               icon: Icons.help_outline_rounded,
               title: 'Bantuan',
-              onTap: () {},
+              onTap: _showBantuan,
             ),
             _buildProfileMenuItem(
               icon: Icons.info_outline_rounded,
               title: 'Tentang Tilawati',
-              onTap: () {},
+              onTap: _showTentangTilawati,
             ),
             const SizedBox(height: 16),
             _buildProfileMenuItem(
@@ -649,15 +894,11 @@ class _ProfileTab extends StatelessWidget {
                       ),
                       TextButton(
                         onPressed: () {
-                          Provider.of<AuthProvider>(context, listen: false)
-                              .logout();
+                          context.read<AuthProvider>().logout();
                           Navigator.pop(ctx);
                           Navigator.pushReplacementNamed(context, '/login');
                         },
-                        child: const Text(
-                          'Keluar',
-                          style: TextStyle(color: AppColors.error),
-                        ),
+                        child: const Text('Keluar', style: TextStyle(color: AppColors.error)),
                       ),
                     ],
                   ),
@@ -673,6 +914,7 @@ class _ProfileTab extends StatelessWidget {
   Widget _buildProfileMenuItem({
     required IconData icon,
     required String title,
+    String? subtitle,
     Color? color,
     required VoidCallback onTap,
   }) {
@@ -699,15 +941,14 @@ class _ProfileTab extends StatelessWidget {
             color: color ?? AppColors.textPrimary,
           ),
         ),
-        trailing: Icon(
-          Icons.chevron_right_rounded,
-          color: color ?? AppColors.textLight,
-        ),
+        subtitle: subtitle != null
+            ? Text(subtitle,
+                style: GoogleFonts.poppins(fontSize: 12, color: AppColors.textSecondary))
+            : null,
+        trailing: Icon(Icons.chevron_right_rounded, color: color ?? AppColors.textLight),
         onTap: onTap,
         contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 4),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       ),
     );
   }

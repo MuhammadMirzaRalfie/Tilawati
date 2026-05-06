@@ -77,6 +77,22 @@ class AuthProvider extends ChangeNotifier {
     }
   }
 
+  Future<bool> updateProfile(String name) async {
+    try {
+      final response = await ApiService.patch(
+        ApiConfig.updateProfile,
+        body: {'name': name},
+      );
+      _user = UserModel.fromJson(response);
+      notifyListeners();
+      return true;
+    } catch (e) {
+      _error = e.toString();
+      notifyListeners();
+      return false;
+    }
+  }
+
   Future<void> logout() async {
     await ApiService.clearToken();
     _user = null;

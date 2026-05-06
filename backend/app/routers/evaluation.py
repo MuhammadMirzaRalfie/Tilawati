@@ -274,6 +274,46 @@ async def _update_progress(
         progress.completed_lessons = eval_result.scalar() or 0
 
 
+@router.post("/submit_lesson_result")
+async def submit_lesson_result(
+    jilid: int = Form(...),
+    lesson_number: int = Form(...),
+    correct_count: int = Form(...),
+    total_count: int = Form(...),
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    """Save word-by-word lesson result and update progress. No audio needed."""
+    lesson = get_lesson(jilid, lesson_number)
+    if lesson is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Pelajaran tidak ditemukan.",
+        )
+
+    overall_score = round((correct_count / total_count * 100) if total_count > 0 else 0.0, 1)
+
+    evaluation = Evaluation(
+        user_id=current_user.id,
+        jilid=jilid,
+        lesson_number=lesson_number,
+        lesson_title=lesson["title"],
+        audio_path=None,
+        overall_score=overall_score,
+        makharijul_huruf_score=overall_score,
+        tajwid_score=overall_score,
+        kelancaran_score=overall_score,
+        feedback_json={"correct": correct_count, "total": total_count},
+        phoneme_details=None,
+    )
+    db.add(evaluation)
+
+    await _update_progress(db, current_user.id, jilid, overall_score)
+    await db.commit()
+
+    return JSONResponse({"saved": True, "overall_score": overall_score})
+
+
 @router.post("/transcribe_free")
 async def transcribe_free(
     audio: UploadFile = File(...),

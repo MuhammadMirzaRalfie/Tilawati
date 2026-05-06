@@ -1,0 +1,22 @@
+Todo TA
+
+priority 1 (yang berkaitan dengan TA)
+-fix halaman latihan (ada yang overflow melebihi halaman) done
+-deploy
+-mungkin improve model (tunggu konfirmasi dospem)
+
+
+
+priority 2 (estetika dan UI/UX)
+-halaman progres (done)
+-halaman profil dan settingan (done)
+-tambahin contoh bacaan di glosarium sama latihan pake bacaan ahli
+-improve ui/ux
+-cookies
+
+priority 3 (jika ada tambahan waktu/ingin diimplemetasikan secara lanjut)
+-improve model ASR untuk semua jilid
+-tambahkan jilid 2-6
+-gamifikasi
+-efisiensi 
+-colab dengan pengembanh lain untuk pembelajaran lebih lanjut

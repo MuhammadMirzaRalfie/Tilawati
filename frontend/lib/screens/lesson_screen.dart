@@ -193,10 +193,27 @@ class _LessonScreenState extends State<LessonScreen> with TickerProviderStateMix
       _recordingSeconds = 0;
       if (_currentTokenIndex >= _tokens.length) {
         _allDone = true;
+        _saveLessonResult();
       } else {
         _tokenStatus[_currentTokenIndex] = _WordStatus.active;
       }
     });
+  }
+
+  Future<void> _saveLessonResult() async {
+    try {
+      await ApiService.postForm(
+        ApiConfig.submitLessonResult,
+        fields: {
+          'jilid': '$_jilid',
+          'lesson_number': '${_lesson['number'] as int}',
+          'correct_count': '$_correctCount',
+          'total_count': '${_tokens.length}',
+        },
+      );
+    } catch (_) {
+      // Silent fail — progress update is non-critical for lesson UX
+    }
   }
 
   String _formatDuration(int seconds) {
@@ -258,11 +275,14 @@ class _LessonScreenState extends State<LessonScreen> with TickerProviderStateMix
                 : textWidget,
           );
         }
-        return Directionality(
-          textDirection: TextDirection.rtl,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: rowChildren,
+        return FittedBox(
+          fit: BoxFit.scaleDown,
+          child: Directionality(
+            textDirection: TextDirection.rtl,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: rowChildren,
+            ),
           ),
         );
       }).toList(),
@@ -480,6 +500,8 @@ class _LessonScreenState extends State<LessonScreen> with TickerProviderStateMix
                     ),
                     child: Text(
                       'Sistem mendengar: $_lastTranscript',
+                      softWrap: true,
+                      textAlign: TextAlign.center,
                       style: GoogleFonts.poppins(
                         fontSize: 13,
                         fontWeight: FontWeight.w500,

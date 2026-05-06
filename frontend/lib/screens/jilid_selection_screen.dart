@@ -34,9 +34,9 @@ class _JilidSelectionScreenState extends State<JilidSelectionScreen> {
           'transliteration': '''A BA
 A BA     BA BA     A A
 A BA     A BA     BA A
-BA BA BA         A A A
-A BA A         BA BA A
-BA A BA         A BA BA''',
+BA BA BA     A A A
+A BA A     BA BA A
+BA A BA     A BA BA''',
           'desc': 'Latihan Tilawati Jilid 1 Halaman 1',
         },
         {
@@ -52,10 +52,10 @@ BA A BA         A BA BA''',
           'transliteration': '''BA TA
 A TA     TA BA     BA TA
 TA A     TA BA     TA TA
-BA TA TA         TA BA TA
-BA A TA         TA A BA
-A BA TA         A TA BA
-BA BA TA         TA TA BA''',
+BA TA TA     TA BA TA
+BA A TA     TA A BA
+A BA TA     A TA BA
+BA BA TA     TA TA BA''',
           'desc': 'Latihan Tilawati Jilid 1 Halaman 2',
         },
         {
@@ -73,9 +73,9 @@ BA BA TA         TA TA BA''',
 TSA BA     TSA TSA     TSA TSA
 TSA BA     TSA A     TSA TA
 BA TSA     A TSA     TA TSA
-BA TA TSA         TSA TSA BA
-TA TSA TA         TSA BA TA
-BA A TSA         TA A TSA
+BA TA TSA     TSA TSA BA
+TA TSA TA     TSA BA TA
+BA A TSA     TA A TSA
 BA TA TSA     TA TSA A     TSA A BA''',
           'desc': 'Latihan Tilawati Jilid 1 Halaman 3',
         },
@@ -89,13 +89,13 @@ BA TA TSA     TA TSA A     TSA A BA''',
 حَ جَ بَ         اَ حَ حَ
 بَ حَ تَ         حَ تَ ثَ
 جَ بَ حَ         حَ ثَ جَ''',
-          'transliteration': '''JA HA
-JA HA     HA HA     JA JA
-TA HA     BA JA     TSA JA
-TSA HA     JA HA     HA TA
-A HA HA         HA JA BA
-HA TA TSA         BA HA TA
-HA TSA JA         JA BA HA''',
+          'transliteration': '''JA HHA
+JA HHA     HHA HHA     JA JA
+TA HHA     BA JA     TSA JA
+TSA HHA     JA HHA     HHA TA
+A HHA HHA     HHA JA BA
+HHA TA TSA     BA HHA TA
+HHA TSA JA     JA BA HHA''',
           'desc': 'Latihan Tilawati Jilid 1 Halaman 4',
         },
         {
@@ -108,13 +108,13 @@ HA TSA JA         JA BA HA''',
 بَ حَ ثَ         حَ خَ ثَ
 خَ خَ جَ         خَ جَ حَ
 خَ بَ جَ         بَ خَ ثَ''',
-          'transliteration': '''KHA BA TSA
-BA KHA     KHA BA     KHA KHA
-KHA KHA     HA KHA     JA KHA
-TSA KHA TA         BA TA KHA
-HA KHA TSA         BA HA TSA
-KHA JA HA         KHA KHA JA
-BA KHA TSA         KHA BA JA''',
+          'transliteration': '''KHO BA TSA
+BA KHO     KHO BA     KHO KHO
+KHO KHO     HHA KHO     JA KHO
+TSA KHO TA     BA TA KHO
+HHA KHO TSA     BA HHA TSA
+KHO JA HHA     KHO KHO JA
+BA KHO TSA     KHO BA JA''',
           'desc': 'Latihan Tilawati Jilid 1 Halaman 5',
         },
         {
@@ -127,13 +127,13 @@ BA KHA TSA         KHA BA JA''',
 بَ خَ جَ   خَ ثَ حَ   جَ اَ بَ
 بَ خَ جَ   جَ ثَ تَ   تَ اَ خَ
 خَ جَ بَ   اَ حَ بَ   بَ حَ ثَ''',
-          'transliteration': '''A TA JA     TA JA TSA     KHA JA BA
-TSA HA JA     BA KHA TSA     TSA JA HA
-HA JA BA     TSA KHA TSA     JA JA TA
-A JA KHA     JA KHA TA     BA JA TSA
-JA A BA     KHA TSA HA     BA KHA JA
-TA A KHA     JA TSA TA     BA KHA JA
-BA HA TSA     A HA BA     KHA JA BA''',
+          'transliteration': '''A TA JA     TA JA TSA     KHO JA BA
+TSA HHA JA     BA KHO TSA     TSA JA HHA
+HHA JA BA     TSA KHO TSA     JA JA TA
+A JA KHO     JA KHO TA     BA JA TSA
+JA A BA     KHO TSA HHA     BA KHO JA
+TA A KHO     JA TSA TA     BA KHO JA
+BA HHA TSA     A HHA BA     KHO JA BA''',
           'desc': 'Latihan Tilawati Jilid 1 Halaman 6',
         },
         {
@@ -146,13 +146,13 @@ BA HA TSA     A HA BA     KHA JA BA''',
 دَ دَ خَ         دَ دَ جَ
 حَ دَ خَ         خَ دَ حَ
 ثَ دَ خَ         تَ دَ حَ''',
-          'transliteration': '''HA KHA DA
-KHA DA     HA DA     DA DA
-DA JA     DA KHA     DA HA
-TA DA     KHA DA     TSA DA
-DA DA JA         DA DA KHA
-HA DA KHA         KHA DA HA
-TA DA HA         TSA DA KHA''',
+          'transliteration': '''HHA KHO DA
+KHO DA     HHA DA     DA DA
+DA JA     DA KHO     DA HHA
+TA DA     KHO DA     TSA DA
+DA DA JA     DA DA KHO
+KHO DA HHA     HHA DA KHO
+TA DA HHA     TSA DA KHO''',
           'desc': 'Latihan Tilawati Jilid 1 Halaman 7',
         },
         {
@@ -165,13 +165,13 @@ TA DA HA         TSA DA KHA''',
 ذَ دَ حَ         دَ ذَ حَ
 حَ بَ ذَ         خَ ذَ ثَ
 تَ خَ ذَ         ثَ جَ ذَ''',
-          'transliteration': '''KHA DA DZA
-DZA KHA     DZA DA     DZA DZA
-JA DZA     KHA DZA     HA DZA
+          'transliteration': '''KHO DA DZA
+DZA KHO     DZA DA     DZA DZA
+JA DZA     KHO DZA     HHA DZA
 DZA TA     BA DZA     DZA TSA
-DA DZA HA         DZA DA HA
-KHA DZA TSA         HA BA DZA
-TSA JA DZA         TA KHA DZA''',
+DA DZA HHA     DZA DA HHA
+KHO DZA TSA     HHA BA DZA
+TSA JA DZA     TA KHO DZA''',
           'desc': 'Latihan Tilawati Jilid 1 Halaman 8',
         },
         {
@@ -184,13 +184,13 @@ TSA JA DZA         TA KHA DZA''',
 ذَ رَ زَ         زَ رَ دَ
 ذَ حَ زَ         زَ خَ رَ
 خَ زَ رَ         حَ ذَ رَ''',
-          'transliteration': '''RA ZA
-ZA RA     DZA RA     RA ZA
-KHA ZA     DA ZA     HA ZA
-DZA ZA     JA RA     RA RA
-ZA RA DA         DZA RA ZA
-ZA KHA RA         DZA HA ZA
-HA DZA RA         KHA ZA RA''',
+          'transliteration': '''RO ZAY
+ZAY RO     DZA RO     RO ZAY
+KHO ZAY     DA ZAY     HHA ZAY
+DZA ZAY     JA RO     RO RO
+ZAY RO DA     DZA RO ZAY
+ZAY KHO RO     DZA HHA ZAY
+HHA DZA RO     KHO ZAY RO''',
           'desc': 'Latihan Tilawati Jilid 1 Halaman 9',
         },
         {
@@ -203,13 +203,13 @@ HA DZA RA         KHA ZA RA''',
 سَ رَ دَ         سَ جَ دَ
 خَ سَ رَ         حَ سَ دَ
 دَ رَ سَ         تَ خَ سَ''',
-          'transliteration': '''ZA SA
-SA ZA     SA RA     SA SA
-ZA SA     DZA SA     DA SA
-SA KHA     SA HA     SA JA
-SA JA DA         SA RA DA
-HA SA DA         KHA SA RA
-TA KHA SA         DA RA SA''',
+          'transliteration': '''ZAY SA
+SA ZAY     SA RO     SA SA
+ZAY SA     DZA SA     DA SA
+SA KHO     SA HHA     SA JA
+SA JA DA     SA RO DA
+HHA SA DA     KHO SA RO
+TA KHO SA     DA RO SA''',
           'desc': 'Latihan Tilawati Jilid 1 Halaman 10',
         },
         {
@@ -222,13 +222,13 @@ TA KHA SA         DA RA SA''',
 شَ جَ سَ         شَ سَ خَ
 خَ سَ رَ         شَ خَ رَ
 شَ جَ رَ         شَ رَ حَ''',
-          'transliteration': '''SYA RA HA
-SYA HA     SYA RA     SYA SYA
-HA SYA     DZA SYA     DA SA
-SYA DZA     SA ZA     SYA KHA
-SYA SA KHA         SYA JA SA
-SYA KHA RA         KHA SA RA
-SYA RA HA         SYA JA RA''',
+          'transliteration': '''SYA RO HHA
+SYA HHA     SYA RO     SYA SYA
+HHA SYA     DZA SYA     DA SA
+SYA DZA     SA ZAY     SYA KHO
+SYA SA KHO     SYA JA SA
+SYA KHO RO     KHO SA RO
+SYA RO HHA     SYA JA RO''',
           'desc': 'Latihan Tilawati Jilid 1 Halaman 11',
         },
         {
@@ -242,14 +242,14 @@ SYA RA HA         SYA JA RA''',
 ثَ جَ دَ   زَ حَ رَ   خَ سَ دَ
 سَ رَ دَ   دَ رَ سَ   خَ سَ رَ
 شَ جَ رَ   رَ شَ دَ   شَ رَ حَ''',
-          'transliteration': '''DZA DA KHA     SA RA DA     SA JA DA
-HA DZA BA     KHA SA RA     HA SA DA
-TA KHA DZA     DA RA SA     TSA KHA SA
-DA DZA HA     RA ZA DA     SA SYA JA
-KHA DA TSA     HA DZA RA     DZA HA SYA
-TSA JA DA     ZA HA RA     KHA SA DA
-SA RA DA     DA RA SA     KHA SA RA
-SYA JA RA     RA SYA DA     SYA RA HA''',
+          'transliteration': '''SA JA DA     SA RO DA     DZA DA KHO
+HHA SA DA     KHO SA RO     HHA DZA BA
+TSA KHO SA     DA RO SA     TA KHO DZA
+SA SYA JA     RO ZAY DA     DA DZA HHA
+DZA HHA SYA     HHA DZA RO     KHO DA TSA
+KHO SA DA     ZAY HHA RO     TSA JA DA
+KHO SA RO     DA RO SA     SA RO DA
+SYA RO HHA     RO SYA DA     SYA JA RO''',
           'desc': 'Latihan Tilawati Jilid 1 Halaman 12',
         },
         {
@@ -262,13 +262,13 @@ SYA JA RA     RA SYA DA     SYA RA HA''',
 صَ دَ بَ         صَ بَ رَ
 جَ تَ صَ         حَ صَ بَ
 حَ صَ دَ         حَ صَ ذَ''',
-          'transliteration': '''SHA HA BA
-SHA KHA     SHA HA     SHA SHA
-DZA SHA     SA SHA     RA SHA
-SHA RA     SHA KHA     SHA BA
-SHA BA RA         SHA DA BA
-HA SHA BA         JA TA SHA
-HA SHA DZA         HA SHA DA''',
+          'transliteration': '''SHO HHA BA
+SHO KHO     SHO HHA     SHO SHO
+DZA SHO     SA SHO     RO SHO
+SHO RO     SHO KHO     SHO BA
+SHO BA RO     SHO DA BA
+HHA SHO BA     JA TA SHO
+HHA SHO DZA     HHA SHO DA''',
           'desc': 'Latihan Tilawati Jilid 1 Halaman 13',
         },
         {
@@ -281,13 +281,13 @@ HA SHA DZA         HA SHA DA''',
 ضَ رَ بَ         ضَ بَ رَ
 حَ ضَ رَ         شَ رَ ضَ
 تَ بَ ضَ         صَ صَ ضَ''',
-          'transliteration': '''DHA RA BA
-DHA BA     DHA RA     DHA DHA
-SHA DHA     DZA DHA     RA DHA
-DHA HA     ZA DHA     DHA KHA
-DHA BA RA         DHA RA BA
-SYA RA DHA         HA DHA RA
-SHA SHA DHA         TA BA DHA''',
+          'transliteration': '''DHO RO BA
+DHO BA     DHO RO     DHO DHO
+SHO DHO     DZA DHO     RO DHO
+DHO HHA     ZAY DHO     DHO KHO
+DHO BA RO     DHO RO BA
+SYA RO DHO     HHA DHO RO
+SHO SHO DHO     TA BA DHO''',
           'desc': 'Latihan Tilawati Jilid 1 Halaman 14',
         },
         {
@@ -300,13 +300,13 @@ SHA SHA DHA         TA BA DHA''',
 طَ بَ خَ         حَ طَ بَ
 صَ تَ طَ         طَ زَ ضَ
 شَ طَ دَ         حَ طَ سَ''',
-          'transliteration': '''THA BA KHA
-THA SHA     THA DHA     THA THA
-SYA THA     SHA THA     SA THA
-THA DA     DZA THA     THA RA
-HA THA BA         THA BA KHA
-THA ZA DHA         SHA TA THA
-HA THA SA         SYA THA DA''',
+          'transliteration': '''THO BA KHO
+THO SHO     THO DHO     THO THO
+SYA THO     SHO THO     SA THO
+THO DA     DZA THO     THO RO
+HHA THO BA     THO BA KHO
+THO ZAY DHO     SHO TA THO
+HHA THO SA     SYA THO DA''',
           'desc': 'Latihan Tilawati Jilid 1 Halaman 15',
         },
         {
@@ -319,13 +319,13 @@ HA THA SA         SYA THA DA''',
 ظَ بَ طَ         سَ ظَ خَ
 صَ حَ ظَ         صَ ظَ بَ
 لَ ظَ بَ         حَ بَ ظَ''',
-          'transliteration': '''ZHA SHA
-THA ZHA     ZHA SHA     ZHA ZHA
-SHA THA     ZA ZHA     SYA ZHA
-ZHA DA     ZHA SA     ZHA THA
-SA ZHA KHA         ZHA BA THA
-SHA ZHA BA         SHA HA ZHA
-HA BA ZHA         LA ZHA BA''',
+          'transliteration': '''ZHO SHO
+THO ZHO     ZHO SHO     ZHO ZHO
+SHO THO     ZAY ZHO     SYA ZHO
+ZHO DA     ZHO SA     ZHO THO
+SA ZHO KHO     ZHO BA THO
+SHO ZHO BA     SHO HHA ZHO
+HHA BA ZHO     LA ZHO BA''',
           'desc': 'Latihan Tilawati Jilid 1 Halaman 16',
         },
         {
@@ -338,13 +338,13 @@ HA BA ZHA         LA ZHA BA''',
 ذَ عَ ظَ         عَ طَ شَ
 سَ صَ عَ         ظَ عَ ضَ
 حَ عَ صَ         عَ ظَ بَ''',
-          'transliteration': """'A THA BA
-'A ZHA     'A THA     'A SHA
-SYA 'A     DHA 'A     'A ZHA
-'A ZA     DZA 'A     'A DA
-DZA 'A ZHA         'A THA SYA
-SA SHA 'A         ZHA 'A DHA
-HA 'A SHA         'A ZHA BA""",
+          'transliteration': """AIN THO BA
+AIN SHO     AIN THO     AIN ZHO
+AIN ZHO     DHO AIN     SYA AIN
+AIN DA     DZA AIN     AIN ZAY
+AIN THO SYA     DZA AIN ZHO
+ZHO AIN DHO     SA SHO AIN
+AIN ZHO BA     HHA AIN SHO""",
           'desc': 'Latihan Tilawati Jilid 1 Halaman 17',
         },
         {
@@ -358,14 +358,14 @@ HA 'A SHA         'A ZHA BA""",
 بَ رَ دَ   زَ رَ عَ   اَ ثَ رَ
 تَ بَ عَ   سَ جَ دَ   شَ رَ بَ
 عَ ضَ بَ   ضَ رَ بَ   عَ رَ ضَ''',
-          'transliteration': '''SHA BA RA     SYA THA THA     RA THA BA
-THA RA DA     ZHA BA THA     'A THA SA
-HA SHA DA     A ZHA BA     THA RA DA
-HA DHA RA     BA THA RA     SYA RA 'A
-KHA THA BA     'A JA BA     BA SYA RA
-BA RA DA     ZA RA 'A     A TSA RA
-TA BA 'A     SA JA DA     SYA RA BA
-'A DHA BA     DHA RA BA     'A RA DHA''',
+          'transliteration': '''RO THO BA     SYA THO THO     SHO BA RO
+AIN THO SA     ZHO BA THO     THO RO DA
+THO RO DA     A ZHO BA     HHA SHO DA
+SYA RO AIN     BA THO RO     HHA DHO RO
+BA SYA RO     AIN JA BA     KHO THO BA
+A TSA RO     ZAY RO AIN     BA RO DA
+SYA RO BA     SA JA DA     TA BA AIN
+AIN RO DHO     DHO RO BA     AIN DHO BA''',
           'desc': 'Latihan Tilawati Jilid 1 Halaman 18',
         },
         {
@@ -378,13 +378,13 @@ TA BA 'A     SA JA DA     SYA RA BA
 غَ بَ رَ         شَ غَ رَ
 بَ غَ سَ         غَ سَ طَ
 غَ ضَ بَ         غَ رَ بَ''',
-          'transliteration': """'A GHA
-GHA GHA     GHA 'A     GHA 'A
-THA GHA     GHA ZHA     SHA 'A
-GHA DHA     SYA GHA     KHA GHA
-GHA BA RA         SYA GHA RA
-BA GHA SA         GHA SA THA
-GHA DHA BA         GHA RA BA""",
+          'transliteration': """AIN GHO
+GHO AIN     GHO AIN     GHO GHO
+SHO AIN     GHO ZHO     THO GHO
+KHO GHO     SYA GHO     GHO DHO
+SYA GHO RO     GHO BA RO
+GHO SA THO     BA GHO SA
+GHO RO BA     GHO DHO BA""",
           'desc': 'Latihan Tilawati Jilid 1 Halaman 19',
         },
         {
@@ -397,13 +397,13 @@ GHA DHA BA         GHA RA BA""",
 فَ زَ دَ         صَ فَ حَ
 عَ ضَ فَ         عَ رَ فَ
 فَ شَ جَ         ظَ عَ فَ''',
-          'transliteration': """GHA FA
-FA FA     FA GHA     FA 'A
-GHA FA     ZHA FA     SHA FA
-FA DHA     FA SYA     FA DZA
-FA ZA DA         SHA FA HA
-'A DHA FA         'A RA FA
-FA SYA JA         ZHA 'A FA""",
+          'transliteration': """GHO FA
+FA AIN     FA GHO     FA FA
+SHO FA     ZHO FA     GHO FA
+FA DZA     FA SYA     FA DHO
+SHO FA HHA     FA ZAY DA
+AIN RO FA     AIN DHO FA
+ZHO AIN FA     FA SYA JA""",
           'desc': 'Latihan Tilawati Jilid 1 Halaman 20',
         },
         {
@@ -416,11 +416,13 @@ FA SYA JA         ZHA 'A FA""",
 قَ فَ ظَ         عَ قَ بَ
 غَ دَ قَ         زَ عَ فَ
 فَ قَ رَ         غَ رَ قَ''',
-          'transliteration': '''FA   QA
-FA QA   QA QA   FA QA   'A QA
-FA QA   'A QA   THA QA   QA THA
-QA DHA   FA ZHA   'A QA   BA QA
-FA QA RA   DA QA A   FA RA 'A   QA RA A''',
+          'transliteration': '''FA QO
+QO AIN     QO FA     FA QO
+THO QO     AIN QO     FA QO
+THO QO     FA ZHO     QO DHO
+AIN QO BA     QO FA ZHO
+ZAY AIN FA     GHO DA QO
+GHO RO QO     FA QO RO''',
           'desc': 'Latihan Tilawati Jilid 1 Halaman 21',
         },
         {
@@ -434,14 +436,14 @@ FA QA RA   DA QA A   FA RA 'A   QA RA A''',
 اَ ثَ رَ   شَ حَ دَ   حَ طَ ظَ
 ظَ فَ رَ   جَ رَ دَ   حَ فَ ظَ
 خَ رَ جَ   عَ زَ زَ   غَ سَ قَ''',
-          'transliteration': """'A RA DHA   GHA DA QA   FA QA RA
-'A RA FA   RA FA QA   FA QA DA
-ZA RA 'A   RA ZA QA   QA TA DA
-RA FA TSA   SA RA QA   QA RA BA
-SYA FA 'A   GHA RA BA   'A DA BA
-A TSA RA   SYA HA DA   HA THA ZHA
-ZHA FA RA   JA RA DA   HA FA ZHA
-KHA RA JA   'A ZA ZA   GHA SA QA""",
+          'transliteration': """FA QO RO     GHO DA QO     AIN RO DHO
+FA QO DA     RO FA QO     AIN RO FA
+QO TA DA     RO ZAY QO     ZAY RO AIN
+QO RO BA     SA RO QO     RO FA TSA
+AIN DA BA     GHO RO BA     SYA FA AIN
+HHA THO ZHO     SYA HHA DA     A TSA RO
+HHA FA ZHO     JA RO DA     ZHO FA RO
+GHO SA QO     AIN ZAY ZAY     KHO RO JA""",
           'desc': 'Latihan Tilawati Jilid 1 Halaman 22',
         },
         {
@@ -454,13 +456,13 @@ KHA RA JA   'A ZA ZA   GHA SA QA""",
 كَ فَ رَ         قَ سَ كَ
 عَ كَ فَ         بَ رَ كَ
 كَ بَ دَ         سَ رَ كَ''',
-          'transliteration': '''KA FA RA
-KA KA   FA KA   KA QA
-FA KA   QA KA   GHA KA
-KA GHA   KA DHA   KA SHA
-KA FA RA         QA SA KA
-'A KA FA         BA RA KA
-KA BA DA         SA RA KA''',
+          'transliteration': '''KA FA RO
+KA QO     FA KA     KA KA
+GHO KA     QO KA     FA KA
+KA SHO     KA DHO     KA GHO
+QO SA KA     KA FA RO
+BA RO KA     AIN KA FA
+SA RO KA     KA BA DA''',
           'desc': 'Latihan Tilawati Jilid 1 Halaman 23',
         },
         {
@@ -474,12 +476,12 @@ KA BA DA         SA RA KA''',
 جَ عَ لَ         فَ لَ حَ
 غَ زَ لَ         خَ لَ قَ''',
           'transliteration': '''LA KA
-LA SYA   LA FA   QA LA
-KA LA   LA KHA   DHA LA
-'A LA   FA LA   LA DHA
-'A DA LA         LA QA BA
-JA 'A LA         FA LA HA
-GHA ZA LA         KHA LA QA''',
+QO LA     LA FA     LA SYA
+DHO LA     LA KHO     KA LA
+LA DHO     FA LA     AIN LA
+LA QO BA     AIN DA LA
+FA LA HHA     JA AIN LA
+KHO LA QO     GHO ZAY LA''',
           'desc': 'Latihan Tilawati Jilid 1 Halaman 24',
         },
         {
@@ -493,12 +495,12 @@ GHA ZA LA         KHA LA QA''',
 كَ رَ مَ   مَ زَ قَ   عَ ظَ مَ
 مَ رَ حَ   رَ جَ مَ   طَ مَ سَ''',
           'transliteration': '''MA = MA
-KA KA   FA KA   KA QA
-LA SA   LA FA   QA LA
-RA MA   MA DHA   LA MA
-QA MA RA   RA GHA MA   FA LA MA
-KA RA MA   MA ZA QA   'A ZHA MA
-MA RA HA   RA JA MA   THA MA SA''',
+KA QO     FA KA     KA KA
+QO LA     LA FA     LA SA
+LA MA     MA DHO     RO MA
+FA LA MA     RO GHO MA     QO MA RO
+AIN ZHO MA     MA ZAY QO     KA RO MA
+THO MA SA     RO JA MA     MA RO HHA''',
           'desc': 'Latihan Tilawati Jilid 1 Halaman 25',
         },
         {
@@ -511,13 +513,13 @@ MA RA HA   RA JA MA   THA MA SA''',
 فَ نَ دَ   نَ صَ رَ   قَ رَ نَ
 ضَ مَ نَ   نَ ظَ مَ   جَ نَ بَ
 حَ ضَ نَ   نَ خَ لَ   حَ سَ نَ''',
-          'transliteration': '''NA = NA
-NA LA   BA NA   KHA NA
-KA NA   FA NA   NA JA
-DA NA   NA DA   NA SHA
-FA NA DA   NA SHA RA   QA RA NA
-DHA MA NA   NA ZHA MA   JA NA BA
-HA DHA NA   NA KHA LA   HA SA NA''',
+          'transliteration': '''NA LA
+KHO NA     BA NA     NA LA
+NA JA     FA NA     KA NA
+NA SHO     NA DA     DA NA
+QO RO NA     NA SHO RO     FA NA DA
+JA NA BA     NA ZHO MA     DHO MA NA
+HHA SA NA     NA KHO LA     HHA DHO NA''',
           'desc': 'Latihan Tilawati Jilid 1 Halaman 26',
         },
         {
@@ -530,13 +532,13 @@ HA DHA NA   NA KHA LA   HA SA NA''',
 وَ قَ رَ         صَ وَ بَ
 سَ قَ وَ         وَ رَ دَ
 وَ جَ لَ         زَ وَ لَ''',
-          'transliteration': '''WA QA FA
-WA QA   WA FA   QA WA
-RA WA   NA WA   WA MA
-WA LA   SHA WA   THA WA
-WA QA RA         SHA WA BA
-SA QA WA         WA RA DA
-WA JA LA         ZA WA LA''',
+          'transliteration': '''WA QO FA
+QO WA     WA FA     WA QO
+WA MA     NA WA     RO WA
+THO WA     SHO WA     WA LA
+SHO WA BA     WA QO RO
+WA RO DA     SA QO WA
+ZAY WA LA     WA JA LA''',
           'desc': 'Latihan Tilawati Jilid 1 Halaman 27',
         },
         {
@@ -549,13 +551,13 @@ WA JA LA         ZA WA LA''',
 هَ دَ بَ         وَ هَ نَ
 جَ هَ دَ         شَ هَ دَ
 دَ هَ قَ         وَ هَ بَ''',
-          'transliteration': '''HA   WA
-HA DA   HA RA   WA HA
-JA HA   SYA HA   HA RA
-HA WA   NA HA   HA MA
-HA DA BA         WA HA NA
-JA HA DA         SYA HA DA
-DA HA QA         WA HA BA''',
+          'transliteration': '''WA     HA
+WA HA     HA RO     HA DA
+HA RO     SYA HA     JA HA
+HA MA     NA HA     HA WA
+WA HA NA     HA DA BA
+SYA HA DA     JA HA DA
+WA HA BA     DA HA QO''',
           'desc': 'Latihan Tilawati Jilid 1 Halaman 28',
         },
         {
@@ -568,13 +570,13 @@ DA HA QA         WA HA BA''',
 جَ بَ لَ   ثَ قَ بَ   وَ طَ رَ
 هَ زَ مَ   نَ زَ لَ   قَ وَ مَ
 حَ زَ نَ   وَ عَ دَ   كَ رَ هَ''',
-          'transliteration': '''HA LA KA   KA LA MA   FA HA DA
-HA SHA LA   HA DA MA   NA ZHA RA
-KA RA MA   FA 'A LA   GHA SA MA
-SYA HA DA   JA 'A LA   MA HA NA
-JA BA LA   TSA QA BA   WA THA RA
-HA ZA MA   NA ZA LA   QA WA MA
-HA ZA NA   WA 'A DA   KA RA HA''',
+          'transliteration': '''FA HA DA     KA LA MA     HA LA KA
+NA ZHO RO     HA DA MA     HHA SHO LA
+GHO SA MA     FA AIN LA     KA RO MA
+MA HA NA     JA AIN LA     SYA HA DA
+WA THO RO     TSA QO BA     JA BA LA
+QO WA MA     NA ZAY LA     HA ZAY MA
+KA RO HA     WA AIN DA     HHA ZAY NA''',
           'desc': 'Latihan Tilawati Jilid 1 Halaman 29',
         },
         {
@@ -588,12 +590,12 @@ HA ZA NA   WA 'A DA   KA RA HA''',
 مَ لَ ءَ         اَ خَ ذَ
 سَ ءَ لَ         نَ دَ هَ''',
           'transliteration': '''A HA
-NA A     A HA     HA A
-JA A     RA A     SA A
-LA A     FA A     MA A
-LA JA A         A MA NA
-MA LA A         A KHA DZA
-SA A LA         NA DA HA''',
+HA A     A HA     NA A
+SA A     RO A     JA A
+MA A     FA A     LA A
+A MA NA     A JA LA
+A KHO DZA     MA LA A
+NA DA HA     SA A LA''',
           'desc': 'Latihan Tilawati Jilid 1 Halaman 30',
         },
         {
@@ -607,12 +609,12 @@ SA A LA         NA DA HA''',
 يَ زَ دَ         خَ يَ لَ
 يَ شَ ءَ         عَ يَ مَ''',
           'transliteration': '''YA A MA
-YA A     YA MA     MA YA
-YA RA     WA YA     HA YA
-QA YA     SHA YA     FA YA
-YA SA RA         QA YA MA
-YA ZA DA         KHA YA LA
-YA SYA A         \'A YA MA''',
+MA YA     YA MA     YA A
+HA YA     WA YA     YA RO
+FA YA     SHO YA     QO YA
+QO YA MA     YA SA RO
+KHO YA LA     YA ZAY DA
+AIN YA MA     YA SYA A''',
           'desc': 'Latihan Tilawati Jilid 1 Halaman 31',
         },
         {
@@ -623,14 +625,11 @@ YA SYA A         \'A YA MA''',
 نَ وَ لَ   هَ وَ نَ   فَ عَ لَ
 اَ مَ نَ   اَ طَ عَ   جَ دَ لَ
 سَ عَ دَ   شَ قَ يَ   عَ ذَ بَ''',
-          'transliteration': '''FA RA GHA     FA QA RA     SHA DA QA
-SA LA KA     KA LA MA     SYA JA RA
-NA WA LA     HA WA NA     FA \'A LA
-A MA NA     A THA \'A     JA DA LA
-SA \'A DA     SYA QA YA     \'A DZA BA
-A BA TA TSA JA HA KHA DA DZA RA
-ZA SA SYA SHA DHA THA ZHA \'A GHA FA
-QA KA LA MA NA WA HA LA A YA''',
+          'transliteration': '''SHO DA QO     FA QO RO     FA RO GHO
+SYA JA RO     KA LA MA     SA LA KA
+FA AIN LA     HA WA NA     NA WA LA
+JA DA LA     A THO AIN     A MA NA
+AIN DZA BA     SYA QO YA     SA AIN DA''',
           'desc': 'Latihan Tilawati Jilid 1 Halaman 32',
         },
         {
@@ -645,13 +644,13 @@ QA KA LA MA NA WA HA LA A YA''',
 بَتَمَ   طَبَرَ   رَتَبَ
 وَثَبَ   بَرَرَ   دَبَرَ''',
           'transliteration': '''BA TA TSA = BA TA TSA
-BA BA TA   TA BA TSA   TSA BA TA
-A TSA BA   BA DA RA   TSA BA RA
-WA TSA QA   TA RA KA   BA RA ZA
-BA TSA THA   TA ZA MA   RA TSA TA
-TA RA KA   TA TSA RA   RA TA BA
-BA TA MA   THA BA RA   RA TA BA
-WA TSA BA   BA RA RA   DA BA RA''',
+TSA BA TA     TA BA TSA     BA BA TA
+TSA BA RO     BA DA RO     A TSA BA
+BA RO ZAY     TA RO KA     WA TSA QO
+RO TSA TA     TA ZAY MA     BA TSA THO
+RO TA BA     TA TSA RO     TA RO KA
+RO TA BA     THO BA RO     BA TA MA
+DA BA RO     BA RO RO     WA TSA BA''',
           'desc': 'Latihan Tilawati Jilid 1 Halaman 33',
         },
         {
@@ -664,14 +663,13 @@ WA TSA BA   BA RA RA   DA BA RA''',
 تَحَجَ   حَجَجَ   اَجَجَ
 تَجَخَ   وَجَدَ   زَحَنَ
 ثَجَجَ   حَرَزَ   حَجَبَ''',
-          'transliteration': '''JA HA KHA = JA HA KHA
-KHA ZA NA   JA RA HA   HA JA MA
-HA JA RA   A KHA DZA   KHA RA JA
-HA JA BA   BA HA TSA   KHA THA BA
-TA HA JA   HA JA JA   A JA JA
-TA JA KHA   WA JA DA   ZA HA NA
-TSA JA JA   HA RA ZA   HA JA BA
-104   102   103   101   100   90''',
+          'transliteration': '''JA HHA KHO = JA HHA KHO
+HHA JA MA     JA RO HHA     KHO ZAY NA
+KHO RO JA     A KHO DZA     HHA JA RO
+KHO THO BA     BA HHA TSA     HHA JA BA
+A JA JA     HHA JA JA     TA HHA JA
+ZAY HHA NA     WA JA DA     TA JA KHO
+HHA JA BA     HHA RO ZAY     TSA JA JA''',
           'desc': 'Latihan Tilawati Jilid 1 Halaman 34',
         },
         {
@@ -685,13 +683,12 @@ TSA JA JA   HA RA ZA   HA JA BA
 سَرَدَ   رَشَدَ   دَرَسَ
 سَحَرَ   رَسَحَ   شَطَبَ''',
           'transliteration': '''SA SYA = SA SYA
-SA RA HA   SYA JA RA   SA RA JA
-HA SA BA   BA SYA RA   RA SA BA
-KHA RA SA   HA SA DA   KHA SYA RA
-A SYA RA   SA WA LA   SA HA BA
-SA RA DA   RA SYA DA   DA RA SA
-SA HA RA   RA SA HA   SYA THA BA
-600   500   400   300   200   100''',
+SA RO JA     SYA JA RO     SA RO HHA
+RO SA BA     BA SYA RO     HHA SA BA
+KHO SYA RO     HHA SA DA     KHO RO SA
+SA HHA BA     SA WA LA     A SYA RO
+DA RO SA     RO SYA DA     SA RO DA
+SYA THO BA     RO SA HHA     SA HHA RO''',
           'desc': 'Latihan Tilawati Jilid 1 Halaman 35',
         },
         {
@@ -704,14 +701,13 @@ SA HA RA   RA SA HA   SYA THA BA
 صَوَبَ   وَضَحَ   جَحَصَ
 نَصَبَ   صَحَبَ   اَضَبَ
 خَبَضَ   رَضَبَ   طَحَضَ''',
-          'transliteration': '''SHA DHA = SHA DHA
-SHA RA HA   HA SHA RA   KHA RA BA
-SHA HA BA   SHA BA RA   DHA HA NA
-HA DHA NA   HA SHA DA   DHA BA THA
-SHA WA BA   WA DHA HA   JA HA SHA
-NA SHA BA   SHA HA BA   A DHA BA
-KHA BA DHA   RA DHA BA   THA HA DHA
-1000   700   800   900''',
+          'transliteration': '''SHO DHO = SHO DHO
+KHO RO BA     HHA SHO RO     SHO RO HHA
+DHO HHA NA     SHO BA RO     SHO HHA BA
+DHO BA THO     HHA SHO DA     HHA DHO NA
+JA HHA SHO     WA DHO HHA     SHO WA BA
+A DHO BA     SHO HHA BA     NA SHO BA
+THO HHA DHO     RO DHO BA     KHO BA DHO''',
           'desc': 'Latihan Tilawati Jilid 1 Halaman 36',
         },
         {
@@ -725,14 +721,14 @@ KHA BA DHA   RA DHA BA   THA HA DHA
 بَغَدَ   تَسَغَ   سَعَدَ
 عَرَفَ   رَفَعَ   رَجَعَ
 غَدَقَ   بَغَو   تَبَغَ''',
-          'transliteration': """'A 'A 'A = 'A 'A 'A
-GHA GHA GHA = GHA GHA GHA
-'A JA BA   SYA 'A RA   'A ZA MA
-GHA BA RA   GHA RA QA   BA SA GHA
-SHA 'A DA   'A JA ZA   WA DA 'A
-BA GHA DA   TA SA GHA   SA 'A DA
-'A RA FA   RA FA 'A   RA JA 'A
-GHA DA QA   BA GHA WA   TA BA GHA""",
+          'transliteration': """AIN AIN AIN = AIN AIN AIN
+GHO GHO GHO = GHO GHO GHO
+AIN ZAY MA     SYA AIN RO     AIN JA BA
+BA SA GHO     GHO RO QO     GHO BA RO
+WA DA AIN     AIN JA ZAY     SHO AIN DA
+SA AIN DA     TA SA GHO     BA GHO DA
+RO JA AIN     RO FA AIN     AIN RO FA
+TA BA GHO     BA GHO WA     GHO DA QO""",
           'desc': 'Latihan Tilawati Jilid 1 Halaman 37',
         },
         {
@@ -747,13 +743,13 @@ GHA DA QA   BA GHA WA   TA BA GHA""",
 حَرَقَ   قَفَصَ   فَقَضَ
 شَفَقَ   تَقَعَ   رَفَقَ''',
           'transliteration': """FA FA FA = FA FA FA
-QA QA QA = QA QA QA
-FA RA HA   FA RA JA   QA DA RA
-FA RA QA   SA FA RA   QA RA MA
-QA FA RA   QA SHA RA   SHA FA RA
-FA SA QA   QA DA RA   RA FA 'A
-HA RA QA   QA FA SHA   FA QA DHA
-SYA FA QA   TA QA 'A   RA FA QA""",
+QO QO QO = QO QO QO
+QO DA RO     FA RO JA     FA RO HHA
+QO RO MA     SA FA RO     FA RO QO
+SHO FA RO     QO SHO RO     QO FA RO
+RO FA AIN     QO DA RO     FA SA QO
+FA QO DHO     QO FA SHO     HHA RO QO
+RO FA QO     TA QO AIN     SYA FA QO""",
           'desc': 'Latihan Tilawati Jilid 1 Halaman 38',
         },
         {
@@ -768,13 +764,13 @@ SYA FA QA   TA QA 'A   RA FA QA""",
 طَلَبَ   ثَلَثَ   حَلَمَ
 حَرَمَ   مَلَحَ   دَخَلَ''',
           'transliteration': '''LA LA LA = LA LA LA
-HA LA MA   SA LA MA   LA MA SA
-JA 'A LA   KHA BA LA   LA SYA DA
-'A LA QA   KHA LA QA   'A ZHA MA
-GHA LA BA   BA LA 'A   GHA RA MA
-SA MA 'A   BA LA GHA   'A JA LA
-THA LA BA   TSA LA TSA   HA LA MA
-HA RA MA   MA LA HA   DA KHA LA''',
+LA MA SA     SA LA MA     HHA LA MA
+LA SYA DA     KHO BA LA     JA AIN LA
+AIN ZHO MA     KHO LA QO     AIN LA QO
+GHO RO MA     BA LA AIN     GHO LA BA
+AIN JA LA     BA LA GHO     SA MA AIN
+HHA LA MA     TSA LA TSA     THO LA BA
+DA KHO LA     MA LA HHA     HHA RO MA''',
           'desc': 'Latihan Tilawati Jilid 1 Halaman 39',
         },
         {
@@ -788,14 +784,14 @@ HA RA MA   MA LA HA   DA KHA LA''',
 كَرَمَ   رَكَبَ   بَرَكَ
 كَتَبَ   سَلَكَ   هَلَكَ
 كَبَرَ   كَمَلَ   بَكَرَ''',
-          'transliteration': '''KA = KA = KA = KA MA LA HA KA MA
-KA RA MA   SYA KA RA   TA RA KA
-MA LA KA   KA LA MA   DZA KA RA
-KA SA RA   KA SA BA   FA LA KA
-KA DZA BA   KA SA DA   KA BA RA
-KA RA MA   RA KA BA   BA RA KA
-KA TA BA   SA LA KA   HA LA KA
-KA BA RA   KA MA LA   BA KA RA''',
+          'transliteration': '''KA = KA = KA = KA MA LA HHA KA MA
+TA RO KA     SYA KA RO     KA RO MA
+DZA KA RO     KA LA MA     MA LA KA
+FA LA KA     KA SA BA     KA SA RO
+KA BA RO     KA SA DA     KA DZA BA
+BA RO KA     RO KA BA     KA RO MA
+HA LA KA     SA LA KA     KA TA BA
+BA KA RO     KA MA LA     KA BA RO''',
           'desc': 'Latihan Tilawati Jilid 1 Halaman 40',
         },
         {
@@ -809,14 +805,14 @@ KA BA RA   KA MA LA   BA KA RA''',
 نَفَرَ   مَنَتَ   فَتَنَ
 سَنَدَ   فَنَنَ   نَفَسَ
 نَذَرَ   مَنَعَ   نَظَرَ''',
-          'transliteration': '''NA = NA = NA ZA LA
-NA SHA RA   SHA NA 'A   HA DHA NA
-FA NA DA   NA FA QA   HA SA NA
-NA BA DZA   BA DA NA   GHA NA MA
-NA 'A MA   QA NA TA   JA NA BA
-NA FA RA   MA NA TA   FA TA NA
-SA NA DA   FA NA NA   NA FA SA
-NA DZA RA   MA NA 'A   NA ZHA RA''',
+          'transliteration': '''NA = NA = NA ZAY LA
+HHA DHO NA     SHO NA AIN     NA SHO RO
+HHA SA NA     NA FA QO     FA NA DA
+GHO NA MA     BA DA NA     NA BA DZA
+JA NA BA     QO NA TA     NA AIN MA
+FA TA NA     MA NA TA     NA FA RO
+NA FA SA     FA NA NA     SA NA DA
+NA ZHO RO     MA NA AIN     NA DZA RO''',
           'desc': 'Latihan Tilawati Jilid 1 Halaman 41',
         },
         {
@@ -831,13 +827,13 @@ NA DZA RA   MA NA 'A   NA ZHA RA''',
 وَهَمَ   ظَهَرَ   بَنَهَ
 شَهَبَ   جَهَلَ   فَهَدَ''',
           'transliteration': '''HA = HA = HA = HA = FA HA DA
-HA LA KA   SYA HA DA   KA RA HA
-JA HA DA   HA RA BA   NA HA RA
-HA DZA LA   LA HA BA   FA QA HA
-SA FA HA   HA DA YA   BA HA JA
-MA HA YA   SYA HA QA   NA ZA HA
-WA HA MA   ZHA HA RA   BA NA HA
-SYA HA BA   JA HA LA   FA HA DA''',
+KA RO HA     SYA HA DA     HA LA KA
+NA HA RO     HA RO BA     JA HA DA
+FA QO HA     LA HA BA     HA DZA LA
+BA HA JA     HA DA YA     SA FA HA
+NA ZAY HA     SYA HA QO     MA HA YA
+BA NA HA     ZHO HA RO     WA HA MA
+FA HA DA     JA HA LA     SYA HA BA''',
           'desc': 'Latihan Tilawati Jilid 1 Halaman 42',
         },
         {
@@ -852,15 +848,15 @@ SYA HA BA   JA HA LA   FA HA DA''',
 يَلَدَ   سَيَرَ   خَطَيَ
 سَئَرَ   لَخَذَ   دَأَبَ
 أَخَذَ   يَتَمَ   بَيَعَ''',
-          'transliteration': '''A = A = A   SA A LA
-YA = YA   YA YA MA
-A DA MA   YA SA RA   FA A DA
-SA A MA   A JA LA   'A SHA YA
-KHA YA RA   BA YA NA   A LA MA
-DA YA RA   A DA BA   BA A SA
-YA LA DA   SA YA RA   KHA THA YA
-SA A RA   YA KHA DZA   DA A BA
-A KHA DZA   YA TA MA   BA YA 'A''',
+          'transliteration': '''SA A LA     A = A =  A 
+YA A MA     YA = YA 
+FA A DA     YA SA RO     A DA MA
+AIN SHO YA     A JA LA     SA A MA
+A LA MA     BA YA NA     KHO YA RO
+BA A SA     A DA BA     DA YA RO
+KHO THO YA     SA YA RO     YA LA DA
+DA A BA     LA KHO DZA     SA A RO
+BA YA AIN     YA TA MA     A KHO DZA''',
           'desc': 'Latihan Tilawati Jilid 1 Halaman 43',
         },
         {
@@ -874,14 +870,14 @@ A KHA DZA   YA TA MA   BA YA 'A''',
 بَشَرَ وَنَذَرَ   ضَلَلَ وَمَيَنَ
 عَزَزَ وَحَلَمَ   شَهَبَ وَثَقَبَ
 كَتَبَ وَمَبَنَ   عَذَبَ وَمَهَنَ''',
-          'transliteration': ''''A LA MA WA HA KA MA   RA A FA WA RA HA MA
-GHA FA RA WA SYA KA RA   SYA HA DA WA MA JA DA
-SA MA 'A WA BA SHA RA   'A DZA BA WA HA DA QA
-SHA 'A DA WA ZA LA QA   ZHA HA RA WA THA BA QA
-'A MA LA WA SHA LA HA   FA KHA RA WA DZA NA BA
-BA SYA RA WA NA DZA RA   DHA LA LA WA MA YA NA
-'A ZA ZA WA HA LA MA   SYA HA BA WA TSA QA BA
-KA TA BA WA BA YA NA   'A DZA BA WA MA HA NA''',
+          'transliteration': '''RO A FA WA RO HHA MA     AIN LA MA WA HHA KA MA
+SYA HA DA WA MA JA DA     GHO FA RO WA SYA KA RO
+AIN DZA BA WA HHA DA QO     SA MA AIN WA BA SHO RO
+ZHO HA RO WA THO BA QO     SHO AIN DA WA ZAY LA QO
+FA KHO RO WA DZA NA BA     AIN MA LA WA SHO LA HHA
+DHO LA LA WA MA YA NA     BA SYA RO WA NA DZA RO
+SYA HA BA WA TSA QO BA     AIN ZAY ZAY WA HHA LA MA
+AIN DZA BA WA MA HA NA     KA TA BA WA MA BA NA''',
           'desc': 'Latihan Tilawati Jilid 1 Halaman 44',
         },
       ],
