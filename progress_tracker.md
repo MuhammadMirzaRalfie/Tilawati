@@ -1,7 +1,7 @@
 # Progress Tracker — TilawatiApp (Tilawati Hijaiyah ASR)
 
-**Update Terakhir:** 2026-05-18
-**Status Proyek:** Fase 4 Deploy in-progress — HF Spaces ✅ DONE, Railway 🔄, APK ⏳
+**Update Terakhir:** 2026-05-18 (sesi penutup)
+**Status Proyek:** Fase 4 Deploy ✅ DONE — HF Spaces + Railway + APK semua RUNNING di production
 
 ---
 
@@ -9,10 +9,15 @@
 
 | Komponen | Status | Catatan |
 |----------|--------|---------|
-| **Fase 1: Klasifikasi Huruf** | ✅ Selesai | Model anas: 84.28% accuracy (production ready) |
-| **Fase 2: ASR (ASR-EXP-03-E3)** | ✅ Selesai | CER 0.0382, WER 0.0712, Acc 92.8% (production ready) |
-| **Fase 3: Development (Flutter + FastAPI)** | ✅ ~95% selesai | Fitur inti berfungsi, deploy prep done |
-| **Fase 4: Production Deploy** | 🔄 30% — HF Spaces DONE, Railway in-progress, APK belum | **PRIORITY 1: Wajib untuk demo sidang** |
+| **Fase 1: Klasifikasi Huruf** | ✅ Selesai | Model anas: 84.28% accuracy (production ready, belum deploy) |
+| **Fase 2: ASR (ASR-EXP-03-E3)** | ✅ Selesai | CER 0.0382, WER 0.0712, Acc 92.8% (deployed di HF) |
+| **Fase 3: Development (Flutter + FastAPI)** | ✅ ~95% selesai | Fitur inti berfungsi |
+| **Fase 4: Production Deploy** | ✅ **DONE** — HF + Railway + APK semua RUNNING | Siap demo sidang 🎉 |
+
+**URL production aktif:**
+- 🤗 ASR: `https://XyroOne-tilawati-asr-exp03e3.hf.space`
+- 🚂 Backend: `https://tilawati-production.up.railway.app`
+- 📱 APK: `Tilawati/frontend/build/app/outputs/flutter-apk/app-release.apk` (85.9 MB, installed di HP Xiaomi Android 16)
 
 ---
 
@@ -252,37 +257,47 @@
 - [x] Test `/transcribe` endpoint — 2 sample WAV match expected
 - [x] **URL production:** `https://XyroOne-tilawati-asr-exp03e3.hf.space`
 
-### Railway Backend Deploy (Fase 3) 🔄 IN PROGRESS
-- [x] Buat file `backend/railway.toml`
-- [x] Buat project Railway (terhubung ke repo `MuhammadMirzaRalfie/Tilawati` branch `implementation_ASR`)
-- [ ] Set **Root Directory = `backend`** di Settings → Source (CRITICAL, fix Railpack error)
-- [ ] Add PostgreSQL database
-- [ ] Set env vars:
+### Railway Backend Deploy (Fase 3) ✅ DONE 2026-05-18
+- [x] Buat file `backend/railway.toml` (dengan `sh -c` wrap untuk $PORT expansion)
+- [x] Buat project Railway, terhubung ke `MuhammadMirzaRalfie/Tilawati` branch `implementation_ASR`
+- [x] Set **Root Directory = `backend`** di Settings → Source (CRITICAL fix Railpack error)
+- [x] Add PostgreSQL database
+- [x] Set env vars:
   - `ASR_SERVICE_URL=https://XyroOne-tilawati-asr-exp03e3.hf.space`
-  - `JWT_SECRET={random 32+ char}`
-  - `ASR_MODEL_DIR=` (kosong, tidak pakai lokal)
-  - `CLASSIFICATION_MODEL_DIR=` (kosong, tidak pakai lokal)
-- [ ] Fix `config.py`: `postgresql://` → `postgresql+asyncpg://`
-- [ ] Deploy & run `alembic upgrade head`
-- [ ] Test `/api/auth/register` endpoint
-- [ ] **Catat URL:** `https://{app-name}.railway.app`
+  - `SECRET_KEY={random 64-char hex}`
+  - `DATABASE_URL=postgresql+asyncpg://...` (override scheme dari Postgres plugin)
+  - `ASR_MODEL_DIR=` (kosong)
+  - `CLASSIFICATION_MODEL_DIR=` (kosong)
+- [x] `config.py`: scheme async sudah `postgresql+asyncpg://`
+- [x] Schema auto-create via `Base.metadata.create_all` di lifespan (tidak butuh alembic)
+- [x] Test `/api/auth/register` endpoint → HTTP 201 + JWT
+- [x] **URL production:** `https://tilawati-production.up.railway.app`
 
-### Flutter Build & Sideload (Fase 4)
-- [ ] Update `api_config.dart` baseUrl ke Railway URL
-- [ ] Build release APK: `flutter build apk --release`
-- [ ] Sideload ke HP via ADB: `adb install app-release.apk`
+### Flutter Build & Sideload (Fase 4) ✅ DONE 2026-05-18
+- [x] Update `api_config.dart` baseUrl pakai `String.fromEnvironment` (compile-time)
+- [x] Build release APK: `flutter build apk --release --dart-define=API_BASE_URL=https://tilawati-production.up.railway.app`
+- [x] Sideload ke HP via ADB → Xiaomi 24090RA29G (Android 16), install sukses
 
-### E2E Testing di HP Fisik (Fase 5)
-- [ ] Register user baru → token diterima
-- [ ] Login → redirect home
-- [ ] Pilih Jilid 1 → list halaman muncul
-- [ ] Rekam audio → transcript ASR muncul
-- [ ] Lihat skor evaluasi
-- [ ] Cek halaman Progres → terupdate
-- [ ] Cek halaman Riwayat → muncul
-- [ ] Cek halaman Profil → edit nama berfungsi
-- [ ] Offline graceful → error message jelas
-- [ ] **Total test:** 8 test cases
+### E2E Testing di HP Fisik (Fase 5) ✅ DONE 2026-05-18
+- [x] Register user baru → token diterima ✅
+- [x] Login → redirect home ✅
+- [x] Pilih Jilid 1 → list halaman muncul ✅
+- [x] Rekam audio → transcript ASR muncul (round-trip Railway→HF Spaces, latency ~3-26s) ✅
+- [x] Lihat skor evaluasi ✅
+- [x] Cek halaman Progres → terupdate (setelah fix navbar bug) ✅
+- [x] Cek halaman Riwayat → entri muncul ✅
+- [x] Cek halaman Profil → edit nama berfungsi & persist ✅
+- [x] **Total test:** 8 test cases — semua PASS (kecuali offline test, optional)
+
+### Fix UI Pasca E2E Test ✅ DONE 2026-05-18 (commit 7586051)
+- [x] Bug: bottom nav 'Progres' show 0 padahal home button kerja → fix dengan ProgressScreen(showBackButton: false)
+- [x] Feature: tombol Ulangi setelah eval hasil → user kontrol re-record sebelum advance
+- [x] Verified di HP fisik oleh user
+
+### Backlog (Tidak Critical untuk Demo)
+- [ ] Deploy classification model ke remote (untuk glossary classify) — fallback graceful sudah ada
+- [ ] Konten Jilid 2-6 lessons (Jilid 1 cukup demo)
+- [ ] Offline graceful error message (low priority)
 
 ---
 
