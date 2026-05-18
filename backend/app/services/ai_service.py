@@ -532,7 +532,7 @@ def _word_match_rate(predicted: list[str], expected: list[str]) -> float:
 
 async def _call_asr_service(audio_path: str) -> list[str] | None:
     """
-    Transkripsi audio menggunakan model ASR lokal (HPT-D).
+    Transkripsi audio menggunakan model ASR lokal (ASR-EXP-03-E3).
     Fallback ke HF Spaces jika ASR_MODEL_DIR tidak tersedia dan ASR_SERVICE_URL diisi.
     Timeout lokal: 8 detik. Timeout HF Spaces: 10 detik.
     """
@@ -578,7 +578,7 @@ async def _call_asr_service(audio_path: str) -> list[str] | None:
 
 async def evaluate_audio(audio_path: str, jilid: int, lesson_number: int) -> dict:
     """
-    Evaluate audio recording using HPT-D ASR model.
+    Evaluate audio recording using ASR-EXP-03-E3 model.
     Calls HF Spaces /transcribe, compares result against expected transliteration.
     Falls back to mock scores if ASR_SERVICE_URL is not configured.
     """

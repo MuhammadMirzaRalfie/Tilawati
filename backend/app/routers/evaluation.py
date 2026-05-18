@@ -20,7 +20,7 @@ router = APIRouter(prefix="/api/evaluation", tags=["Evaluation"])
 # ──────────────────────────────────────────────────────────────────────────────
 # Normalization: transliterasi ai_service.py  →  label ASR model (id2word.json)
 #
-# Model ASR (HPT-D) menggunakan label lowercase sesuai vocab.json:
+# Model ASR (ASR-EXP-03-E3) menggunakan label lowercase sesuai vocab.json:
 #   a, ain, ba, da, dho, dza, fa, gho, ha, hha, ja, ka, kho, la, ma,
 #   na, qo, ro, sa, sho, sya, ta, tho, tsa, wa, ya, zay, zho
 #

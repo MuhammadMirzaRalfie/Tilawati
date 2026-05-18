@@ -1,5 +1,5 @@
 """
-ASR inference lokal — model HPT-D (CER 0.1013, WER 0.2025)
+ASR inference lokal — model ASR-EXP-03-E3 (CER 0.0382, WER 0.0712, Acc 92.75%)
 Dimuat sekali saat startup, dipakai oleh ai_service.evaluate_audio().
 """
 
@@ -25,8 +25,16 @@ def _get_model_dir() -> Path:
     from app.config import settings
     if settings.ASR_MODEL_DIR:
         return Path(settings.ASR_MODEL_DIR)
-    # default: model/ di sebelah direktori backend (untuk dev lokal)
-    return Path(__file__).parent.parent.parent.parent / "Model" / "Deploy" / "api" / "model"
+    # default: model ASR-EXP-03-E3 (dev lokal)
+    return (
+        Path(__file__).parent.parent.parent.parent.parent
+        / "model"
+        / "Model Final ASR"
+        / "ASR-EXP-03-E3"
+        / "final model exp03e3"
+        / "asr_hpt_e3"
+        / "best_model"
+    )
 
 
 def load_asr_model():
@@ -53,7 +61,7 @@ def load_asr_model():
         raw = json.load(f)
     _id2word = {int(k): v for k, v in raw.items()}
 
-    print(f"[asr_inference] Model HPT-D siap. Device: {_device}", flush=True)
+    print(f"[asr_inference] Model ASR-EXP-03-E3 siap. Device: {_device}", flush=True)
 
 
 def warmup_asr_model():

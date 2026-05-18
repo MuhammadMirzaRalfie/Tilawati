@@ -466,7 +466,7 @@ class _FreeInferenceScreenState extends State<FreeInferenceScreen>
                   ),
                 ),
                 Text(
-                  'Wav2Vec2 HPT-D sedang mentranskripsi',
+                  'Wav2Vec2 EXP-03-E3 sedang mentranskripsi',
                   style: GoogleFonts.poppins(
                     fontSize: 12,
                     color: AppColors.textSecondary,
@@ -529,7 +529,7 @@ class _FreeInferenceScreenState extends State<FreeInferenceScreen>
                       ),
                       const SizedBox(width: 4),
                       Text(
-                        modelAvailable ? 'ASR HPT-D' : 'Model Tidak Tersedia',
+                        modelAvailable ? 'ASR EXP-03-E3' : 'Model Tidak Tersedia',
                         style: GoogleFonts.poppins(
                           fontSize: 11,
                           fontWeight: FontWeight.w600,

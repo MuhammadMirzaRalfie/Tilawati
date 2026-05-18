@@ -258,7 +258,7 @@ File APK ada di: `build/app/outputs/flutter-apk/app-release.apk`
 
 ## Bagian 3 — Konfigurasi Evaluasi AI (Opsional)
 
-Secara default, evaluasi menggunakan **mock score** (skor acak yang realistis). Untuk menggunakan model HPT-D yang sesungguhnya, deploy ASR service ke HuggingFace Spaces terlebih dahulu.
+Secara default, evaluasi menggunakan **mock score** (skor acak yang realistis). Untuk menggunakan model **ASR-EXP-03-E3** yang sesungguhnya (CER 0.0382 · WER 0.0712 · Acc 92.8%), deploy ASR service ke HuggingFace Spaces terlebih dahulu.
 
 ### Deploy ASR ke HuggingFace Spaces
 

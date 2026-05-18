@@ -9,7 +9,7 @@ Aplikasi Flutter + FastAPI untuk membantu pengguna belajar dan mengevaluasi baca
 **Tugas Akhir:** Tilawati Hijaiyah ASR — pengenalan dan evaluasi ucapan huruf hijaiyah.
 **Target Platform:** Android (prioritas), iOS, Web.
 **Stack:** Flutter (frontend) + FastAPI + PostgreSQL (backend).
-**Status AI:** Evaluasi terhubung ke model HPT-D lokal via `asr_inference.py`; fallback ke mock jika model tidak tersedia. 
+**Status AI:** Evaluasi terhubung ke model **ASR-EXP-03-E3** (CER 0.0382 · WER 0.0712 · Acc 92.8%) lokal via `asr_inference.py`; fallback ke mock jika model tidak tersedia.
 
 ---
 ## Direktori

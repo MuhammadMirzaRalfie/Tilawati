@@ -1,18 +1,12 @@
 class ApiConfig {
-  // Pilih sesuai konfigurasi:
-  //
-  // 1) USB device (recommended): jalankan dulu di host:
-  //      adb reverse tcp:8000 tcp:8000
-  //    lalu pakai baris 'localhost' di bawah.
-  //
-  // 2) Android emulator: 'http://10.0.2.2:8000'
-  //
-  // 3) Real device via Wi-Fi LAN: 'http://192.168.x.x:8000'
-  //    (cari IP host dengan `ipconfig` di Windows / `ifconfig` di Mac/Linux,
-  //     dan pastikan firewall mengizinkan port 8000)
-  static const String baseUrl = 'http://localhost:8000'; // USB/Web/iOS Simulator
-  //static const String baseUrl = 'http://10.0.2.2:8000'; // Android emulator
-  // static const String baseUrl = 'http://10.222.230.53:8000'; // LAN Wi-Fi
+  // Override at build time:
+  //   flutter run --dart-define=API_BASE_URL=http://10.0.2.2:8000     (Android emulator)
+  //   flutter build apk --release --dart-define=API_BASE_URL=https://<app>.railway.app
+  // Default (USB/Web/iOS Simulator) requires: adb reverse tcp:8000 tcp:8000
+  static const String baseUrl = String.fromEnvironment(
+    'API_BASE_URL',
+    defaultValue: 'http://localhost:8000',
+  );
 
   static const String apiUrl = '$baseUrl/api';
 

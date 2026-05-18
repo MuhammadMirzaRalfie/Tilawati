@@ -10,7 +10,7 @@
 | Komponen | Status | Catatan |
 |----------|--------|---------|
 | **Fase 1: Klasifikasi Huruf** | ✅ Selesai | Model anas: 84.28% accuracy (production ready) |
-| **Fase 2: ASR (HPT-D)** | ✅ Selesai | CER 0.1013, WER 0.2025, TSA 65.2% (production ready) |
+| **Fase 2: ASR (ASR-EXP-03-E3)** | ✅ Selesai | CER 0.0382, WER 0.0712, Acc 92.8% (production ready) |
 | **Fase 3: Development (Flutter + FastAPI)** | ✅ ~95% selesai | Fitur inti berfungsi, belum deploy ke prod |
 | **Fase 4: Production Deploy** | 🔄 Belum dimulai | **PRIORITY 1: Wajib untuk demo sidang** |
 
@@ -252,12 +252,12 @@
 
 ## Technical Specifications (Reference)
 
-### Model ASR (HPT-D)
-- Architecture: Wav2Vec2ForCTC (pretrained IndoHuggingFace)
-- Vocab: Word-level (Jilid 1 vocab)
+### Model ASR (ASR-EXP-03-E3)
+- Architecture: Wav2Vec2ForCTC (Jonathan-base + Extended Dataset + Word-Level CTC + HPT Phase-2 LR × Dropout)
+- Vocab: Word-level Extended (Jilid 1 + Jilid 2-ish vocab)
 - Input: 16 kHz mono WAV
 - Output: Transcript + confidence scores
-- Performance: CER 0.1013, WER 0.2025, TSA 65.2%
+- Performance: CER 0.0382, WER 0.0712, Accuracy 92.8%
 
 ### Model Klasifikasi (anas)
 - Architecture: CNN (feature extractor frozen, linear head)

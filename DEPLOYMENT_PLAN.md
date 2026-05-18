@@ -12,7 +12,7 @@ Railway.app
   └─ PostgreSQL (user data, evaluations, progress)
     ↓ HTTPS (ASR_SERVICE_URL env var)
 HuggingFace Spaces
-  └─ ASR inference (HPT-D, Wav2Vec2ForCTC, 1.2 GB)
+  └─ ASR inference (ASR-EXP-03-E3, Wav2Vec2ForCTC, 1.2 GB)
 ```
 
 ASR tetap di HF Spaces (stateless, sudah ada scaffold di `Model/Deploy/api/`). Backend full di Railway (butuh PostgreSQL). Flutter APK di-build release dan di-sideload ke HP.
@@ -29,7 +29,7 @@ File: `Model/Deploy/api/README.md`
 Pastikan header YAML tepat:
 ```yaml
 ---
-title: Tilawati ASR Hijaiyah HPT-D
+title: ASR Hijaiyah EXP-03-E3
 emoji: 🕌
 colorFrom: green
 colorTo: blue
@@ -107,7 +107,7 @@ git add .gitattributes
 ### 2.4 Push ke HF Spaces
 ```bash
 git add .
-git commit -m "Initial deploy HPT-D ASR API"
+git commit -m "Initial deploy ASR-EXP-03-E3 API"
 git push
 ```
 Upload 1.2 GB via Git LFS — bisa memakan **15–30 menit** tergantung koneksi.
@@ -121,16 +121,16 @@ Upload 1.2 GB via Git LFS — bisa memakan **15–30 menit** tergantung koneksi.
 ### 2.6 Test endpoint
 ```bash
 # Health check
-curl https://{username}-tilawati-asr-hptd.hf.space/health
+curl https://{username}-tilawati-asr-exp03e3.hf.space/health
 
 # Transcribe test (pakai file WAV 16kHz)
-curl -X POST https://{username}-tilawati-asr-hptd.hf.space/transcribe \
+curl -X POST https://{username}-tilawati-asr-exp03e3.hf.space/transcribe \
   -F "audio=@test_audio.wav"
 ```
 
-**Verifikasi sukses:** `/health` → `{"status":"ok","model":"HPT-D"}` dan `/transcribe` → `{"transcript":"ba ta","words":["ba","ta"],...}`
+**Verifikasi sukses:** `/health` → `{"status":"ok","model":"ASR-EXP-03-E3"}` dan `/transcribe` → `{"transcript":"ba ta","words":["ba","ta"],...}`
 
-**Catat URL:** `https://{username}-tilawati-asr-hptd.hf.space` → dipakai di Fase 3.
+**Catat URL:** `https://{username}-tilawati-asr-exp03e3.hf.space` → dipakai di Fase 3.
 
 ---
 
@@ -166,7 +166,7 @@ Di dashboard Railway project:
 Tambah vars berikut di Railway dashboard (Settings → Variables):
 
 ```
-ASR_SERVICE_URL=https://{username}-tilawati-asr-hptd.hf.space
+ASR_SERVICE_URL=https://{username}-tilawati-asr-exp03e3.hf.space
 JWT_SECRET={random string panjang, minimal 32 karakter}
 ASR_MODEL_DIR=
 CLASSIFICATION_MODEL_DIR=
@@ -277,7 +277,7 @@ adb install build/app/outputs/flutter-apk/app-release.apk
 
 ## Sukses Kriteria
 
-- [ ] `GET /health` HF Spaces → `{"status":"ok","model":"HPT-D"}`
+- [ ] `GET /health` HF Spaces → `{"status":"ok","model":"ASR-EXP-03-E3"}`
 - [ ] `POST /transcribe` HF Spaces → transcript valid untuk audio hijaiyah
 - [ ] `POST /api/auth/register` Railway → user terbuat di DB
 - [ ] `POST /api/evaluation/submit_word` Railway → ASR dari HF Spaces dipakai (bukan mock)
