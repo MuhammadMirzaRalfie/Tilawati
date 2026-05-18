@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../config/theme.dart';
 import '../providers/auth_provider.dart';
+import 'progress_screen.dart';
 
 
 class HomeScreen extends StatefulWidget {
@@ -26,7 +27,7 @@ class _HomeScreenState extends State<HomeScreen> {
           // Tab "Jilid" tidak punya konten in-place — tap langsung push
           // ke /jilid-selection (lihat onTap BottomNavigationBar di bawah).
           SizedBox.shrink(),
-          _ProgressTab(),
+          ProgressScreen(showBackButton: false),
           _ProfileTab(),
         ],
       ),
@@ -424,130 +425,6 @@ class _HomeTab extends StatelessWidget {
   }
 }
 
-// ========== PROGRESS TAB ==========
-class _ProgressTab extends StatelessWidget {
-  const _ProgressTab();
-
-  @override
-  Widget build(BuildContext context) {
-    return SafeArea(
-      child: SingleChildScrollView(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const SizedBox(height: 8),
-            Text(
-              'Progres Saya',
-              style: GoogleFonts.poppins(
-                fontSize: 22,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const SizedBox(height: 20),
-
-            // Stats row
-            Row(
-              children: [
-                _buildStatCard('0', 'Total\nLatihan', AppColors.primary),
-                const SizedBox(width: 10),
-                _buildStatCard('0', 'Rata-rata\nSkor', const Color(0xFF1976D2)),
-                const SizedBox(width: 10),
-                _buildStatCard('0', 'Hari\nBerturut', const Color(0xFFF57C00)),
-              ],
-            ),
-            const SizedBox(height: 24),
-
-            // Empty state
-            Container(
-              width: double.infinity,
-              padding: const EdgeInsets.all(40),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(24),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.04),
-                    blurRadius: 12,
-                    offset: const Offset(0, 4),
-                  ),
-                ],
-              ),
-              child: Column(
-                children: [
-                  Icon(
-                    Icons.bar_chart_rounded,
-                    size: 64,
-                    color: Colors.grey.shade300,
-                  ),
-                  const SizedBox(height: 16),
-                  Text(
-                    'Belum ada data progres',
-                    style: GoogleFonts.poppins(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                      color: AppColors.textSecondary,
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    'Mulai latihan untuk melihat\nperkembangan bacaan Anda',
-                    style: GoogleFonts.poppins(
-                      fontSize: 13,
-                      color: AppColors.textLight,
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                  const SizedBox(height: 20),
-                  ElevatedButton(
-                    onPressed: () {
-                      Navigator.pushNamed(context, '/jilid-selection');
-                    },
-                    child: const Text('Mulai Latihan'),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildStatCard(String value, String label, Color color) {
-    return Expanded(
-      child: Container(
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          color: color.withOpacity(0.08),
-          borderRadius: BorderRadius.circular(18),
-          border: Border.all(color: color.withOpacity(0.15)),
-        ),
-        child: Column(
-          children: [
-            Text(
-              value,
-              style: GoogleFonts.poppins(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-                color: color,
-              ),
-            ),
-            const SizedBox(height: 4),
-            Text(
-              label,
-              style: GoogleFonts.poppins(
-                fontSize: 11,
-                color: color.withOpacity(0.8),
-              ),
-              textAlign: TextAlign.center,
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
 
 // ========== PROFILE TAB ==========
 class _ProfileTab extends StatefulWidget {

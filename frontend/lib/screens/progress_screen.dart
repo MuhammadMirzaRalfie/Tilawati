@@ -6,7 +6,8 @@ import '../config/theme.dart';
 import '../providers/progress_provider.dart';
 
 class ProgressScreen extends StatefulWidget {
-  const ProgressScreen({super.key});
+  final bool showBackButton;
+  const ProgressScreen({super.key, this.showBackButton = true});
 
   @override
   State<ProgressScreen> createState() => _ProgressScreenState();
@@ -44,10 +45,13 @@ class _ProgressScreenState extends State<ProgressScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_rounded),
-          onPressed: () => Navigator.pop(context),
-        ),
+        automaticallyImplyLeading: widget.showBackButton,
+        leading: widget.showBackButton
+            ? IconButton(
+                icon: const Icon(Icons.arrow_back_ios_rounded),
+                onPressed: () => Navigator.pop(context),
+              )
+            : null,
         title: Text(
           'Progres Saya',
           style: GoogleFonts.poppins(fontWeight: FontWeight.w600),

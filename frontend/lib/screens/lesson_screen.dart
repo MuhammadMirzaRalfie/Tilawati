@@ -38,6 +38,7 @@ class _LessonScreenState extends State<LessonScreen> with TickerProviderStateMix
   int _correctCount = 0;
   String _lastTranscript = "";
   bool _lastMatched = true;
+  bool _showResultActions = false;
 
   @override
   void initState() {
@@ -107,6 +108,7 @@ class _LessonScreenState extends State<LessonScreen> with TickerProviderStateMix
       _lastTranscript = "";
       _lastMatched = true;
       _isEvaluatingWord = false;
+      _showResultActions = false;
       _allDone = false;
       _tokenStatus = List.filled(_tokens.length, _WordStatus.pending);
       if (_tokens.isNotEmpty) _tokenStatus[0] = _WordStatus.active;
@@ -138,6 +140,7 @@ class _LessonScreenState extends State<LessonScreen> with TickerProviderStateMix
         _isRecording = true;
         _recordingSeconds = 0;
         _recordingPath = path;
+        _showResultActions = false;
       });
       _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
         setState(() => _recordingSeconds++);
@@ -182,21 +185,35 @@ class _LessonScreenState extends State<LessonScreen> with TickerProviderStateMix
       if (matched) _correctCount++;
       _lastTranscript = transcript;
       _lastMatched = matched;
-    });
-
-    await Future.delayed(const Duration(milliseconds: 200));
-
-    setState(() {
-      _currentTokenIndex++;
       _isEvaluatingWord = false;
       _recordingPath = null;
       _recordingSeconds = 0;
+      _showResultActions = true;
+    });
+  }
+
+  void _advanceToNextWord() {
+    setState(() {
+      _showResultActions = false;
+      _currentTokenIndex++;
       if (_currentTokenIndex >= _tokens.length) {
         _allDone = true;
         _saveLessonResult();
       } else {
         _tokenStatus[_currentTokenIndex] = _WordStatus.active;
       }
+    });
+  }
+
+  void _retryCurrentWord() {
+    if (_currentTokenIndex >= _tokens.length) return;
+    // Revert skor jika sebelumnya sempat tercatat benar.
+    if (_lastMatched) _correctCount--;
+    setState(() {
+      _showResultActions = false;
+      _lastTranscript = "";
+      _lastMatched = true;
+      _tokenStatus[_currentTokenIndex] = _WordStatus.active;
     });
   }
 
@@ -409,6 +426,88 @@ class _LessonScreenState extends State<LessonScreen> with TickerProviderStateMix
     );
   }
 
+  Widget _buildResultActions() {
+    final matchColor = _lastMatched ? Colors.green : Colors.red;
+    return Column(
+      children: [
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+          decoration: BoxDecoration(
+            color: matchColor.withOpacity(0.1),
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                _lastMatched ? 'Bacaan benar' : 'Bacaan belum tepat',
+                style: GoogleFonts.poppins(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600,
+                  color: matchColor.shade800,
+                ),
+              ),
+              const SizedBox(height: 4),
+              Text(
+                'Sistem mendengar: $_lastTranscript',
+                softWrap: true,
+                textAlign: TextAlign.center,
+                style: GoogleFonts.poppins(
+                  fontSize: 12,
+                  color: matchColor.shade700,
+                ),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 18),
+        Row(
+          children: [
+            Expanded(
+              child: OutlinedButton.icon(
+                onPressed: _retryCurrentWord,
+                icon: const Icon(Icons.refresh_rounded),
+                label: const Text('Ulangi'),
+                style: OutlinedButton.styleFrom(
+                  foregroundColor: AppColors.error,
+                  side: BorderSide(color: AppColors.error.withOpacity(0.5)),
+                  padding: const EdgeInsets.symmetric(vertical: 14),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(14),
+                  ),
+                  textStyle: GoogleFonts.poppins(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: ElevatedButton.icon(
+                onPressed: _advanceToNextWord,
+                icon: const Icon(Icons.arrow_forward_rounded),
+                label: const Text('Lanjut'),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: _color,
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(vertical: 14),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(14),
+                  ),
+                  textStyle: GoogleFonts.poppins(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
   Widget _buildRecordingSection() {
     return Container(
       padding: const EdgeInsets.all(24),
@@ -454,6 +553,8 @@ class _LessonScreenState extends State<LessonScreen> with TickerProviderStateMix
               padding: EdgeInsets.symmetric(vertical: 12),
               child: CircularProgressIndicator(),
             )
+          else if (_showResultActions)
+            _buildResultActions()
           else
             Column(
               children: [
