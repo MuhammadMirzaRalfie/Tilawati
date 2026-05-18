@@ -1,7 +1,7 @@
 # Progress Tracker — TilawatiApp (Tilawati Hijaiyah ASR)
 
-**Update Terakhir:** 2026-05-06  
-**Status Proyek:** Fase Development selesai, siap Deploy (🔄 In Progress)
+**Update Terakhir:** 2026-05-18
+**Status Proyek:** Fase 4 Deploy in-progress — HF Spaces ✅ DONE, Railway 🔄, APK ⏳
 
 ---
 
@@ -11,8 +11,84 @@
 |----------|--------|---------|
 | **Fase 1: Klasifikasi Huruf** | ✅ Selesai | Model anas: 84.28% accuracy (production ready) |
 | **Fase 2: ASR (ASR-EXP-03-E3)** | ✅ Selesai | CER 0.0382, WER 0.0712, Acc 92.8% (production ready) |
-| **Fase 3: Development (Flutter + FastAPI)** | ✅ ~95% selesai | Fitur inti berfungsi, belum deploy ke prod |
-| **Fase 4: Production Deploy** | 🔄 Belum dimulai | **PRIORITY 1: Wajib untuk demo sidang** |
+| **Fase 3: Development (Flutter + FastAPI)** | ✅ ~95% selesai | Fitur inti berfungsi, deploy prep done |
+| **Fase 4: Production Deploy** | 🔄 30% — HF Spaces DONE, Railway in-progress, APK belum | **PRIORITY 1: Wajib untuk demo sidang** |
+
+---
+
+## Sesi Deploy 2026-05-17 / 2026-05-18
+
+### Yang Dikerjakan
+
+#### 1. Dokumen Rancangan Implementasi Deploy ✅
+- File baru: `Tilawati/Blueprint dan Rancangan/Rancangan_Implementasi_Deploy.md` + `.docx`
+- Helper convert md → docx: `_md_to_docx.py` (python-docx, in-house)
+- Isi: tujuan & konteks, arsitektur production (Flutter APK → Railway → HF Spaces), komponen, env vars, urutan implementasi Fase 0–5, risiko, kriteria verifikasi, estimasi 4–7 jam
+
+#### 2. Rebrand HPT-D → ASR-EXP-03-E3 ✅
+- Update label di: `Model/Deploy/api/main.py` (FastAPI title + /health response), `README.md` (YAML header + metrics), backend `evaluation.py` & `ai_service.py` & `asr_inference.py`, `frontend/lib/screens/free_inference_screen.dart` (UI badge), dokumentasi `CLAUDE.md` (×2), `DEPLOYMENT_PLAN.md` (6 occurrence), `README.md`, `progress_tracker.md`
+- `Model/Deploy/api/README.md` YAML header: tambah `app_port: 7860`
+- Verifikasi: model artefak di `Model/Deploy/api/model/` sudah identical dengan E3 best_model (10 file, 1.2 GB total — size match exact)
+
+#### 3. Backend Railway Config ✅
+- File baru: `Tilawati/backend/railway.toml` — builder Dockerfile, startCommand `uvicorn app.main:app --host 0.0.0.0 --port $PORT`, healthcheck `/health`
+- `.env.example`: tambah `ASR_SERVICE_URL` & `ASR_MODEL_DIR` (default kosong → fallback ke remote ASR)
+
+#### 4. Frontend baseUrl ke `String.fromEnvironment` ✅
+- File: `Tilawati/frontend/lib/config/api_config.dart`
+- Strategy: `String.fromEnvironment('API_BASE_URL', defaultValue: 'http://localhost:8000')`
+- Build prod: `flutter build apk --release --dart-define=API_BASE_URL=https://<railway>.up.railway.app`
+- Hapus comment 3-opsi USB/emulator/LAN (single source of truth)
+
+#### 5. HuggingFace Spaces Deploy ✅ END-TO-END VERIFIED
+
+**Constraint discovered:** HF Spaces Free tier limit storage **1 GB**, model.safetensors E3 = 1.17 GB → tidak muat langsung. **Solusi yang dipakai:** model-repo + Space code separate (standard HF pattern).
+
+**Model Repo `XyroOne/asr-exp-03-e3`** (1.2 GB):
+- Upload via Git LFS manual (clone + git lfs install + git add + git push). `huggingface_hub.upload_large_folder` stuck di 47% untuk file 1.17 GB — switch ke git LFS manual selesai dalam ~3 menit @ 6.9 MB/s
+- 10 file: model.safetensors, config, vocab, id2word, word2id, preprocessor_config, tokenizer_config, special_tokens_map, added_tokens, training_args.bin
+- SHA commit: `782e57d5bca1`
+
+**Space `XyroOne/tilawati-asr-exp03e3`** (6.86 KB code, Docker SDK):
+- Upload via `huggingface_hub.upload_large_folder` dengan `ignore_patterns` skip bobot besar
+- 7 file: Dockerfile, main.py, inference.py, requirements.txt, README.md, .gitattributes, model/id2word.json
+- `inference.py` patched: load model via `Wav2Vec2*.from_pretrained("XyroOne/asr-exp-03-e3")` — transformers auto-download bobot dari model repo saat startup
+- Helper script: `Model/Deploy/_upload_to_hf.py` (2-mode: --mode=model / --mode=space) — di-gitignore
+
+**Verifikasi endpoint production:**
+| Endpoint | Test | Hasil | Latency |
+|----------|------|-------|---------|
+| `GET https://XyroOne-tilawati-asr-exp03e3.hf.space/health` | Health check | `{"status":"ok","model":"ASR-EXP-03-E3","device":"cpu"}` HTTP 200 | 1.4s |
+| `POST /transcribe` group_0000.wav | Expected: `zay ba ba` | **`zay ba ba`** ✅ | 26s (cold) |
+| `POST /transcribe` group_0001.wav | Expected: `dza tho` | **`dza tho`** ✅ | 8s (warm) |
+
+**URL production:** `https://XyroOne-tilawati-asr-exp03e3.hf.space`
+
+#### 6. Commit & Push GitHub ✅
+- Commit `6bb1994` di branch `implementation_ASR` — pushed ke `origin/implementation_ASR`
+- Cleanup file deleted: `CARA_MENJALANKAN.md`, `implementation_plan_fix_overflow.md`, `REKOMENDASI_PENGEMBANGAN.md`
+- `.gitignore`: tambah helper scripts (`_md_to_docx.py`)
+
+---
+
+### Yang BELUM Dikerjakan / Blocker
+
+| # | Item | Status | Catatan |
+|---|------|--------|---------|
+| 1 | Railway service config Root Directory = `backend` | 🔄 In progress | Build gagal di Railpack default (scan dari root repo). Fix: set Root Directory di Settings → Source |
+| 2 | PostgreSQL plugin di Railway | ⏳ Belum | Step 4 panduan deploy |
+| 3 | Env vars Railway: `DATABASE_URL` (override async), `SECRET_KEY`, `ASR_SERVICE_URL` | ⏳ Belum | `ASR_SERVICE_URL` sudah ready: `https://XyroOne-tilawati-asr-exp03e3.hf.space` |
+| 4 | Build APK release | ⏳ Belum | `flutter build apk --release --dart-define=API_BASE_URL=<railway URL>` setelah Railway up |
+| 5 | E2E test di HP fisik (8 skenario) | ⏳ Belum | Per checklist `progress_tracker.md` lama |
+
+---
+
+### Lessons Learned (Worth Remembering)
+
+- **HF Spaces Free tier limit 1 GB** — model >1 GB pakai pattern model-repo + Space code separate via `from_pretrained(repo_id)`.
+- **`huggingface_hub.upload_large_folder`** kurang reliable untuk file >1 GB single safetensors — fallback ke git LFS manual (`git clone https://USER:TOKEN@... && git lfs install && git push`).
+- **HF token security:** jangan embed token di URL git config persistent. Rewrite remote URL setelah push selesai.
+- **Railway monorepo:** wajib set **Root Directory** di Settings → Source kalau Dockerfile bukan di repo root. Default scan akan pakai Railpack (auto-detect bahasa) yang fail.
 
 ---
 
@@ -165,22 +241,24 @@
 - [ ] `Model/Deploy/api/.gitattributes` — LFS tracking `*.safetensors` & `*.bin`
 - [ ] `Model/Deploy/api/model/` — Semua file ada (model.safetensors 1.175 GB, config, vocab, dll)
 
-### HuggingFace Spaces Deploy (Fase 2)
-- [ ] Buat Space baru (Docker SDK, Public)
-- [ ] Clone & setup Git LFS
-- [ ] Copy file dari `Model/Deploy/api/`
-- [ ] Push ke HF (via Git LFS)
-- [ ] Monitor build (~15 menit)
-- [ ] Test `/health` endpoint
-- [ ] Test `/transcribe` endpoint
-- [ ] **Catat URL:** `https://{username}-tilawati-asr-hptd.hf.space`
+### HuggingFace Spaces Deploy (Fase 2) ✅ DONE 2026-05-18
+- [x] Buat Space `XyroOne/tilawati-asr-exp03e3` (Docker SDK, Public)
+- [x] Buat model repo terpisah `XyroOne/asr-exp-03-e3` (constraint 1 GB)
+- [x] Clone & setup Git LFS (manual untuk model 1.2 GB)
+- [x] Copy file dari `Model/Deploy/api/`
+- [x] Push model repo via git LFS manual + Space via huggingface_hub
+- [x] Monitor build (~10 menit)
+- [x] Test `/health` endpoint — `{"status":"ok","model":"ASR-EXP-03-E3","device":"cpu"}`
+- [x] Test `/transcribe` endpoint — 2 sample WAV match expected
+- [x] **URL production:** `https://XyroOne-tilawati-asr-exp03e3.hf.space`
 
-### Railway Backend Deploy (Fase 3)
-- [ ] Buat file `backend/railway.toml`
-- [ ] Buat project Railway
+### Railway Backend Deploy (Fase 3) 🔄 IN PROGRESS
+- [x] Buat file `backend/railway.toml`
+- [x] Buat project Railway (terhubung ke repo `MuhammadMirzaRalfie/Tilawati` branch `implementation_ASR`)
+- [ ] Set **Root Directory = `backend`** di Settings → Source (CRITICAL, fix Railpack error)
 - [ ] Add PostgreSQL database
 - [ ] Set env vars:
-  - `ASR_SERVICE_URL=https://{username}-tilawati-asr-hptd.hf.space`
+  - `ASR_SERVICE_URL=https://XyroOne-tilawati-asr-exp03e3.hf.space`
   - `JWT_SECRET={random 32+ char}`
   - `ASR_MODEL_DIR=` (kosong, tidak pakai lokal)
   - `CLASSIFICATION_MODEL_DIR=` (kosong, tidak pakai lokal)
