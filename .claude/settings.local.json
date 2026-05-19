@@ -8,7 +8,10 @@
       "Bash(python -c \"from app.routers.evaluation import router; from app.services.ai_service import transcribe_word; print\\('Backend imports OK'\\)\")",
       "Bash(python *)",
       "Bash(flutter analyze *)",
-      "PowerShell(python -c \"import docx; print\\('python-docx', docx.__version__\\)\" 2>&1)"
+      "PowerShell(python -c \"import docx; print\\('python-docx', docx.__version__\\)\" 2>&1)",
+      "Bash(flutter devices *)",
+      "Bash(flutter build *)",
+      "Bash(flutter install *)"
     ]
   }
 }

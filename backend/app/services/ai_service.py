@@ -534,7 +534,7 @@ async def _call_asr_service(audio_path: str) -> list[str] | None:
     """
     Transkripsi audio menggunakan model ASR lokal (ASR-EXP-03-E3).
     Fallback ke HF Spaces jika ASR_MODEL_DIR tidak tersedia dan ASR_SERVICE_URL diisi.
-    Timeout lokal: 8 detik. Timeout HF Spaces: 10 detik.
+    Timeout lokal: 8 detik. Timeout HF Spaces: 55 detik (cover cold start free tier).
     """
     import asyncio
 
@@ -564,7 +564,7 @@ async def _call_asr_service(audio_path: str) -> list[str] | None:
     try:
         import httpx
         url = settings.ASR_SERVICE_URL.rstrip("/") + "/transcribe"
-        async with httpx.AsyncClient(timeout=10.0) as client:
+        async with httpx.AsyncClient(timeout=55.0) as client:
             with open(audio_path, "rb") as f:
                 response = await client.post(url, files={"audio": f})
         response.raise_for_status()

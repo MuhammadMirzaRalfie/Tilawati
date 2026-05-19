@@ -130,7 +130,7 @@ class _FreeInferenceScreenState extends State<FreeInferenceScreen>
         fields: {},
         filePath: _recordingPath!,
         fileField: 'audio',
-        timeout: const Duration(seconds: 20),
+        timeout: const Duration(seconds: 70),
       );
 
       final words = (response['words'] as List?)

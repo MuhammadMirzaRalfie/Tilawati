@@ -81,7 +81,7 @@ class _GlossaryDetailScreenState extends State<GlossaryDetailScreen>
         fields: {'expected_label': label},
         filePath: _recordingPath!,
         fileField: 'audio',
-        timeout: const Duration(seconds: 60),
+        timeout: const Duration(seconds: 70),
       );
       setState(() {
         _result = response;

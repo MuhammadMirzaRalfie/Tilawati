@@ -156,7 +156,7 @@ def classify_file(audio_path: str) -> dict:
     }
 
 
-async def classify_via_service(audio_path: str, timeout: float = 30.0) -> dict:
+async def classify_via_service(audio_path: str, timeout: float = 55.0) -> dict:
     """Klasifikasi via HF Space POST /classify. Return canonical format sama dengan
     classify_file() (predicted_label, confidence, is_correct, top3).
 

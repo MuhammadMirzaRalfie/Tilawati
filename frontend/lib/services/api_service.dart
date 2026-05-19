@@ -81,7 +81,7 @@ class ApiService {
     return _handleResponse(response);
   }
 
-  static const Duration wordEvalTimeout = Duration(seconds: 12);
+  static const Duration wordEvalTimeout = Duration(seconds: 70);
 
   static Future<Map<String, dynamic>> postMultipart(
     String url, {
