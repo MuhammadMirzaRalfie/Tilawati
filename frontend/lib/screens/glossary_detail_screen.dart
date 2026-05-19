@@ -81,6 +81,7 @@ class _GlossaryDetailScreenState extends State<GlossaryDetailScreen>
         fields: {'expected_label': label},
         filePath: _recordingPath!,
         fileField: 'audio',
+        timeout: const Duration(seconds: 60),
       );
       setState(() {
         _result = response;
@@ -249,11 +250,14 @@ class _GlossaryDetailScreenState extends State<GlossaryDetailScreen>
                     Text(
                       _isRecording
                           ? 'Ucapkan sekali dengan jelas'
-                          : 'Tekan tombol mikrofon untuk mulai',
+                          : _isSubmitting
+                              ? 'Mohon tunggu, hingga 1 menit jika pertama kali'
+                              : 'Tekan tombol mikrofon untuk mulai',
                       style: GoogleFonts.poppins(
                         fontSize: 12,
                         color: AppColors.textSecondary,
                       ),
+                      textAlign: TextAlign.center,
                     ),
                     const SizedBox(height: 24),
                     if (_isRecording)
