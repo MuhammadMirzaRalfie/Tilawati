@@ -22,6 +22,7 @@ class Settings:
     ASR_SERVICE_URL: str = os.getenv("ASR_SERVICE_URL", "")
     ASR_MODEL_DIR: str = os.getenv("ASR_MODEL_DIR", "")
     CLASSIFICATION_MODEL_DIR: str = os.getenv("CLASSIFICATION_MODEL_DIR", "")
+    CLASSIFIER_SERVICE_URL: str = os.getenv("CLASSIFIER_SERVICE_URL", "")
 
 
 settings = Settings()

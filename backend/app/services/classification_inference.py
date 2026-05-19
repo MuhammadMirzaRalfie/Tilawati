@@ -1,6 +1,17 @@
 """
-Classification inference lokal — model anas (84.28% test acc)
-Digunakan oleh fitur Glosarium: klasifikasi 28 huruf hijaiyah berharakat fathah.
+Classification inference untuk fitur Glosarium (klasifikasi 28 huruf hijaiyah).
+
+Pola hybrid:
+- Local model (Jonathan extended, 93.07% test acc) bila CLASSIFICATION_MODEL_DIR atau
+  default path tersedia.
+- Fallback ke HF Space POST /classify (XyroOne/Klasifikasi-Hijaiyah-Jonas) bila
+  CLASSIFIER_SERVICE_URL diisi.
+
+Public API:
+  load_classification_model()         — startup loader (graceful, tidak crash bila gagal)
+  classify_file(audio_path)           — local-only, sync
+  classify_via_service(audio_path)    — HF Space, async
+  classify_audio(audio_path)          — hybrid: local first, fallback HF Space, async
 """
 
 import io
@@ -56,25 +67,39 @@ def _get_model_dir() -> Path:
     from app.config import settings
     if settings.CLASSIFICATION_MODEL_DIR:
         return Path(settings.CLASSIFICATION_MODEL_DIR)
+    # Default: Jonathan extended (Test Acc 93.07%, F1 0.9307) — model klasifikasi terpilih.
+    # Path relatif dari backend/app/services/ → naik 4 level ke TilawatiApp/, masuk ke Model/.
     return (
-        Path(__file__).parent.parent.parent.parent
+        Path(__file__).parent.parent.parent.parent.parent
         / "Model"
-        / "Model Klasifikasi(Anas-Wav2Vec2)"
-        / "final-anas-wav2vec2-large-xlsr-arabic"
+        / "Model Klasifikasi"
+        / "Model dengan Extended dataset"
+        / "klasifikasi-jonathan-extended"
+        / "final-jonatasgrosman-wav2vec2-large-xlsr-53-arabic"
     )
 
 
 def load_classification_model():
+    """Load model klasifikasi lokal. Graceful: tidak crash kalau path tidak ada
+    (akan fallback ke HF Space saat request datang)."""
     global _processor, _model, _device, _id2label
     if _model is not None:
         return
 
+    model_dir = _get_model_dir()
+    if not model_dir.exists():
+        print(
+            f"[classification] Local model dir tidak ditemukan: {model_dir}. "
+            f"Akan fallback ke HF Space bila CLASSIFIER_SERVICE_URL diset.",
+            flush=True,
+        )
+        return
+
     from transformers import Wav2Vec2FeatureExtractor, Wav2Vec2ForSequenceClassification
 
-    model_dir = _get_model_dir()
     model_path = str(model_dir.resolve())
 
-    print(f"[classification] Memuat model dari: {model_path}", flush=True)
+    print(f"[classification] Memuat model lokal dari: {model_path}", flush=True)
     _processor = Wav2Vec2FeatureExtractor.from_pretrained(model_path, local_files_only=True)
     _model = Wav2Vec2ForSequenceClassification.from_pretrained(model_path, local_files_only=True)
     _model.eval()
@@ -83,7 +108,7 @@ def load_classification_model():
     _model = _model.to(_device)
     _id2label = _model.config.id2label
 
-    print(f"[classification] Model anas siap. Device: {_device}", flush=True)
+    print(f"[classification] Model Jonathan extended siap. Device: {_device}", flush=True)
 
 
 def classify_file(audio_path: str) -> dict:
@@ -129,3 +154,78 @@ def classify_file(audio_path: str) -> dict:
         "is_correct": confidence >= 0.5,
         "top3": top3,
     }
+
+
+async def classify_via_service(audio_path: str, timeout: float = 30.0) -> dict:
+    """Klasifikasi via HF Space POST /classify. Return canonical format sama dengan
+    classify_file() (predicted_label, confidence, is_correct, top3).
+
+    HF Space response shape:
+      {"predicted": "ba", "confidence": 0.96, "top_k":[{label,score}×5], "duration_ms": ...}
+
+    Raise RuntimeError bila CLASSIFIER_SERVICE_URL tidak diset atau request gagal.
+    """
+    from app.config import settings
+
+    if not settings.CLASSIFIER_SERVICE_URL:
+        raise RuntimeError("CLASSIFIER_SERVICE_URL belum diset")
+
+    import httpx
+
+    url = settings.CLASSIFIER_SERVICE_URL.rstrip("/") + "/classify"
+    async with httpx.AsyncClient(timeout=timeout) as client:
+        with open(audio_path, "rb") as f:
+            response = await client.post(url, files={"audio": f})
+    response.raise_for_status()
+    data = response.json()
+
+    predicted_lower = data.get("predicted", "")
+    confidence = float(data.get("confidence", 0.0))
+    top_k = data.get("top_k", [])
+
+    # Normalize ke canonical format (uppercase + top3 + is_correct flag)
+    top3 = [
+        {"label": item["label"].upper(), "confidence": round(float(item["score"]), 4)}
+        for item in top_k[:3]
+    ]
+
+    return {
+        "predicted_label": predicted_lower.upper(),
+        "confidence": round(confidence, 4),
+        "is_correct": confidence >= 0.5,
+        "top3": top3,
+    }
+
+
+async def classify_audio(audio_path: str) -> dict:
+    """Hybrid: pakai model lokal kalau sudah dimuat, fallback ke HF Space.
+
+    Pola sama dengan ai_service._call_asr_service:
+      1. Try local model (sync, dijalankan via executor agar tidak blokir event loop)
+      2. Fallback ke HF Space bila local model tidak tersedia atau error
+
+    Raise RuntimeError bila kedua jalur gagal.
+    """
+    import asyncio
+    from app.config import settings
+
+    # Coba local dulu
+    if _model is not None:
+        try:
+            loop = asyncio.get_event_loop()
+            return await asyncio.wait_for(
+                loop.run_in_executor(None, classify_file, audio_path),
+                timeout=8.0,
+            )
+        except asyncio.TimeoutError:
+            print("[classification] Local timeout >8s, fallback ke HF Space.", flush=True)
+        except Exception as e:
+            print(f"[classification] Local error: {e}. Fallback ke HF Space.", flush=True)
+
+    # Fallback HF Space
+    if not settings.CLASSIFIER_SERVICE_URL:
+        raise RuntimeError(
+            "Local classification model belum dimuat dan CLASSIFIER_SERVICE_URL belum diset."
+        )
+
+    return await classify_via_service(audio_path)
