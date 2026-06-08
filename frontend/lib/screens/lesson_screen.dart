@@ -35,10 +35,19 @@ class _LessonScreenState extends State<LessonScreen> with TickerProviderStateMix
   int _currentTokenIndex = 0;
   bool _isEvaluatingWord = false;
   bool _allDone = false;
-  int _correctCount = 0;
   String _lastTranscript = "";
   bool _lastMatched = true;
   bool _showResultActions = false;
+
+  // Skor diturunkan langsung dari status tiap kata supaya rekam-ulang atau
+  // loncat antar kata tidak menyebabkan salah hitung.
+  int get _correctCount =>
+      _tokenStatus.where((s) => s == _WordStatus.correct).length;
+  int get _evaluatedCount => _tokenStatus
+      .where((s) => s == _WordStatus.correct || s == _WordStatus.incorrect)
+      .length;
+  bool get _allEvaluated =>
+      _tokens.isNotEmpty && !_tokenStatus.contains(_WordStatus.pending);
 
   @override
   void initState() {
@@ -104,7 +113,6 @@ class _LessonScreenState extends State<LessonScreen> with TickerProviderStateMix
       _recordingPath = null;
       _recordingSeconds = 0;
       _currentTokenIndex = 0;
-      _correctCount = 0;
       _lastTranscript = "";
       _lastMatched = true;
       _isEvaluatingWord = false;
@@ -182,33 +190,69 @@ class _LessonScreenState extends State<LessonScreen> with TickerProviderStateMix
 
     setState(() {
       _tokenStatus[_currentTokenIndex] = matched ? _WordStatus.correct : _WordStatus.incorrect;
-      if (matched) _correctCount++;
       _lastTranscript = transcript;
       _lastMatched = matched;
       _isEvaluatingWord = false;
       _recordingPath = null;
       _recordingSeconds = 0;
-      _showResultActions = true;
+      if (_allEvaluated) {
+        // Semua kata sudah dinilai → langsung tampilkan ringkasan skor.
+        _showResultActions = false;
+        _allDone = true;
+        _saveLessonResult();
+      } else {
+        _showResultActions = true;
+      }
+    });
+  }
+
+  void _selectWord(int idx) {
+    if (_isRecording || _isEvaluatingWord || _allDone) return;
+    if (idx < 0 || idx >= _tokens.length) return;
+    if (idx == _currentTokenIndex && !_showResultActions) return;
+    setState(() {
+      // Kembalikan kata aktif lama ke pending jika belum sempat dinilai.
+      if (_tokenStatus[_currentTokenIndex] == _WordStatus.active) {
+        _tokenStatus[_currentTokenIndex] = _WordStatus.pending;
+      }
+      _currentTokenIndex = idx;
+      _tokenStatus[idx] = _WordStatus.active;
+      _showResultActions = false;
+      _lastTranscript = "";
+      _lastMatched = true;
+      _recordingPath = null;
+      _recordingSeconds = 0;
     });
   }
 
   void _advanceToNextWord() {
+    // Cari kata pending berikutnya, mulai dari setelah kata sekarang lalu
+    // melingkar ke awal jika perlu.
+    int? nextPending;
+    for (int step = 1; step <= _tokens.length; step++) {
+      final idx = (_currentTokenIndex + step) % _tokens.length;
+      if (_tokenStatus[idx] == _WordStatus.pending) {
+        nextPending = idx;
+        break;
+      }
+    }
     setState(() {
       _showResultActions = false;
-      _currentTokenIndex++;
-      if (_currentTokenIndex >= _tokens.length) {
+      _lastTranscript = "";
+      _lastMatched = true;
+      if (nextPending == null) {
+        // Tidak ada kata pending tersisa → selesai.
         _allDone = true;
         _saveLessonResult();
       } else {
-        _tokenStatus[_currentTokenIndex] = _WordStatus.active;
+        _currentTokenIndex = nextPending;
+        _tokenStatus[nextPending] = _WordStatus.active;
       }
     });
   }
 
   void _retryCurrentWord() {
     if (_currentTokenIndex >= _tokens.length) return;
-    // Revert skor jika sebelumnya sempat tercatat benar.
-    if (_lastMatched) _correctCount--;
     setState(() {
       _showResultActions = false;
       _lastTranscript = "";
@@ -275,21 +319,29 @@ class _LessonScreenState extends State<LessonScreen> with TickerProviderStateMix
               decoration: TextDecoration.none,
             ),
           );
-          rowChildren.add(
-            status == _WordStatus.active
-                ? Container(
-                    padding: const EdgeInsets.only(bottom: 2),
-                    decoration: BoxDecoration(
-                      border: Border(
-                        bottom: BorderSide(
-                          color: Colors.green.shade700,
-                          width: 2.5,
-                        ),
+          final displayWidget = status == _WordStatus.active
+              ? Container(
+                  padding: const EdgeInsets.only(bottom: 2),
+                  decoration: BoxDecoration(
+                    border: Border(
+                      bottom: BorderSide(
+                        color: Colors.green.shade700,
+                        width: 2.5,
                       ),
                     ),
-                    child: textWidget,
-                  )
-                : textWidget,
+                  ),
+                  child: textWidget,
+                )
+              : textWidget;
+          // Tiap kata bisa diketuk untuk dijadikan kata aktif (tap-to-jump),
+          // kecuali saat sedang merekam / mengevaluasi.
+          final tappable = !_isRecording && !_isEvaluatingWord && !_allDone;
+          rowChildren.add(
+            GestureDetector(
+              behavior: HitTestBehavior.opaque,
+              onTap: tappable ? () => _selectWord(idx) : null,
+              child: displayWidget,
+            ),
           );
         }
         return FittedBox(
@@ -665,7 +717,7 @@ class _LessonScreenState extends State<LessonScreen> with TickerProviderStateMix
               padding: const EdgeInsets.only(right: 4),
               child: Center(
                 child: Text(
-                  '$_currentTokenIndex/${_tokens.length}',
+                  '$_evaluatedCount/${_tokens.length}',
                   style: GoogleFonts.poppins(
                     fontSize: 13,
                     fontWeight: FontWeight.w500,

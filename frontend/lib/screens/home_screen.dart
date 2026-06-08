@@ -308,7 +308,10 @@ class _HomeTab extends StatelessWidget {
             const SizedBox(height: 12),
             _buildTipCard(
               '🎯 Konsistensi',
-              'Latihan 15-30 menit setiap hari lebih efektif dari latihan panjang sesekali.',
+              '''أَحَبُّ الأَعْمَالِ إِلَى اللَّهِ أَدْوَمُهَا وَإِنْ قَلَّ
+
+"Amalan yang paling dicintai oleh Allah adalah amalan yang paling kontinu (konsisten), walaupun sedikit."
+(HR. Bukhari dan Muslim).''',
             ),
             _buildTipCard(
               '🎤 Lingkungan Tenang',
@@ -648,7 +651,7 @@ class _ProfileTabState extends State<_ProfileTab> {
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 12),
-            Text('Tugas Akhir — 2025',
+            Text('Tilawati — 2025',
                 style: GoogleFonts.poppins(fontSize: 12, color: AppColors.textLight)),
           ],
         ),
