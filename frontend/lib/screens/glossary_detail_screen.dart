@@ -7,6 +7,8 @@ import 'package:record/record.dart';
 import '../config/theme.dart';
 import '../config/api_config.dart';
 import '../services/api_service.dart';
+import '../widgets/example_audio_button.dart';
+import '../widgets/hold_hint_banner.dart';
 
 class GlossaryDetailScreen extends StatefulWidget {
   const GlossaryDetailScreen({super.key});
@@ -192,6 +194,16 @@ class _GlossaryDetailScreenState extends State<GlossaryDetailScreen>
                 ],
               ),
             ),
+            const SizedBox(height: 16),
+
+            // Contoh bacaan ahli (audio). Graceful bila file belum di-bundle.
+            Center(
+              child: ExampleAudioButton(
+                assetPath: 'assets/audio/glossary/${label.toLowerCase()}.mp3',
+                color: color,
+                label: 'Dengar contoh',
+              ),
+            ),
             const SizedBox(height: 24),
 
             // Result card
@@ -218,6 +230,7 @@ class _GlossaryDetailScreenState extends State<GlossaryDetailScreen>
                 ],
               ),
             ] else ...[
+              const HoldHintBanner(),
               // Recording section
               Container(
                 padding: const EdgeInsets.all(24),
@@ -252,7 +265,7 @@ class _GlossaryDetailScreenState extends State<GlossaryDetailScreen>
                           ? 'Ucapkan sekali dengan jelas'
                           : _isSubmitting
                               ? 'Mohon tunggu, hingga 1 menit jika pertama kali'
-                              : 'Tekan tombol mikrofon untuk mulai',
+                              : 'Tahan tombol mikrofon & ucapkan',
                       style: GoogleFonts.poppins(
                         fontSize: 12,
                         color: AppColors.textSecondary,
@@ -276,9 +289,15 @@ class _GlossaryDetailScreenState extends State<GlossaryDetailScreen>
                       const CircularProgressIndicator()
                     else
                       GestureDetector(
-                        onTap: _isRecording
-                            ? () => _stopAndSubmit(label)
-                            : _startRecording,
+                        onTapDown: (_) {
+                          if (!_isRecording) _startRecording();
+                        },
+                        onTapUp: (_) {
+                          if (_isRecording) _stopAndSubmit(label);
+                        },
+                        onTapCancel: () {
+                          if (_isRecording) _stopAndSubmit(label);
+                        },
                         child: AnimatedBuilder(
                           animation: _pulseController,
                           builder: (context, child) {
@@ -306,10 +325,8 @@ class _GlossaryDetailScreenState extends State<GlossaryDetailScreen>
                                     ),
                                   ],
                                 ),
-                                child: Icon(
-                                  _isRecording
-                                      ? Icons.stop_rounded
-                                      : Icons.mic_rounded,
+                                child: const Icon(
+                                  Icons.mic_rounded,
                                   color: Colors.white,
                                   size: 36,
                                 ),
@@ -321,7 +338,7 @@ class _GlossaryDetailScreenState extends State<GlossaryDetailScreen>
                     if (_isRecording) ...[
                       const SizedBox(height: 12),
                       Text(
-                        'Tekan stop setelah selesai',
+                        'Lepas tombol setelah selesai',
                         style: GoogleFonts.poppins(
                           fontSize: 11,
                           color: AppColors.textLight,

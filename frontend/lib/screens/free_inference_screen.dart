@@ -6,6 +6,7 @@ import 'package:record/record.dart';
 import '../config/theme.dart';
 import '../config/api_config.dart';
 import '../services/api_service.dart';
+import '../widgets/hold_hint_banner.dart';
 
 class FreeInferenceScreen extends StatefulWidget {
   const FreeInferenceScreen({super.key});
@@ -298,13 +299,14 @@ class _FreeInferenceScreenState extends State<FreeInferenceScreen>
       ),
       child: Column(
         children: [
+          if (!_isRecording && !_isProcessing) const HoldHintBanner(),
           // Status teks
           Text(
             _isRecording
                 ? 'Sedang merekam...'
                 : _isProcessing
                     ? 'Memproses...'
-                    : 'Tekan mikrofon untuk mulai',
+                    : 'Tahan mikrofon & bicara',
             style: GoogleFonts.poppins(
               fontSize: 14,
               color: _isRecording ? AppColors.error : AppColors.textSecondary,
@@ -332,7 +334,15 @@ class _FreeInferenceScreenState extends State<FreeInferenceScreen>
           // Tombol mikrofon
           if (!_isProcessing)
             GestureDetector(
-              onTap: _isRecording ? _stopAndTranscribe : _startRecording,
+              onTapDown: (_) {
+                if (!_isRecording) _startRecording();
+              },
+              onTapUp: (_) {
+                if (_isRecording) _stopAndTranscribe();
+              },
+              onTapCancel: () {
+                if (_isRecording) _stopAndTranscribe();
+              },
               child: AnimatedBuilder(
                 animation: _pulseController,
                 builder: (context, child) {
@@ -365,10 +375,8 @@ class _FreeInferenceScreenState extends State<FreeInferenceScreen>
                           ),
                         ],
                       ),
-                      child: Icon(
-                        _isRecording
-                            ? Icons.stop_rounded
-                            : Icons.mic_rounded,
+                      child: const Icon(
+                        Icons.mic_rounded,
                         color: Colors.white,
                         size: 40,
                       ),
@@ -391,7 +399,7 @@ class _FreeInferenceScreenState extends State<FreeInferenceScreen>
 
           const SizedBox(height: 16),
           Text(
-            _isRecording ? 'Tap untuk berhenti & transkripsi' : 'Tap & bicara',
+            _isRecording ? 'Lepas untuk transkripsi' : 'Tahan & bicara',
             style: GoogleFonts.poppins(
               fontSize: 12,
               color: AppColors.textLight,

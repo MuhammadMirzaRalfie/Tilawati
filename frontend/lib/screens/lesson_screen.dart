@@ -6,6 +6,8 @@ import 'package:record/record.dart';
 import '../config/theme.dart';
 import '../config/api_config.dart';
 import '../services/api_service.dart';
+import '../widgets/example_audio_button.dart';
+import '../widgets/hold_hint_banner.dart';
 
 enum _WordStatus { pending, active, correct, incorrect }
 
@@ -48,6 +50,13 @@ class _LessonScreenState extends State<LessonScreen> with TickerProviderStateMix
       .length;
   bool get _allEvaluated =>
       _tokens.isNotEmpty && !_tokenStatus.contains(_WordStatus.pending);
+
+  // Contoh bacaan ahli (opsional). Aktif bila backend menyertakan `audio_url`
+  // pada data lesson; jika tidak ada, tombol contoh tidak ditampilkan.
+  String? get _lessonAudioUrl {
+    final v = _lesson['audio_url'];
+    return (v is String && v.isNotEmpty) ? v : null;
+  }
 
   @override
   void initState() {
@@ -576,12 +585,24 @@ class _LessonScreenState extends State<LessonScreen> with TickerProviderStateMix
       ),
       child: Column(
         children: [
+          if (!_isRecording && !_isEvaluatingWord) const HoldHintBanner(),
+          if (_lessonAudioUrl != null &&
+              !_isRecording &&
+              !_isEvaluatingWord &&
+              !_showResultActions) ...[
+            ExampleAudioButton(
+              url: _lessonAudioUrl,
+              color: _color,
+              label: 'Dengar contoh',
+            ),
+            const SizedBox(height: 16),
+          ],
           Text(
             _isEvaluatingWord
                 ? 'Mengevaluasi...'
                 : _isRecording
-                    ? 'Sedang merekam...'
-                    : 'Ucapkan kata yang disorot hijau',
+                    ? 'Sedang merekam... lepas untuk berhenti'
+                    : 'Tahan tombol & ucapkan kata yang disorot hijau',
             style: GoogleFonts.poppins(
               fontSize: 14,
               color: AppColors.textSecondary,
@@ -611,7 +632,15 @@ class _LessonScreenState extends State<LessonScreen> with TickerProviderStateMix
             Column(
               children: [
                 GestureDetector(
-                  onTap: _isRecording ? _stopRecording : _startRecording,
+                  onTapDown: (_) {
+                    if (!_isRecording) _startRecording();
+                  },
+                  onTapUp: (_) {
+                    if (_isRecording) _stopRecording();
+                  },
+                  onTapCancel: () {
+                    if (_isRecording) _stopRecording();
+                  },
                   child: AnimatedBuilder(
                     animation: _pulseController,
                     builder: (context, child) {
@@ -634,8 +663,8 @@ class _LessonScreenState extends State<LessonScreen> with TickerProviderStateMix
                             ),
                           ],
                         ),
-                        child: Icon(
-                          _isRecording ? Icons.stop_rounded : Icons.mic_rounded,
+                        child: const Icon(
+                          Icons.mic_rounded,
                           color: Colors.white,
                           size: 36,
                         ),
