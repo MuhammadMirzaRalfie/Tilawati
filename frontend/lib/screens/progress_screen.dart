@@ -1,9 +1,14 @@
+import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
 import 'package:provider/provider.dart';
 import '../config/theme.dart';
 import '../providers/progress_provider.dart';
+import '../widgets/achievement_grid.dart';
+import '../widgets/error_state.dart';
+import '../widgets/skeleton_loading.dart';
 
 class ProgressScreen extends StatefulWidget {
   final bool showBackButton;
@@ -67,7 +72,13 @@ class _ProgressScreenState extends State<ProgressScreen> {
       body: Consumer<ProgressProvider>(
         builder: (context, provider, _) {
           if (provider.isLoading) {
-            return const Center(child: CircularProgressIndicator());
+            return const ProgressSkeleton();
+          }
+          if (provider.error != null) {
+            return ErrorStateWidget(
+              message: provider.error!,
+              onRetry: () => provider.fetchDashboard(),
+            );
           }
           return RefreshIndicator(
             onRefresh: () => provider.fetchDashboard(),
@@ -77,6 +88,7 @@ class _ProgressScreenState extends State<ProgressScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  if (provider.isOffline) const OfflineBanner(),
                   // Stats Cards
                   Row(
                     children: [
@@ -94,7 +106,7 @@ class _ProgressScreenState extends State<ProgressScreen> {
                         const Color(0xFFF57C00),
                       ),
                     ],
-                  ),
+                  ).animate().fadeIn(duration: 250.ms).slideY(begin: 0.08),
                   const SizedBox(height: 10),
                   Row(
                     children: [
@@ -112,6 +124,29 @@ class _ProgressScreenState extends State<ProgressScreen> {
                         const Color(0xFFD32F2F),
                       ),
                     ],
+                  ).animate().fadeIn(duration: 250.ms, delay: 80.ms).slideY(begin: 0.08),
+                  // Score trend chart (tampil jika ada >= 2 evaluasi)
+                  ..._buildScoreTrendSection(provider),
+                  const SizedBox(height: 28),
+
+                  // Achievements
+                  Text(
+                    'Pencapaian',
+                    style: GoogleFonts.poppins(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w600,
+                      color: context.textPrimary,
+                    ),
+                  ),
+                  const SizedBox(height: 14),
+                  AchievementGrid(
+                    achievements: deriveAchievements(
+                      totalEvaluations: provider.totalEvaluations,
+                      bestScore: provider.bestScore,
+                      streakDays: provider.streakDays,
+                      jilid1Completed: provider.completedLessons(1),
+                      jilid1Total: provider.totalLessons(1),
+                    ),
                   ),
                   const SizedBox(height: 28),
 
@@ -121,7 +156,7 @@ class _ProgressScreenState extends State<ProgressScreen> {
                     style: GoogleFonts.poppins(
                       fontSize: 18,
                       fontWeight: FontWeight.w600,
-                      color: AppColors.textPrimary,
+                      color: context.textPrimary,
                     ),
                   ),
                   const SizedBox(height: 14),
@@ -154,7 +189,7 @@ class _ProgressScreenState extends State<ProgressScreen> {
                     style: GoogleFonts.poppins(
                       fontSize: 18,
                       fontWeight: FontWeight.w600,
-                      color: AppColors.textPrimary,
+                      color: context.textPrimary,
                     ),
                   ),
                   const SizedBox(height: 14),
@@ -163,7 +198,7 @@ class _ProgressScreenState extends State<ProgressScreen> {
                       width: double.infinity,
                       padding: const EdgeInsets.all(32),
                       decoration: BoxDecoration(
-                        color: Colors.white,
+                        color: context.cardBg,
                         borderRadius: BorderRadius.circular(20),
                         boxShadow: [
                           BoxShadow(
@@ -182,7 +217,7 @@ class _ProgressScreenState extends State<ProgressScreen> {
                             'Belum ada aktivitas',
                             style: GoogleFonts.poppins(
                               fontSize: 14,
-                              color: AppColors.textSecondary,
+                              color: context.textSecondary,
                             ),
                           ),
                           const SizedBox(height: 4),
@@ -190,7 +225,7 @@ class _ProgressScreenState extends State<ProgressScreen> {
                             'Mulai berlatih untuk melihat riwayat',
                             style: GoogleFonts.poppins(
                               fontSize: 12,
-                              color: AppColors.textLight,
+                              color: context.textLight,
                             ),
                           ),
                         ],
@@ -203,12 +238,15 @@ class _ProgressScreenState extends State<ProgressScreen> {
                       final title = e['lesson_title'] as String? ?? '';
                       final date = e['created_at'] as String? ?? '';
                       final gradeColor = _gradeColor(score);
-                      return Container(
+                      return GestureDetector(
+                        onTap: () =>
+                            Navigator.pushNamed(context, '/riwayat'),
+                        child: Container(
                         margin: const EdgeInsets.only(bottom: 8),
                         padding: const EdgeInsets.symmetric(
                             horizontal: 16, vertical: 12),
                         decoration: BoxDecoration(
-                          color: Colors.white,
+                          color: context.cardBg,
                           borderRadius: BorderRadius.circular(14),
                           boxShadow: [
                             BoxShadow(
@@ -251,7 +289,7 @@ class _ProgressScreenState extends State<ProgressScreen> {
                                     style: GoogleFonts.poppins(
                                       fontSize: 12,
                                       fontWeight: FontWeight.w500,
-                                      color: AppColors.textPrimary,
+                                      color: context.textPrimary,
                                     ),
                                     maxLines: 1,
                                     overflow: TextOverflow.ellipsis,
@@ -260,7 +298,7 @@ class _ProgressScreenState extends State<ProgressScreen> {
                                     _formatDate(date),
                                     style: GoogleFonts.poppins(
                                       fontSize: 10,
-                                      color: AppColors.textLight,
+                                      color: context.textLight,
                                     ),
                                   ),
                                 ],
@@ -276,6 +314,7 @@ class _ProgressScreenState extends State<ProgressScreen> {
                             ),
                           ],
                         ),
+                        ),
                       );
                     }),
                 ],
@@ -285,6 +324,126 @@ class _ProgressScreenState extends State<ProgressScreen> {
         },
       ),
     );
+  }
+
+  /// Section "Tren Skor" — grafik garis skor evaluasi terbaru.
+  /// Kosong jika data kurang dari 2 titik.
+  List<Widget> _buildScoreTrendSection(ProgressProvider provider) {
+    final evals = provider.recentEvaluations;
+    if (evals.length < 2) return [];
+
+    // API mengembalikan evaluasi terbaru lebih dulu → balik agar kronologis.
+    final scores = evals.reversed
+        .map((e) =>
+            ((e['overall_score'] as num?)?.toDouble() ?? 0).clamp(0.0, 100.0))
+        .toList();
+    final spots = [
+      for (var i = 0; i < scores.length; i++)
+        FlSpot(i.toDouble(), scores[i]),
+    ];
+
+    return [
+      const SizedBox(height: 28),
+      Text(
+        'Tren Skor',
+        style: GoogleFonts.poppins(
+          fontSize: 18,
+          fontWeight: FontWeight.w600,
+          color: context.textPrimary,
+        ),
+      ),
+      const SizedBox(height: 14),
+      Container(
+        padding: const EdgeInsets.fromLTRB(8, 20, 20, 12),
+        decoration: BoxDecoration(
+          color: context.cardBg,
+          borderRadius: BorderRadius.circular(18),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.03),
+              blurRadius: 8,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        ),
+        child: SizedBox(
+          height: 180,
+          child: LineChart(
+            LineChartData(
+              minY: 0,
+              maxY: 100,
+              gridData: FlGridData(
+                show: true,
+                drawVerticalLine: false,
+                horizontalInterval: 25,
+                getDrawingHorizontalLine: (_) => FlLine(
+                  color: Theme.of(context).dividerColor.withOpacity(0.15),
+                  strokeWidth: 1,
+                ),
+              ),
+              titlesData: FlTitlesData(
+                leftTitles: AxisTitles(
+                  sideTitles: SideTitles(
+                    showTitles: true,
+                    interval: 25,
+                    reservedSize: 34,
+                    getTitlesWidget: (value, _) => Text(
+                      value.toInt().toString(),
+                      style: GoogleFonts.poppins(
+                        fontSize: 10,
+                        color: context.textLight,
+                      ),
+                    ),
+                  ),
+                ),
+                bottomTitles: const AxisTitles(
+                    sideTitles: SideTitles(showTitles: false)),
+                topTitles: const AxisTitles(
+                    sideTitles: SideTitles(showTitles: false)),
+                rightTitles: const AxisTitles(
+                    sideTitles: SideTitles(showTitles: false)),
+              ),
+              borderData: FlBorderData(show: false),
+              lineTouchData: LineTouchData(
+                touchTooltipData: LineTouchTooltipData(
+                  getTooltipItems: (touchedSpots) => touchedSpots
+                      .map((s) => LineTooltipItem(
+                            s.y.toStringAsFixed(1),
+                            GoogleFonts.poppins(
+                              color: Colors.white,
+                              fontWeight: FontWeight.w600,
+                              fontSize: 12,
+                            ),
+                          ))
+                      .toList(),
+                ),
+              ),
+              lineBarsData: [
+                LineChartBarData(
+                  spots: spots,
+                  isCurved: true,
+                  preventCurveOverShooting: true,
+                  color: AppColors.primaryLight,
+                  barWidth: 3,
+                  dotData: const FlDotData(show: true),
+                  belowBarData: BarAreaData(
+                    show: true,
+                    gradient: LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      colors: [
+                        AppColors.primaryLight.withOpacity(0.25),
+                        AppColors.primaryLight.withOpacity(0.0),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    ];
   }
 
   Widget _buildStatCard(
@@ -297,7 +456,7 @@ class _ProgressScreenState extends State<ProgressScreen> {
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: context.cardBg,
           borderRadius: BorderRadius.circular(20),
           boxShadow: [
             BoxShadow(
@@ -328,14 +487,14 @@ class _ProgressScreenState extends State<ProgressScreen> {
                     style: GoogleFonts.poppins(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
-                      color: AppColors.textPrimary,
+                      color: context.textPrimary,
                     ),
                   ),
                   Text(
                     label,
                     style: GoogleFonts.poppins(
                       fontSize: 11,
-                      color: AppColors.textSecondary,
+                      color: context.textSecondary,
                     ),
                   ),
                 ],
@@ -359,7 +518,7 @@ class _ProgressScreenState extends State<ProgressScreen> {
       margin: const EdgeInsets.only(bottom: 10),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: context.cardBg,
         borderRadius: BorderRadius.circular(18),
         boxShadow: [
           BoxShadow(
@@ -399,7 +558,7 @@ class _ProgressScreenState extends State<ProgressScreen> {
                   style: GoogleFonts.poppins(
                     fontSize: 14,
                     fontWeight: FontWeight.w500,
-                    color: AppColors.textPrimary,
+                    color: context.textPrimary,
                   ),
                 ),
               ),

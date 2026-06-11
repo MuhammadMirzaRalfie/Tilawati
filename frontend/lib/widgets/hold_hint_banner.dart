@@ -59,7 +59,7 @@ class _HoldHintBannerState extends State<HoldHintBanner> {
               'Tahan tombol lalu ucapkan, lepas untuk berhenti.',
               style: GoogleFonts.poppins(
                 fontSize: 12.5,
-                color: AppColors.textPrimary,
+                color: context.textPrimary,
               ),
             ),
           ),

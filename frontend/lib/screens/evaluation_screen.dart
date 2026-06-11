@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import '../config/theme.dart';
 import '../models/evaluation_model.dart';
 import '../providers/evaluation_provider.dart';
+import '../widgets/confetti_celebration.dart';
 
 class EvaluationScreen extends StatefulWidget {
   const EvaluationScreen({super.key});
@@ -142,7 +143,7 @@ class _EvaluationScreenState extends State<EvaluationScreen>
                     const SizedBox(height: 8),
                     Text(
                       provider.error!,
-                      style: GoogleFonts.poppins(color: AppColors.textSecondary),
+                      style: GoogleFonts.poppins(color: context.textSecondary),
                       textAlign: TextAlign.center,
                     ),
                     const SizedBox(height: 24),
@@ -161,7 +162,14 @@ class _EvaluationScreenState extends State<EvaluationScreen>
             return const Center(child: CircularProgressIndicator());
           }
 
-          return _buildResult(eval, color);
+          return Stack(
+            children: [
+              _buildResult(eval, color),
+              // Perayaan sekali jalan saat skor Mumtaz.
+              if (_showDetails && eval.overallScore >= 85)
+                const Positioned.fill(child: ConfettiCelebration()),
+            ],
+          );
         },
       ),
     );
@@ -196,7 +204,7 @@ class _EvaluationScreenState extends State<EvaluationScreen>
                       'dari 100',
                       style: GoogleFonts.poppins(
                         fontSize: 12,
-                        color: AppColors.textSecondary,
+                        color: context.textSecondary,
                       ),
                     ),
                   ],
@@ -236,7 +244,7 @@ class _EvaluationScreenState extends State<EvaluationScreen>
             eval.gradeMessage,
             style: GoogleFonts.poppins(
               fontSize: 14,
-              color: AppColors.textSecondary,
+              color: context.textSecondary,
             ),
             textAlign: TextAlign.center,
           ),
@@ -262,7 +270,7 @@ class _EvaluationScreenState extends State<EvaluationScreen>
                   Container(
                     padding: const EdgeInsets.all(20),
                     decoration: BoxDecoration(
-                      color: Colors.white,
+                      color: context.cardBg,
                       borderRadius: BorderRadius.circular(24),
                       boxShadow: [
                         BoxShadow(
@@ -280,7 +288,7 @@ class _EvaluationScreenState extends State<EvaluationScreen>
                           style: GoogleFonts.poppins(
                             fontSize: 16,
                             fontWeight: FontWeight.w600,
-                            color: AppColors.textPrimary,
+                            color: context.textPrimary,
                           ),
                         ),
                         const SizedBox(height: 16),
@@ -311,7 +319,7 @@ class _EvaluationScreenState extends State<EvaluationScreen>
                     Container(
                       padding: const EdgeInsets.all(20),
                       decoration: BoxDecoration(
-                        color: Colors.white,
+                        color: context.cardBg,
                         borderRadius: BorderRadius.circular(24),
                         boxShadow: [
                           BoxShadow(
@@ -334,7 +342,7 @@ class _EvaluationScreenState extends State<EvaluationScreen>
                                 style: GoogleFonts.poppins(
                                   fontSize: 16,
                                   fontWeight: FontWeight.w600,
-                                  color: AppColors.textPrimary,
+                                  color: context.textPrimary,
                                 ),
                               ),
                             ],
@@ -362,7 +370,7 @@ class _EvaluationScreenState extends State<EvaluationScreen>
                                       tip,
                                       style: GoogleFonts.poppins(
                                         fontSize: 13,
-                                        color: AppColors.textSecondary,
+                                        color: context.textSecondary,
                                         height: 1.5,
                                       ),
                                     ),
@@ -415,7 +423,7 @@ class _EvaluationScreenState extends State<EvaluationScreen>
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: context.cardBg,
         borderRadius: BorderRadius.circular(24),
         boxShadow: [
           BoxShadow(
@@ -438,7 +446,7 @@ class _EvaluationScreenState extends State<EvaluationScreen>
                 style: GoogleFonts.poppins(
                   fontSize: 16,
                   fontWeight: FontWeight.w600,
-                  color: AppColors.textPrimary,
+                  color: context.textPrimary,
                 ),
               ),
             ],
@@ -449,7 +457,7 @@ class _EvaluationScreenState extends State<EvaluationScreen>
           if (expected != null) ...[
             const SizedBox(height: 8),
             _buildTranscriptRow('Yang diharapkan', '"${expected.toUpperCase()}"',
-                AppColors.textSecondary),
+                context.textSecondary),
           ],
         ],
       ),
@@ -466,11 +474,11 @@ class _EvaluationScreenState extends State<EvaluationScreen>
             label,
             style: GoogleFonts.poppins(
               fontSize: 12,
-              color: AppColors.textSecondary,
+              color: context.textSecondary,
             ),
           ),
         ),
-        const Text(': ', style: TextStyle(color: AppColors.textLight)),
+        Text(': ', style: TextStyle(color: context.textLight)),
         Expanded(
           child: Text(
             value,
@@ -508,7 +516,7 @@ class _EvaluationScreenState extends State<EvaluationScreen>
                 style: GoogleFonts.poppins(
                   fontSize: 13,
                   fontWeight: FontWeight.w500,
-                  color: AppColors.textPrimary,
+                  color: context.textPrimary,
                 ),
               ),
               const SizedBox(height: 4),

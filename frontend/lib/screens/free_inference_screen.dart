@@ -181,7 +181,6 @@ class _FreeInferenceScreenState extends State<FreeInferenceScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF7F8FC),
       appBar: AppBar(
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios_rounded),
@@ -287,7 +286,7 @@ class _FreeInferenceScreenState extends State<FreeInferenceScreen>
       width: double.infinity,
       padding: const EdgeInsets.symmetric(vertical: 36, horizontal: 24),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: context.cardBg,
         borderRadius: BorderRadius.circular(24),
         boxShadow: [
           BoxShadow(
@@ -309,7 +308,7 @@ class _FreeInferenceScreenState extends State<FreeInferenceScreen>
                     : 'Tahan mikrofon & bicara',
             style: GoogleFonts.poppins(
               fontSize: 14,
-              color: _isRecording ? AppColors.error : AppColors.textSecondary,
+              color: _isRecording ? AppColors.error : context.textSecondary,
               fontWeight: _isRecording ? FontWeight.w600 : FontWeight.normal,
             ),
           ),
@@ -321,26 +320,22 @@ class _FreeInferenceScreenState extends State<FreeInferenceScreen>
             style: GoogleFonts.poppins(
               fontSize: 40,
               fontWeight: FontWeight.w200,
-              color: _isRecording ? AppColors.error : AppColors.textLight,
+              color: _isRecording ? AppColors.error : context.textLight,
               letterSpacing: 2,
             ),
           ),
           const SizedBox(height: 28),
 
-          // Gelombang suara animasi saat rekam
-          if (_isRecording) _buildWaveform(),
-          if (_isRecording) const SizedBox(height: 24),
-
           // Tombol mikrofon
           if (!_isProcessing)
-            GestureDetector(
-              onTapDown: (_) {
+            Listener(
+              onPointerDown: (_) {
                 if (!_isRecording) _startRecording();
               },
-              onTapUp: (_) {
+              onPointerUp: (_) {
                 if (_isRecording) _stopAndTranscribe();
               },
-              onTapCancel: () {
+              onPointerCancel: (_) {
                 if (_isRecording) _stopAndTranscribe();
               },
               child: AnimatedBuilder(
@@ -402,9 +397,16 @@ class _FreeInferenceScreenState extends State<FreeInferenceScreen>
             _isRecording ? 'Lepas untuk transkripsi' : 'Tahan & bicara',
             style: GoogleFonts.poppins(
               fontSize: 12,
-              color: AppColors.textLight,
+              color: context.textLight,
             ),
           ),
+
+          // Gelombang suara animasi saat rekam (di bawah tombol agar tombol
+          // tidak bergeser saat mulai merekam).
+          if (_isRecording) ...[
+            const SizedBox(height: 20),
+            _buildWaveform(),
+          ],
         ],
       ),
     );
@@ -446,7 +448,7 @@ class _FreeInferenceScreenState extends State<FreeInferenceScreen>
       width: double.infinity,
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: context.cardBg,
         borderRadius: BorderRadius.circular(20),
         border: Border.all(color: const Color(0xFF1976D2).withOpacity(0.15)),
       ),
@@ -477,7 +479,7 @@ class _FreeInferenceScreenState extends State<FreeInferenceScreen>
                   'Wav2Vec2 EXP-03-E3 sedang mentranskripsi',
                   style: GoogleFonts.poppins(
                     fontSize: 12,
-                    color: AppColors.textSecondary,
+                    color: context.textSecondary,
                   ),
                 ),
               ],
@@ -498,7 +500,7 @@ class _FreeInferenceScreenState extends State<FreeInferenceScreen>
         width: double.infinity,
         padding: const EdgeInsets.all(24),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: context.cardBg,
           borderRadius: BorderRadius.circular(24),
           boxShadow: [
             BoxShadow(
@@ -554,7 +556,7 @@ class _FreeInferenceScreenState extends State<FreeInferenceScreen>
                   '${_words.length} token',
                   style: GoogleFonts.poppins(
                     fontSize: 12,
-                    color: AppColors.textSecondary,
+                    color: context.textSecondary,
                   ),
                 ),
               ],
@@ -568,7 +570,7 @@ class _FreeInferenceScreenState extends State<FreeInferenceScreen>
                 style: GoogleFonts.poppins(
                   fontSize: 12,
                   fontWeight: FontWeight.w600,
-                  color: AppColors.textSecondary,
+                  color: context.textSecondary,
                   letterSpacing: 0.5,
                 ),
               ),
@@ -627,7 +629,7 @@ class _FreeInferenceScreenState extends State<FreeInferenceScreen>
                       'Teks Lengkap',
                       style: GoogleFonts.poppins(
                         fontSize: 11,
-                        color: AppColors.textSecondary,
+                        color: context.textSecondary,
                         fontWeight: FontWeight.w500,
                       ),
                     ),
@@ -661,7 +663,7 @@ class _FreeInferenceScreenState extends State<FreeInferenceScreen>
                           : 'Model ASR tidak tersedia.\nDeploy model terlebih dahulu.',
                       style: GoogleFonts.poppins(
                         fontSize: 14,
-                        color: AppColors.textSecondary,
+                        color: context.textSecondary,
                         height: 1.5,
                       ),
                       textAlign: TextAlign.center,
@@ -782,8 +784,8 @@ class _FreeInferenceScreenState extends State<FreeInferenceScreen>
                                   fontSize: 14,
                                   fontWeight: FontWeight.w500,
                                   color: item.transcript.isEmpty
-                                      ? AppColors.textLight
-                                      : AppColors.textPrimary,
+                                      ? context.textLight
+                                      : context.textPrimary,
                                 ),
                               ),
                               const SizedBox(height: 2),
@@ -791,7 +793,7 @@ class _FreeInferenceScreenState extends State<FreeInferenceScreen>
                                 '${item.words.length} token · ${item.duration}s · ${_timeAgo(item.timestamp)}',
                                 style: GoogleFonts.poppins(
                                   fontSize: 11,
-                                  color: AppColors.textLight,
+                                  color: context.textLight,
                                 ),
                               ),
                             ],

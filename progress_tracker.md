@@ -1,6 +1,6 @@
 # Progress Tracker — TilawatiApp (Tilawati Hijaiyah ASR)
 
-**Update Terakhir:** 2026-06-08  
+**Update Terakhir:** 2026-06-11  
 **Status Proyek:** Production LIVE ✅ — HF Spaces + Railway + APK semua running
 
 ---
@@ -68,10 +68,14 @@ Worst-case: HF cold start 55s + network ~5s = ~60s → Flutter 70s cukup menutup
 - Glossary: list huruf hijaiyah + klasifikasi (lokal)
 
 ### UI/UX ✅
-- Dark mode, bottom nav (5 tab), responsive Android 6.0+
+- **Dark mode** (2026-06-11) — toggle di Profil, persist via SharedPreferences. (Catatan: klaim "dark mode" di tracker sebelumnya tidak akurat — baru benar-benar diimplementasi sekarang.)
+- Bottom nav (4 tab), responsive Android 6.0+
 - Fix overflow teks Arab (FittedBox)
 - Tombol Ulangi/Lanjut di lesson
 - Progress tab pakai ProgressProvider (fix navbar bug)
+- **Offline/error UX** (2026-06-11) — ErrorStateWidget reusable + pesan ramah ("Tidak ada koneksi internet"), cache dashboard & glossary di SharedPreferences dengan banner offline
+- **Achievements** (2026-06-11) — 7 badge client-side di tab Progres (derive dari data dashboard, tanpa backend)
+- **Notifikasi lokal** (2026-06-11) — pengingat latihan harian 18:00 via flutter_local_notifications; toggle Notifikasi di Profil kini benar-benar berfungsi
 
 ---
 
@@ -90,9 +94,9 @@ Worst-case: HF cold start 55s + network ~5s = ~60s → Flutter 70s cukup menutup
 
 - [✅ ] Deploy classification model ke remote (untuk glossary classify)
 - [ ] Konten Jilid 2-6 lessons
-- [ ] Offline graceful error message
+- [✅] Offline graceful error message (2026-06-11)
 - [ ] Unit test + integration test
-- [ ] Gamifikasi (leaderboard, achievements, streaks)
+- [~] Gamifikasi — achievements ✅ + streak display ✅ (2026-06-11); leaderboard belum
 
 ---
 
@@ -126,6 +130,43 @@ Worst-case: HF cold start 55s + network ~5s = ~60s → Flutter 70s cukup menutup
 ---
 
 ## Riwayat Sesi
+
+### Sesi 2026-06-11 — 4 Quick Wins: Offline UX, Dark Mode, Achievements, Notifikasi
+
+**Yang dikerjakan (semua frontend, tanpa perubahan backend):**
+1. **Offline/Error UX** — `_guard()` di `api_service.dart` mengubah `SocketException`/`TimeoutException` jadi pesan ramah; util `saveCache`/`loadCache` (SharedPreferences); `ErrorStateWidget` + `OfflineBanner` reusable (`widgets/error_state.dart`); fallback cache di dashboard progres & glossary; error state di Progres/Glosarium/Riwayat (sebelumnya silent fail → angka 0).
+2. **Dark Mode** — `AppTheme.darkTheme` + `ThemeProvider` baru, extension `ThemeColors on BuildContext` (`cardBg`/`textPrimary`/`textSecondary`/`textLight`), sweep warna hardcoded di 11 screen + 2 widget, toggle "Mode Gelap" di Profil, persist `dark_mode` pref, status bar menyesuaikan per theme.
+3. **Achievements** — `widgets/achievement_grid.dart`: 7 badge (Latihan Pertama/10/50, Rajin, Konsisten, Mumtaz, Jilid 1 Tamat) derive client-side dari data dashboard; section "Pencapaian" di tab Progres; tap badge → dialog deskripsi.
+4. **Notifikasi Lokal** — `flutter_local_notifications` ^18 + `timezone`; desugaring di `build.gradle.kts`; permission `POST_NOTIFICATIONS` + boot receiver di manifest; `services/notification_service.dart` (reminder harian 18:00, inexact alarm → tanpa SCHEDULE_EXACT_ALARM); toggle Notifikasi di Profil kini schedule/cancel sungguhan + handle penolakan izin Android 13+.
+
+**Output:**
+- `flutter analyze` bersih; APK release rebuild (87.8 MB) dengan `--dart-define=API_BASE_URL=...railway.app`.
+- File baru: `lib/providers/theme_provider.dart`, `lib/widgets/error_state.dart`, `lib/widgets/achievement_grid.dart`, `lib/services/notification_service.dart`.
+
+**Belum diverifikasi di device (perlu smoke test manual):**
+- Visual dark mode tiap screen, notifikasi 18:00 muncul, banner offline saat airplane mode, badge sesuai data.
+
+**Lanjutan sesi yang sama — 4 polesan UI/UX:**
+1. **Font Arab Amiri** — ganti `fontFamily: 'Arial'` → `GoogleFonts.amiri` di lesson, glosarium, dan detail glosarium (font naskh yang layak untuk teks Al-Qur'an).
+2. **Shimmer skeleton loading** — `widgets/skeleton_loading.dart` (ProgressSkeleton, GlossaryGridSkeleton, HistoryListSkeleton) menggantikan spinner polos; theme-aware dark/light. Package `shimmer` yang sudah terpasang akhirnya dipakai.
+3. **Grafik tren skor** — section "Tren Skor" di tab Progres (LineChart `fl_chart` dari recent evaluations, tampil jika ≥2 data, tooltip skor). Package `fl_chart` yang sudah terpasang akhirnya dipakai.
+4. **Confetti Mumtaz** — `widgets/confetti_celebration.dart` (CustomPainter ~3 detik, tanpa aset eksternal) muncul di halaman evaluasi saat skor ≥85.
+- Keputusan user: **tanpa haptic feedback** (getaran tidak disukai).
+- APK rebuild (88.4 MB) + terinstall & diluncurkan di Xiaomi 24090RA29G.
+- Catatan: `lottie` & `flutter_animate` di pubspec masih belum terpakai — kandidat dihapus untuk mengecilkan APK.
+
+**Lanjutan sesi yang sama — 10 pembaruan UI/UX (hasil analisa screenshot):**
+1. **Status di daftar pelajaran** — data jilid statis diekstrak ke `lib/data/tilawati_lessons.dart` (`kJilids`); kartu lesson kini menampilkan ✓ + chip "Skor X" (warna sesuai grade) / "Belum dikerjakan", ikon play→replay, border hijau untuk yang selesai; header jilid menampilkan "X/N pelajaran selesai". Status dari history evaluasi (`fetchHistory(limit: 100)` — provider sekarang menerima param limit), refresh otomatis setelah kembali dari latihan.
+2. **Kartu "Lanjutkan Latihan" di Beranda** — target = pelajaran setelah evaluasi terakhir, dengan progress bar jilid; navigasi langsung ke `/lesson`. Dashboard di-fetch saat HomeScreen init.
+3. **Progres di badge terkunci** — Achievement punya field `progress` ("2/10", "1/3 hari", "Terbaik 85"); tampil emas kecil di badge terkunci; opacity terkunci dinaikkan 0.45→0.6.
+4. **Ornamen geometris Islami** — `widgets/islamic_pattern.dart` (CustomPainter bintang 8 sudut konsentris, tanpa aset); dipasang di banner Beranda (putih transparan) + latar login (hijau/emas transparan).
+5. **Legenda warna + progress bar di latihan** — chip legenda (Giliran Anda/Benar/Perlu diulang/Belum) di atas kartu Arab; LinearProgressIndicator tipis di bawah AppBar (evaluated/total).
+6. **Animasi stagger (flutter_animate akhirnya dipakai)** — fade-in+slide pada grid jilid, list lesson, menu Beranda, stat cards Progres, kartu Lanjutkan.
+7. **Aktivitas Terbaru tappable** → membuka /riwayat.
+8. **Ikon Mode Gelap** statis bulan. 9. **Pill indicator** di bottom nav aktif. 10. Emoji ✨ di register dihapus.
+- `flutter analyze` bersih; APK rebuild 88.6 MB. **Install ke HP tertunda — device tidak terdeteksi ADB saat itu** (`adb install -r frontend/build/app/outputs/flutter-apk/app-release.apk` saat HP tersambung).
+
+---
 
 ### Sesi 2026-06-08 — Fitur Tap-to-Jump pada Latihan Modul + Fix Build
 

@@ -1,9 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:provider/provider.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:percent_indicator/linear_percent_indicator.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../config/theme.dart';
+import '../data/tilawati_lessons.dart';
 import '../providers/auth_provider.dart';
+import '../providers/progress_provider.dart';
+import '../providers/theme_provider.dart';
+import '../services/notification_service.dart';
+import '../widgets/islamic_pattern.dart';
 import 'progress_screen.dart';
 
 
@@ -16,6 +23,15 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   int _currentIndex = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    // Data dashboard dipakai kartu "Lanjutkan Latihan" di Beranda.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<ProgressProvider>().fetchDashboard();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -33,7 +49,7 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
       bottomNavigationBar: Container(
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: context.cardBg,
           boxShadow: [
             BoxShadow(
               color: Colors.black.withOpacity(0.06),
@@ -53,26 +69,32 @@ class _HomeScreenState extends State<HomeScreen> {
             }
             setState(() => _currentIndex = index);
           },
-          items: const [
-            BottomNavigationBarItem(
-              icon: Icon(Icons.home_rounded),
-              label: 'Beranda',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.menu_book_rounded),
-              label: 'Jilid',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.bar_chart_rounded),
-              label: 'Progres',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.person_rounded),
-              label: 'Profil',
-            ),
+          items: [
+            _navItem(Icons.home_rounded, 'Beranda'),
+            _navItem(Icons.menu_book_rounded, 'Jilid'),
+            _navItem(Icons.bar_chart_rounded, 'Progres'),
+            _navItem(Icons.person_rounded, 'Profil'),
           ],
         ),
       ),
+    );
+  }
+
+  /// Item bottom nav dengan pill highlight saat aktif.
+  BottomNavigationBarItem _navItem(IconData icon, String label) {
+    final accent =
+        context.isDarkMode ? AppColors.primaryLight : AppColors.primary;
+    return BottomNavigationBarItem(
+      icon: Icon(icon),
+      activeIcon: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+        decoration: BoxDecoration(
+          color: accent.withOpacity(0.12),
+          borderRadius: BorderRadius.circular(14),
+        ),
+        child: Icon(icon),
+      ),
+      label: label,
     );
   }
 }
@@ -104,7 +126,7 @@ class _HomeTab extends StatelessWidget {
                         'Assalamu\'alaikum,',
                         style: GoogleFonts.poppins(
                           fontSize: 14,
-                          color: AppColors.textSecondary,
+                          color: context.textSecondary,
                         ),
                       ),
                       Text(
@@ -112,7 +134,7 @@ class _HomeTab extends StatelessWidget {
                         style: GoogleFonts.poppins(
                           fontSize: 22,
                           fontWeight: FontWeight.bold,
-                          color: AppColors.textPrimary,
+                          color: context.textPrimary,
                         ),
                       ),
                     ],
@@ -145,7 +167,6 @@ class _HomeTab extends StatelessWidget {
             // Banner Card
             Container(
               width: double.infinity,
-              padding: const EdgeInsets.all(24),
               decoration: BoxDecoration(
                 gradient: const LinearGradient(
                   begin: Alignment.topLeft,
@@ -161,7 +182,30 @@ class _HomeTab extends StatelessWidget {
                   ),
                 ],
               ),
-              child: Column(
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(24),
+                child: Stack(
+                  children: [
+                    // Ornamen geometris halus di pojok banner
+                    Positioned(
+                      right: -35,
+                      top: -35,
+                      child: IslamicStarOrnament(
+                        size: 160,
+                        color: Colors.white.withOpacity(0.10),
+                      ),
+                    ),
+                    Positioned(
+                      right: 40,
+                      bottom: -50,
+                      child: IslamicStarOrnament(
+                        size: 110,
+                        color: Colors.white.withOpacity(0.07),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(24),
+                      child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Container(
@@ -222,8 +266,14 @@ class _HomeTab extends StatelessWidget {
                     ),
                   ),
                 ],
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
+            // Lanjutkan latihan dari posisi terakhir
+            ..._buildContinueSection(context),
             const SizedBox(height: 28),
 
             // Quick Menu
@@ -232,7 +282,7 @@ class _HomeTab extends StatelessWidget {
               style: GoogleFonts.poppins(
                 fontSize: 18,
                 fontWeight: FontWeight.w600,
-                color: AppColors.textPrimary,
+                color: context.textPrimary,
               ),
             ),
             const SizedBox(height: 16),
@@ -256,7 +306,7 @@ class _HomeTab extends StatelessWidget {
                   onTap: () => Navigator.pushNamed(context, '/progress'),
                 ),
               ],
-            ),
+            ).animate().fadeIn(duration: 250.ms).slideY(begin: 0.08),
             const SizedBox(height: 12),
             Row(
               children: [
@@ -278,7 +328,7 @@ class _HomeTab extends StatelessWidget {
                   onTap: () => Navigator.pushNamed(context, '/free-inference'),
                 ),
               ],
-            ),
+            ).animate().fadeIn(duration: 250.ms, delay: 80.ms).slideY(begin: 0.08),
             const SizedBox(height: 12),
             Row(
               children: [
@@ -291,9 +341,9 @@ class _HomeTab extends StatelessWidget {
                   onTap: () => Navigator.pushNamed(context, '/riwayat'),
                 ),
                 const SizedBox(width: 12),
-                Expanded(child: SizedBox()),
+                const Expanded(child: SizedBox()),
               ],
-            ),
+            ).animate().fadeIn(duration: 250.ms, delay: 160.ms).slideY(begin: 0.08),
             const SizedBox(height: 28),
 
             // Tips Section
@@ -302,11 +352,12 @@ class _HomeTab extends StatelessWidget {
               style: GoogleFonts.poppins(
                 fontSize: 18,
                 fontWeight: FontWeight.w600,
-                color: AppColors.textPrimary,
+                color: context.textPrimary,
               ),
             ),
             const SizedBox(height: 12),
             _buildTipCard(
+              context,
               '🎯 Konsistensi',
               '''أَحَبُّ الأَعْمَالِ إِلَى اللَّهِ أَدْوَمُهَا وَإِنْ قَلَّ
 
@@ -314,10 +365,12 @@ class _HomeTab extends StatelessWidget {
 (HR. Bukhari dan Muslim).''',
             ),
             _buildTipCard(
+              context,
               '🎤 Lingkungan Tenang',
               'Rekam bacaan di tempat tenang untuk hasil evaluasi AI yang lebih akurat.',
             ),
             _buildTipCard(
+              context,
               '📝 Perbaiki Bertahap',
               'Fokus memperbaiki satu aspek (makhraj/tajwid) per sesi latihan.',
             ),
@@ -341,7 +394,7 @@ class _HomeTab extends StatelessWidget {
         child: Container(
           padding: const EdgeInsets.all(18),
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: context.cardBg,
             borderRadius: BorderRadius.circular(20),
             boxShadow: [
               BoxShadow(
@@ -369,14 +422,14 @@ class _HomeTab extends StatelessWidget {
                 style: GoogleFonts.poppins(
                   fontSize: 15,
                   fontWeight: FontWeight.w600,
-                  color: AppColors.textPrimary,
+                  color: context.textPrimary,
                 ),
               ),
               Text(
                 subtitle,
                 style: GoogleFonts.poppins(
                   fontSize: 12,
-                  color: AppColors.textSecondary,
+                  color: context.textSecondary,
                 ),
               ),
             ],
@@ -386,13 +439,152 @@ class _HomeTab extends StatelessWidget {
     );
   }
 
-  Widget _buildTipCard(String title, String content) {
+  /// Kartu "Lanjutkan Latihan": target = pelajaran setelah evaluasi terakhir
+  /// (atau pelajaran yang sama jika sudah di akhir jilid). Kosong jika belum
+  /// pernah latihan.
+  List<Widget> _buildContinueSection(BuildContext context) {
+    final progress = context.watch<ProgressProvider>();
+    if (progress.recentEvaluations.isEmpty) return [];
+
+    final last = progress.recentEvaluations.first;
+    final jilidNum = (last['jilid'] as num?)?.toInt() ?? 1;
+    final lastLesson = (last['lesson_number'] as num?)?.toInt() ?? 1;
+
+    final jilid = kJilids.firstWhere(
+      (j) => j['jilid'] == jilidNum,
+      orElse: () => kJilids.first,
+    );
+    // cast() penting: list literal di kJilids ber-elemen Map<String, Object>,
+    // sehingga orElse pada firstWhere butuh tipe E yang konsisten.
+    final lessons =
+        (jilid['lessons'] as List).cast<Map<String, dynamic>>();
+    final next = lessons.firstWhere(
+      (l) => l['number'] == lastLesson + 1,
+      orElse: () => lessons.firstWhere(
+        (l) => l['number'] == lastLesson,
+        orElse: () => lessons.first,
+      ),
+    );
+    final color = jilid['color'] as Color;
+
+    final completed = progress.completedLessons(jilidNum);
+    final total = progress.totalLessons(jilidNum) > 0
+        ? progress.totalLessons(jilidNum)
+        : lessons.length;
+    final percent = (completed / total).clamp(0.0, 1.0);
+
+    return [
+      const SizedBox(height: 16),
+      GestureDetector(
+        onTap: () {
+          Navigator.pushNamed(
+            context,
+            '/lesson',
+            arguments: {'jilid': jilidNum, 'lesson': next, 'color': color},
+          );
+        },
+        child: Container(
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: context.cardBg,
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(color: color.withOpacity(0.25)),
+            boxShadow: [
+              BoxShadow(
+                color: color.withOpacity(0.08),
+                blurRadius: 12,
+                offset: const Offset(0, 4),
+              ),
+            ],
+          ),
+          child: Row(
+            children: [
+              Container(
+                width: 48,
+                height: 48,
+                decoration: BoxDecoration(
+                  color: color.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(14),
+                ),
+                child: Icon(Icons.auto_stories_rounded, color: color, size: 24),
+              ),
+              const SizedBox(width: 14),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'LANJUTKAN LATIHAN',
+                      style: GoogleFonts.poppins(
+                        fontSize: 10,
+                        fontWeight: FontWeight.w600,
+                        letterSpacing: 1.2,
+                        color: color,
+                      ),
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      'Jilid $jilidNum · ${next['title']}',
+                      style: GoogleFonts.poppins(
+                        fontSize: 13,
+                        fontWeight: FontWeight.w600,
+                        color: context.textPrimary,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    const SizedBox(height: 8),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: LinearPercentIndicator(
+                            padding: EdgeInsets.zero,
+                            lineHeight: 6,
+                            percent: percent,
+                            backgroundColor: color.withOpacity(0.12),
+                            progressColor: color,
+                            barRadius: const Radius.circular(3),
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        Text(
+                          '$completed/$total',
+                          style: GoogleFonts.poppins(
+                            fontSize: 11,
+                            fontWeight: FontWeight.w600,
+                            color: color,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(width: 10),
+              Container(
+                width: 36,
+                height: 36,
+                decoration: BoxDecoration(
+                  color: color,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: const Icon(Icons.arrow_forward_rounded,
+                    color: Colors.white, size: 20),
+              ),
+            ],
+          ),
+        ),
+      ).animate().fadeIn(duration: 300.ms).slideY(begin: 0.1),
+    ];
+  }
+
+  Widget _buildTipCard(BuildContext context, String title, String content) {
     return Container(
       width: double.infinity,
       margin: const EdgeInsets.only(bottom: 10),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: context.cardBg,
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
@@ -410,7 +602,7 @@ class _HomeTab extends StatelessWidget {
             style: GoogleFonts.poppins(
               fontSize: 14,
               fontWeight: FontWeight.w600,
-              color: AppColors.textPrimary,
+              color: context.textPrimary,
             ),
           ),
           const SizedBox(height: 4),
@@ -418,7 +610,7 @@ class _HomeTab extends StatelessWidget {
             content,
             style: GoogleFonts.poppins(
               fontSize: 13,
-              color: AppColors.textSecondary,
+              color: context.textSecondary,
               height: 1.5,
             ),
           ),
@@ -448,15 +640,42 @@ class _ProfileTabState extends State<_ProfileTab> {
 
   Future<void> _loadNotificationPref() async {
     final prefs = await SharedPreferences.getInstance();
+    final enabled = prefs.getBool('notifications_enabled') ?? true;
     if (mounted) {
-      setState(() {
-        _notificationsEnabled = prefs.getBool('notifications_enabled') ?? true;
-      });
+      setState(() => _notificationsEnabled = enabled);
+    }
+    // Sinkronkan state: pref default true tapi jadwal belum tentu terpasang
+    // (mis. setelah reinstall). zonedSchedule dengan id sama bersifat replace.
+    if (enabled) {
+      final granted = await NotificationService.requestPermission();
+      if (granted) await NotificationService.scheduleDailyReminder();
     }
   }
 
   Future<void> _saveNotificationPref(bool value) async {
     final prefs = await SharedPreferences.getInstance();
+
+    if (value) {
+      final granted = await NotificationService.requestPermission();
+      if (!granted) {
+        if (mounted) {
+          setState(() => _notificationsEnabled = false);
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text(
+                  'Izin notifikasi ditolak. Aktifkan di pengaturan perangkat.'),
+              backgroundColor: AppColors.error,
+            ),
+          );
+        }
+        await prefs.setBool('notifications_enabled', false);
+        return;
+      }
+      await NotificationService.scheduleDailyReminder();
+    } else {
+      await NotificationService.cancelReminder();
+    }
+
     await prefs.setBool('notifications_enabled', value);
   }
 
@@ -501,7 +720,7 @@ class _ProfileTabState extends State<_ProfileTab> {
                   style: GoogleFonts.poppins(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
-                    color: AppColors.textPrimary,
+                    color: context.textPrimary,
                   ),
                 ),
                 const SizedBox(height: 20),
@@ -566,14 +785,16 @@ class _ProfileTabState extends State<_ProfileTab> {
               SwitchListTile(
                 title: Text('Pengingat latihan harian',
                     style: GoogleFonts.poppins(fontSize: 14)),
-                subtitle: Text('Ingatkan saya untuk berlatih setiap hari',
-                    style: GoogleFonts.poppins(fontSize: 12, color: AppColors.textSecondary)),
+                subtitle: Text('Ingatkan saya berlatih setiap hari pukul 18:00',
+                    style: GoogleFonts.poppins(fontSize: 12, color: context.textSecondary)),
                 value: _notificationsEnabled,
                 activeColor: AppColors.primary,
-                onChanged: (val) {
-                  setDialogState(() {});
+                onChanged: (val) async {
                   setState(() => _notificationsEnabled = val);
-                  _saveNotificationPref(val);
+                  setDialogState(() {});
+                  await _saveNotificationPref(val);
+                  // Refresh dialog: izin bisa ditolak → switch kembali off.
+                  setDialogState(() {});
                 },
               ),
             ],
@@ -634,25 +855,30 @@ class _ProfileTabState extends State<_ProfileTab> {
               width: 72,
               height: 72,
               decoration: BoxDecoration(
-                gradient: const LinearGradient(colors: [AppColors.primary, AppColors.primaryLight]),
+                // Logo butuh latar terang agar terlihat di dark mode.
+                color: Colors.white,
                 borderRadius: BorderRadius.circular(20),
+                border: Border.all(color: AppColors.primary.withOpacity(0.15)),
               ),
-              child: const Icon(Icons.menu_book_rounded, color: Colors.white, size: 36),
+              child: Padding(
+                padding: const EdgeInsets.all(8),
+                child: Image.asset('assets/icon/logo_aplikasi.png'),
+              ),
             ),
             const SizedBox(height: 16),
             Text('Tilawati',
-                style: GoogleFonts.poppins(fontSize: 20, fontWeight: FontWeight.bold, color: AppColors.textPrimary)),
+                style: GoogleFonts.poppins(fontSize: 20, fontWeight: FontWeight.bold, color: context.textPrimary)),
             Text('v1.0.0',
-                style: GoogleFonts.poppins(fontSize: 13, color: AppColors.textSecondary)),
+                style: GoogleFonts.poppins(fontSize: 13, color: context.textSecondary)),
             const SizedBox(height: 16),
             Text(
               'Aplikasi pembelajaran bacaan Al-Qur\'an berbasis AI menggunakan metode Tilawati. Membantu pengguna belajar dan mengevaluasi bacaan huruf hijaiyah dengan teknologi pengenalan suara.',
-              style: GoogleFonts.poppins(fontSize: 13, color: AppColors.textSecondary, height: 1.6),
+              style: GoogleFonts.poppins(fontSize: 13, color: context.textSecondary, height: 1.6),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 12),
             Text('Tilawati — 2025',
-                style: GoogleFonts.poppins(fontSize: 12, color: AppColors.textLight)),
+                style: GoogleFonts.poppins(fontSize: 12, color: context.textLight)),
           ],
         ),
         actions: [
@@ -672,10 +898,10 @@ class _ProfileTabState extends State<_ProfileTab> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(question,
-              style: GoogleFonts.poppins(fontSize: 13, fontWeight: FontWeight.w600, color: AppColors.textPrimary)),
+              style: GoogleFonts.poppins(fontSize: 13, fontWeight: FontWeight.w600, color: context.textPrimary)),
           const SizedBox(height: 4),
           Text(answer,
-              style: GoogleFonts.poppins(fontSize: 12, color: AppColors.textSecondary, height: 1.5)),
+              style: GoogleFonts.poppins(fontSize: 12, color: context.textSecondary, height: 1.5)),
         ],
       ),
     );
@@ -725,12 +951,12 @@ class _ProfileTabState extends State<_ProfileTab> {
               style: GoogleFonts.poppins(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
-                color: AppColors.textPrimary,
+                color: context.textPrimary,
               ),
             ),
             Text(
               user?.email ?? '',
-              style: GoogleFonts.poppins(fontSize: 14, color: AppColors.textSecondary),
+              style: GoogleFonts.poppins(fontSize: 14, color: context.textSecondary),
             ),
             const SizedBox(height: 32),
 
@@ -740,6 +966,7 @@ class _ProfileTabState extends State<_ProfileTab> {
               title: 'Edit Profil',
               onTap: _showEditProfile,
             ),
+            _buildDarkModeItem(),
             _buildProfileMenuItem(
               icon: Icons.notifications_outlined,
               title: 'Notifikasi',
@@ -791,6 +1018,43 @@ class _ProfileTabState extends State<_ProfileTab> {
     );
   }
 
+  Widget _buildDarkModeItem() {
+    final themeProvider = context.watch<ThemeProvider>();
+    return Container(
+      margin: const EdgeInsets.only(bottom: 8),
+      decoration: BoxDecoration(
+        color: context.cardBg,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.03),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: SwitchListTile(
+        secondary: Icon(
+          Icons.dark_mode_outlined,
+          color: context.textPrimary,
+        ),
+        title: Text(
+          'Mode Gelap',
+          style: GoogleFonts.poppins(
+            fontSize: 15,
+            fontWeight: FontWeight.w500,
+            color: context.textPrimary,
+          ),
+        ),
+        value: themeProvider.isDark,
+        activeColor: AppColors.primaryLight,
+        onChanged: (v) => themeProvider.toggle(v),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 4),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      ),
+    );
+  }
+
   Widget _buildProfileMenuItem({
     required IconData icon,
     required String title,
@@ -801,7 +1065,7 @@ class _ProfileTabState extends State<_ProfileTab> {
     return Container(
       margin: const EdgeInsets.only(bottom: 8),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: context.cardBg,
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
@@ -812,20 +1076,20 @@ class _ProfileTabState extends State<_ProfileTab> {
         ],
       ),
       child: ListTile(
-        leading: Icon(icon, color: color ?? AppColors.textPrimary),
+        leading: Icon(icon, color: color ?? context.textPrimary),
         title: Text(
           title,
           style: GoogleFonts.poppins(
             fontSize: 15,
             fontWeight: FontWeight.w500,
-            color: color ?? AppColors.textPrimary,
+            color: color ?? context.textPrimary,
           ),
         ),
         subtitle: subtitle != null
             ? Text(subtitle,
-                style: GoogleFonts.poppins(fontSize: 12, color: AppColors.textSecondary))
+                style: GoogleFonts.poppins(fontSize: 12, color: context.textSecondary))
             : null,
-        trailing: Icon(Icons.chevron_right_rounded, color: color ?? AppColors.textLight),
+        trailing: Icon(Icons.chevron_right_rounded, color: color ?? context.textLight),
         onTap: onTap,
         contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 4),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),

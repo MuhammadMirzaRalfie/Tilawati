@@ -147,8 +147,7 @@ class _GlossaryDetailScreenState extends State<GlossaryDetailScreen>
                 children: [
                   Text(
                     letter['arabic'] as String,
-                    style: TextStyle(
-                      fontFamily: 'Arial',
+                    style: GoogleFonts.amiri(
                       fontSize: 80,
                       color: color,
                       height: 1.2,
@@ -184,7 +183,7 @@ class _GlossaryDetailScreenState extends State<GlossaryDetailScreen>
                           letter['makhraj'] as String,
                           style: GoogleFonts.poppins(
                             fontSize: 12,
-                            color: AppColors.textSecondary,
+                            color: context.textSecondary,
                           ),
                           textAlign: TextAlign.center,
                         ),
@@ -235,7 +234,7 @@ class _GlossaryDetailScreenState extends State<GlossaryDetailScreen>
               Container(
                 padding: const EdgeInsets.all(24),
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: context.cardBg,
                   borderRadius: BorderRadius.circular(24),
                   boxShadow: [
                     BoxShadow(
@@ -256,7 +255,7 @@ class _GlossaryDetailScreenState extends State<GlossaryDetailScreen>
                       style: GoogleFonts.poppins(
                         fontSize: 15,
                         fontWeight: FontWeight.w600,
-                        color: AppColors.textPrimary,
+                        color: context.textPrimary,
                       ),
                     ),
                     const SizedBox(height: 6),
@@ -268,34 +267,22 @@ class _GlossaryDetailScreenState extends State<GlossaryDetailScreen>
                               : 'Tahan tombol mikrofon & ucapkan',
                       style: GoogleFonts.poppins(
                         fontSize: 12,
-                        color: AppColors.textSecondary,
+                        color: context.textSecondary,
                       ),
                       textAlign: TextAlign.center,
                     ),
                     const SizedBox(height: 24),
-                    if (_isRecording)
-                      Padding(
-                        padding: const EdgeInsets.only(bottom: 16),
-                        child: Text(
-                          '${_recordingSeconds}s',
-                          style: GoogleFonts.poppins(
-                            fontSize: 32,
-                            fontWeight: FontWeight.w300,
-                            color: AppColors.error,
-                          ),
-                        ),
-                      ),
                     if (_isSubmitting)
                       const CircularProgressIndicator()
                     else
-                      GestureDetector(
-                        onTapDown: (_) {
+                      Listener(
+                        onPointerDown: (_) {
                           if (!_isRecording) _startRecording();
                         },
-                        onTapUp: (_) {
+                        onPointerUp: (_) {
                           if (_isRecording) _stopAndSubmit(label);
                         },
-                        onTapCancel: () {
+                        onPointerCancel: (_) {
                           if (_isRecording) _stopAndSubmit(label);
                         },
                         child: AnimatedBuilder(
@@ -336,12 +323,21 @@ class _GlossaryDetailScreenState extends State<GlossaryDetailScreen>
                         ),
                       ),
                     if (_isRecording) ...[
-                      const SizedBox(height: 12),
+                      const SizedBox(height: 14),
+                      Text(
+                        '${_recordingSeconds}s',
+                        style: GoogleFonts.poppins(
+                          fontSize: 32,
+                          fontWeight: FontWeight.w300,
+                          color: AppColors.error,
+                        ),
+                      ),
+                      const SizedBox(height: 6),
                       Text(
                         'Lepas tombol setelah selesai',
                         style: GoogleFonts.poppins(
                           fontSize: 11,
-                          color: AppColors.textLight,
+                          color: context.textLight,
                         ),
                       ),
                     ],
@@ -376,7 +372,7 @@ class _ResultCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: context.cardBg,
         borderRadius: BorderRadius.circular(24),
         border: Border.all(color: statusColor.withOpacity(0.3)),
         boxShadow: [
@@ -423,7 +419,7 @@ class _ResultCard extends StatelessWidget {
                       '${confidencePct.toStringAsFixed(1)}% keyakinan model',
                       style: GoogleFonts.poppins(
                         fontSize: 12,
-                        color: AppColors.textSecondary,
+                        color: context.textSecondary,
                       ),
                     ),
                   ],
@@ -444,7 +440,7 @@ class _ResultCard extends StatelessWidget {
               feedback['message'] as String,
               style: GoogleFonts.poppins(
                 fontSize: 13,
-                color: AppColors.textPrimary,
+                color: context.textPrimary,
                 height: 1.5,
               ),
             ),
@@ -463,7 +459,7 @@ class _ResultCard extends StatelessWidget {
                     feedback['tip'] as String,
                     style: GoogleFonts.poppins(
                       fontSize: 12,
-                      color: AppColors.textSecondary,
+                      color: context.textSecondary,
                       fontStyle: FontStyle.italic,
                     ),
                   ),
@@ -478,7 +474,7 @@ class _ResultCard extends StatelessWidget {
             style: GoogleFonts.poppins(
               fontSize: 13,
               fontWeight: FontWeight.w600,
-              color: AppColors.textPrimary,
+              color: context.textPrimary,
             ),
           ),
           const SizedBox(height: 8),
@@ -515,7 +511,7 @@ class _ResultCard extends StatelessWidget {
                     '${pct.toStringAsFixed(1)}%',
                     style: GoogleFonts.poppins(
                       fontSize: 11,
-                      color: AppColors.textSecondary,
+                      color: context.textSecondary,
                     ),
                   ),
                 ],

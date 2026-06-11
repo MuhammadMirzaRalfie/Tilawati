@@ -60,11 +60,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               Text(
-                'Buat Akun Baru ✨',
+                'Buat Akun Baru',
                 style: GoogleFonts.poppins(
                   fontSize: 26,
                   fontWeight: FontWeight.bold,
-                  color: AppColors.textPrimary,
+                  color: context.textPrimary,
                 ),
               ),
               const SizedBox(height: 8),
@@ -72,7 +72,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 'Mulai perjalanan belajar Al-Qur\'an Anda',
                 style: GoogleFonts.poppins(
                   fontSize: 14,
-                  color: AppColors.textSecondary,
+                  color: context.textSecondary,
                 ),
               ),
               const SizedBox(height: 32),
@@ -242,7 +242,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   Text(
                     'Sudah punya akun? ',
                     style: GoogleFonts.poppins(
-                      color: AppColors.textSecondary,
+                      color: context.textSecondary,
                     ),
                   ),
                   GestureDetector(

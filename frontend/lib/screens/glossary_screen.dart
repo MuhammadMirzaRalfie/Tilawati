@@ -3,6 +3,8 @@ import 'package:google_fonts/google_fonts.dart';
 import '../config/theme.dart';
 import '../config/api_config.dart';
 import '../services/api_service.dart';
+import '../widgets/error_state.dart';
+import '../widgets/skeleton_loading.dart';
 
 class GlossaryScreen extends StatefulWidget {
   const GlossaryScreen({super.key});
@@ -14,6 +16,7 @@ class GlossaryScreen extends StatefulWidget {
 class _GlossaryScreenState extends State<GlossaryScreen> {
   List<Map<String, dynamic>> _letters = [];
   bool _isLoading = true;
+  bool _isOffline = false;
   String? _error;
 
   @override
@@ -23,21 +26,40 @@ class _GlossaryScreenState extends State<GlossaryScreen> {
   }
 
   Future<void> _fetchLetters() async {
+    setState(() {
+      _isLoading = true;
+      _error = null;
+    });
     try {
       final response = await ApiService.get(ApiConfig.glossaryLetters);
       final list = response['letters'] as List;
+      await ApiService.saveCache('glossary_letters', response);
       setState(() {
         _letters = list.map((e) => Map<String, dynamic>.from(e)).toList();
+        _isOffline = false;
         _isLoading = false;
       });
     } catch (e, stack) {
       // Print ke logcat supaya `adb logcat | grep flutter` bisa diagnosa.
       // ignore: avoid_print
       print('[GlossaryScreen] fetch error: $e\n$stack');
-      setState(() {
-        _error = 'Gagal memuat glosarium: $e';
-        _isLoading = false;
-      });
+      // Gagal fetch: coba tampilkan data cache terakhir (mode offline).
+      final cached = await ApiService.loadCache('glossary_letters');
+      final cachedList = cached?['letters'] as List?;
+      if (!mounted) return;
+      if (cachedList != null && cachedList.isNotEmpty) {
+        setState(() {
+          _letters =
+              cachedList.map((e) => Map<String, dynamic>.from(e)).toList();
+          _isOffline = true;
+          _isLoading = false;
+        });
+      } else {
+        setState(() {
+          _error = e.toString();
+          _isLoading = false;
+        });
+      }
     }
   }
 
@@ -63,29 +85,23 @@ class _GlossaryScreenState extends State<GlossaryScreen> {
         ),
       ),
       body: _isLoading
-          ? const Center(child: CircularProgressIndicator())
+          ? const GlossaryGridSkeleton()
           : _error != null
-              ? Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Icon(Icons.error_outline, size: 48, color: AppColors.error),
-                      const SizedBox(height: 12),
-                      Text(_error!, style: GoogleFonts.poppins(color: AppColors.textSecondary)),
-                      const SizedBox(height: 16),
-                      ElevatedButton(onPressed: _fetchLetters, child: const Text('Coba Lagi')),
-                    ],
-                  ),
-                )
+              ? ErrorStateWidget(message: _error!, onRetry: _fetchLetters)
               : Column(
                   children: [
+                    if (_isOffline)
+                      const Padding(
+                        padding: EdgeInsets.fromLTRB(16, 12, 16, 0),
+                        child: OfflineBanner(),
+                      ),
                     Padding(
                       padding: const EdgeInsets.fromLTRB(20, 16, 20, 8),
                       child: Text(
                         'Pilih huruf untuk berlatih pengucapan',
                         style: GoogleFonts.poppins(
                           fontSize: 13,
-                          color: AppColors.textSecondary,
+                          color: context.textSecondary,
                         ),
                       ),
                     ),
@@ -143,7 +159,7 @@ class _LetterCard extends StatelessWidget {
       onTap: onTap,
       child: Container(
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: context.cardBg,
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
@@ -159,9 +175,8 @@ class _LetterCard extends StatelessWidget {
           children: [
             Text(
               letter['arabic'] as String,
-              style: TextStyle(
+              style: GoogleFonts.amiri(
                 fontSize: 28,
-                fontFamily: 'Arial',
                 color: color,
                 height: 1.2,
               ),

@@ -47,14 +47,14 @@ class EvaluationProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> fetchHistory({int? jilid}) async {
+  Future<void> fetchHistory({int? jilid, int limit = 20}) async {
     _isLoading = true;
     notifyListeners();
 
     try {
-      String url = ApiConfig.evaluationHistory;
+      String url = '${ApiConfig.evaluationHistory}?limit=$limit';
       if (jilid != null) {
-        url += '?jilid=$jilid';
+        url += '&jilid=$jilid';
       }
       final response = await ApiService.get(url);
       final data = response['data'] as List? ?? [];

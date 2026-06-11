@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../config/theme.dart';
+import '../widgets/islamic_pattern.dart';
 import '../providers/auth_provider.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -42,7 +43,26 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
-        child: SingleChildScrollView(
+        child: Stack(
+          children: [
+            // Ornamen geometris halus di latar
+            Positioned(
+              top: -60,
+              right: -60,
+              child: IslamicStarOrnament(
+                size: 200,
+                color: AppColors.primary.withOpacity(0.06),
+              ),
+            ),
+            Positioned(
+              bottom: -80,
+              left: -80,
+              child: IslamicStarOrnament(
+                size: 260,
+                color: AppColors.secondary.withOpacity(0.08),
+              ),
+            ),
+            SingleChildScrollView(
           padding: const EdgeInsets.all(24),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -54,9 +74,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   width: 80,
                   height: 80,
                   decoration: BoxDecoration(
-                    gradient: const LinearGradient(
-                      colors: [AppColors.primary, AppColors.primaryLight],
-                    ),
+                    color: Colors.white,
                     borderRadius: BorderRadius.circular(20),
                     boxShadow: [
                       BoxShadow(
@@ -66,10 +84,9 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                     ],
                   ),
-                  child: const Icon(
-                    Icons.menu_book_rounded,
-                    size: 40,
-                    color: Colors.white,
+                  child: Padding(
+                    padding: const EdgeInsets.all(10),
+                    child: Image.asset('assets/icon/logo_aplikasi.png'),
                   ),
                 ),
               ),
@@ -79,7 +96,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 style: GoogleFonts.poppins(
                   fontSize: 26,
                   fontWeight: FontWeight.bold,
-                  color: AppColors.textPrimary,
+                  color: context.textPrimary,
                 ),
                 textAlign: TextAlign.center,
               ),
@@ -88,7 +105,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 'Masuk ke akun Tilawati Anda',
                 style: GoogleFonts.poppins(
                   fontSize: 14,
-                  color: AppColors.textSecondary,
+                  color: context.textSecondary,
                 ),
                 textAlign: TextAlign.center,
               ),
@@ -220,7 +237,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   Text(
                     'Belum punya akun? ',
                     style: GoogleFonts.poppins(
-                      color: AppColors.textSecondary,
+                      color: context.textSecondary,
                     ),
                   ),
                   GestureDetector(
@@ -239,6 +256,8 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
             ],
           ),
+            ),
+          ],
         ),
       ),
     );

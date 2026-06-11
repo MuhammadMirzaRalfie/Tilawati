@@ -4,6 +4,8 @@ import 'package:provider/provider.dart';
 import '../config/theme.dart';
 import '../providers/evaluation_provider.dart';
 import '../models/evaluation_model.dart';
+import '../widgets/error_state.dart';
+import '../widgets/skeleton_loading.dart';
 
 class HistoryScreen extends StatefulWidget {
   const HistoryScreen({super.key});
@@ -59,7 +61,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: context.cardBg,
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
@@ -101,7 +103,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                   style: GoogleFonts.poppins(
                     fontSize: 13,
                     fontWeight: FontWeight.w600,
-                    color: AppColors.textPrimary,
+                    color: context.textPrimary,
                   ),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
@@ -111,7 +113,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                   _formatDate(item.createdAt),
                   style: GoogleFonts.poppins(
                     fontSize: 11,
-                    color: AppColors.textLight,
+                    color: context.textLight,
                   ),
                 ),
               ],
@@ -155,7 +157,6 @@ class _HistoryScreenState extends State<HistoryScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF8F9FA),
       appBar: AppBar(
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios_rounded),
@@ -169,28 +170,13 @@ class _HistoryScreenState extends State<HistoryScreen> {
       body: Consumer<EvaluationProvider>(
         builder: (context, provider, _) {
           if (provider.isLoading) {
-            return const Center(child: CircularProgressIndicator());
+            return const HistoryListSkeleton();
           }
 
           if (provider.error != null && provider.history.isEmpty) {
-            return Center(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  const Icon(Icons.error_outline_rounded,
-                      size: 48, color: AppColors.textLight),
-                  const SizedBox(height: 12),
-                  Text(
-                    'Gagal memuat riwayat',
-                    style: GoogleFonts.poppins(color: AppColors.textSecondary),
-                  ),
-                  const SizedBox(height: 12),
-                  ElevatedButton(
-                    onPressed: () => provider.fetchHistory(),
-                    child: Text('Coba Lagi', style: GoogleFonts.poppins()),
-                  ),
-                ],
-              ),
+            return ErrorStateWidget(
+              message: provider.error!,
+              onRetry: () => provider.fetchHistory(),
             );
           }
 
@@ -200,14 +186,14 @@ class _HistoryScreenState extends State<HistoryScreen> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Icon(Icons.history_rounded, size: 64,
-                      color: AppColors.textLight.withOpacity(0.5)),
+                      color: context.textLight.withOpacity(0.5)),
                   const SizedBox(height: 16),
                   Text(
                     'Belum ada riwayat evaluasi',
                     style: GoogleFonts.poppins(
                       fontSize: 16,
                       fontWeight: FontWeight.w500,
-                      color: AppColors.textSecondary,
+                      color: context.textSecondary,
                     ),
                   ),
                   const SizedBox(height: 8),
@@ -215,7 +201,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                     'Mulai latihan untuk melihat hasilnya di sini',
                     style: GoogleFonts.poppins(
                       fontSize: 13,
-                      color: AppColors.textLight,
+                      color: context.textLight,
                     ),
                     textAlign: TextAlign.center,
                   ),

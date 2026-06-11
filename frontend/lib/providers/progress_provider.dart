@@ -10,6 +10,7 @@ class ProgressProvider extends ChangeNotifier {
   List<Map<String, dynamic>> jilidProgress = [];
   List<Map<String, dynamic>> recentEvaluations = [];
   bool isLoading = false;
+  bool isOffline = false;
   String? error;
 
   Future<void> fetchDashboard() async {
@@ -19,22 +20,35 @@ class ProgressProvider extends ChangeNotifier {
 
     try {
       final data = await ApiService.get(ApiConfig.dashboard);
-      totalEvaluations = (data['total_evaluations'] as num?)?.toInt() ?? 0;
-      averageScore = (data['average_score'] as num?)?.toDouble() ?? 0;
-      bestScore = (data['best_score'] as num?)?.toDouble() ?? 0;
-      streakDays = (data['streak_days'] as num?)?.toInt() ?? 0;
-      jilidProgress = List<Map<String, dynamic>>.from(
-        (data['jilid_progress'] as List? ?? []).map((e) => Map<String, dynamic>.from(e)),
-      );
-      recentEvaluations = List<Map<String, dynamic>>.from(
-        (data['recent_evaluations'] as List? ?? []).map((e) => Map<String, dynamic>.from(e)),
-      );
+      _applyDashboard(data);
+      isOffline = false;
+      await ApiService.saveCache('dashboard', data);
     } catch (e) {
-      error = e.toString();
+      // Gagal fetch: coba tampilkan data cache terakhir (mode offline).
+      final cached = await ApiService.loadCache('dashboard');
+      if (cached != null) {
+        _applyDashboard(cached);
+        isOffline = true;
+      } else {
+        error = e.toString();
+      }
     }
 
     isLoading = false;
     notifyListeners();
+  }
+
+  void _applyDashboard(Map<String, dynamic> data) {
+    totalEvaluations = (data['total_evaluations'] as num?)?.toInt() ?? 0;
+    averageScore = (data['average_score'] as num?)?.toDouble() ?? 0;
+    bestScore = (data['best_score'] as num?)?.toDouble() ?? 0;
+    streakDays = (data['streak_days'] as num?)?.toInt() ?? 0;
+    jilidProgress = List<Map<String, dynamic>>.from(
+      (data['jilid_progress'] as List? ?? []).map((e) => Map<String, dynamic>.from(e)),
+    );
+    recentEvaluations = List<Map<String, dynamic>>.from(
+      (data['recent_evaluations'] as List? ?? []).map((e) => Map<String, dynamic>.from(e)),
+    );
   }
 
   int completedLessons(int jilid) {

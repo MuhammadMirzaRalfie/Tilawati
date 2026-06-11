@@ -315,13 +315,12 @@ class _LessonScreenState extends State<LessonScreen> with TickerProviderStateMix
               textColor = Colors.red.shade600;
               break;
             case _WordStatus.pending:
-              textColor = AppColors.textPrimary;
+              textColor = context.textPrimary;
               break;
           }
           final textWidget = Text(
             lineGroups[i],
-            style: TextStyle(
-              fontFamily: 'Arial',
+            style: GoogleFonts.amiri(
               fontSize: 36,
               height: 2,
               color: textColor,
@@ -388,7 +387,7 @@ class _LessonScreenState extends State<LessonScreen> with TickerProviderStateMix
     return Container(
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: context.cardBg,
         borderRadius: BorderRadius.circular(24),
         boxShadow: [
           BoxShadow(
@@ -405,7 +404,7 @@ class _LessonScreenState extends State<LessonScreen> with TickerProviderStateMix
             style: GoogleFonts.poppins(
               fontSize: 20,
               fontWeight: FontWeight.bold,
-              color: AppColors.textPrimary,
+              color: context.textPrimary,
             ),
           ),
           const SizedBox(height: 16),
@@ -424,7 +423,7 @@ class _LessonScreenState extends State<LessonScreen> with TickerProviderStateMix
                 ' / $total',
                 style: GoogleFonts.poppins(
                   fontSize: 28,
-                  color: AppColors.textSecondary,
+                  color: context.textSecondary,
                 ),
               ),
             ],
@@ -433,7 +432,7 @@ class _LessonScreenState extends State<LessonScreen> with TickerProviderStateMix
             'kata benar',
             style: GoogleFonts.poppins(
               fontSize: 13,
-              color: AppColors.textSecondary,
+              color: context.textSecondary,
             ),
           ),
           const SizedBox(height: 12),
@@ -569,11 +568,32 @@ class _LessonScreenState extends State<LessonScreen> with TickerProviderStateMix
     );
   }
 
+  Widget _legendItem(Color color, String label) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Container(
+          width: 9,
+          height: 9,
+          decoration: BoxDecoration(color: color, shape: BoxShape.circle),
+        ),
+        const SizedBox(width: 5),
+        Text(
+          label,
+          style: GoogleFonts.poppins(
+            fontSize: 11,
+            color: context.textSecondary,
+          ),
+        ),
+      ],
+    );
+  }
+
   Widget _buildRecordingSection() {
     return Container(
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: context.cardBg,
         borderRadius: BorderRadius.circular(24),
         boxShadow: [
           BoxShadow(
@@ -605,22 +625,10 @@ class _LessonScreenState extends State<LessonScreen> with TickerProviderStateMix
                     : 'Tahan tombol & ucapkan kata yang disorot hijau',
             style: GoogleFonts.poppins(
               fontSize: 14,
-              color: AppColors.textSecondary,
+              color: context.textSecondary,
             ),
           ),
           const SizedBox(height: 16),
-          if (_isRecording)
-            Padding(
-              padding: const EdgeInsets.only(bottom: 12),
-              child: Text(
-                _formatDuration(_recordingSeconds),
-                style: GoogleFonts.poppins(
-                  fontSize: 28,
-                  fontWeight: FontWeight.w300,
-                  color: AppColors.error,
-                ),
-              ),
-            ),
           if (_isEvaluatingWord)
             const Padding(
               padding: EdgeInsets.symmetric(vertical: 12),
@@ -631,42 +639,47 @@ class _LessonScreenState extends State<LessonScreen> with TickerProviderStateMix
           else
             Column(
               children: [
-                GestureDetector(
-                  onTapDown: (_) {
+                Listener(
+                  onPointerDown: (_) {
                     if (!_isRecording) _startRecording();
                   },
-                  onTapUp: (_) {
+                  onPointerUp: (_) {
                     if (_isRecording) _stopRecording();
                   },
-                  onTapCancel: () {
+                  onPointerCancel: (_) {
                     if (_isRecording) _stopRecording();
                   },
                   child: AnimatedBuilder(
                     animation: _pulseController,
                     builder: (context, child) {
-                      final size = _isRecording ? 80.0 + (_pulseController.value * 8) : 80.0;
-                      return Container(
-                        width: size,
-                        height: size,
-                        decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            colors: _isRecording
-                                ? [AppColors.error, const Color(0xFFFF5252)]
-                                : [_color, _color.withOpacity(0.8)],
-                          ),
-                          shape: BoxShape.circle,
-                          boxShadow: [
-                            BoxShadow(
-                              color: (_isRecording ? AppColors.error : _color).withOpacity(0.3),
-                              blurRadius: 20,
-                              offset: const Offset(0, 6),
+                      final scale =
+                          _isRecording ? 1.0 + (_pulseController.value * 0.08) : 1.0;
+                      return Transform.scale(
+                        scale: scale,
+                        child: Container(
+                          width: 80,
+                          height: 80,
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              colors: _isRecording
+                                  ? [AppColors.error, const Color(0xFFFF5252)]
+                                  : [_color, _color.withOpacity(0.8)],
                             ),
-                          ],
-                        ),
-                        child: const Icon(
-                          Icons.mic_rounded,
-                          color: Colors.white,
-                          size: 36,
+                            shape: BoxShape.circle,
+                            boxShadow: [
+                              BoxShadow(
+                                color: (_isRecording ? AppColors.error : _color)
+                                    .withOpacity(0.3),
+                                blurRadius: 20,
+                                offset: const Offset(0, 6),
+                              ),
+                            ],
+                          ),
+                          child: const Icon(
+                            Icons.mic_rounded,
+                            color: Colors.white,
+                            size: 36,
+                          ),
                         ),
                       );
                     },
@@ -695,7 +708,16 @@ class _LessonScreenState extends State<LessonScreen> with TickerProviderStateMix
               ],
             ),
           if (_isRecording) ...[
-            const SizedBox(height: 12),
+            const SizedBox(height: 14),
+            Text(
+              _formatDuration(_recordingSeconds),
+              style: GoogleFonts.poppins(
+                fontSize: 28,
+                fontWeight: FontWeight.w300,
+                color: AppColors.error,
+              ),
+            ),
+            const SizedBox(height: 8),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -750,7 +772,7 @@ class _LessonScreenState extends State<LessonScreen> with TickerProviderStateMix
                   style: GoogleFonts.poppins(
                     fontSize: 13,
                     fontWeight: FontWeight.w500,
-                    color: AppColors.textSecondary,
+                    color: context.textSecondary,
                   ),
                 ),
               ),
@@ -761,6 +783,18 @@ class _LessonScreenState extends State<LessonScreen> with TickerProviderStateMix
             tooltip: 'Ulangi dari awal',
           ),
         ],
+        // Progress bar tipis: berapa kata sudah dinilai
+        bottom: _tokens.isEmpty
+            ? null
+            : PreferredSize(
+                preferredSize: const Size.fromHeight(3),
+                child: LinearProgressIndicator(
+                  value: _evaluatedCount / _tokens.length,
+                  minHeight: 3,
+                  backgroundColor: _color.withOpacity(0.12),
+                  valueColor: AlwaysStoppedAnimation<Color>(_color),
+                ),
+              ),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(20),
@@ -772,7 +806,7 @@ class _LessonScreenState extends State<LessonScreen> with TickerProviderStateMix
               style: GoogleFonts.poppins(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
-                color: AppColors.textPrimary,
+                color: context.textPrimary,
               ),
             ),
             const SizedBox(height: 4),
@@ -780,10 +814,23 @@ class _LessonScreenState extends State<LessonScreen> with TickerProviderStateMix
               _lesson['desc'] as String,
               style: GoogleFonts.poppins(
                 fontSize: 13,
-                color: AppColors.textSecondary,
+                color: context.textSecondary,
               ),
             ),
-            const SizedBox(height: 24),
+            const SizedBox(height: 12),
+
+            // Legenda warna kata
+            Wrap(
+              spacing: 14,
+              runSpacing: 4,
+              children: [
+                _legendItem(Colors.green.shade700, 'Giliran Anda'),
+                _legendItem(Colors.green.shade500, 'Benar'),
+                _legendItem(Colors.red.shade600, 'Perlu diulang'),
+                _legendItem(context.textPrimary, 'Belum'),
+              ],
+            ),
+            const SizedBox(height: 16),
 
             // Arabic Text Card
             Container(
