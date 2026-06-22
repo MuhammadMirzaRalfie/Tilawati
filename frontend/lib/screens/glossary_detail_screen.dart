@@ -198,7 +198,7 @@ class _GlossaryDetailScreenState extends State<GlossaryDetailScreen>
             // Contoh bacaan ahli (audio). Graceful bila file belum di-bundle.
             Center(
               child: ExampleAudioButton(
-                assetPath: 'assets/audio/glossary/${label.toLowerCase()}.mp3',
+                assetPath: 'assets/audio/glossary/${label.toLowerCase()}.wav',
                 color: color,
                 label: 'Dengar contoh',
               ),

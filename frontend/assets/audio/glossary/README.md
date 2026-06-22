@@ -6,27 +6,27 @@ hijaiyah, yang diputar lewat tombol "Dengar contoh" di layar
 
 ## Konvensi penamaan
 
-- Format: **`<label-huruf-lowercase>.mp3`**
+- Format: **`<label-huruf-lowercase>.wav`**
 - `label` mengikuti kunci pada `HIJAIYAH_META`
   (`backend/app/services/classification_inference.py`).
-- Contoh: huruf **BA** → `ba.mp3`, **TSA** → `tsa.mp3`, **AIN** → `ain.mp3`.
+- Contoh: huruf **BA** → `ba.wav`, **TSA** → `tsa.wav`, **AIN** → `ain.wav`.
 
-Resolusi path di kode: `assets/audio/glossary/${label.toLowerCase()}.mp3`.
+Resolusi path di kode: `assets/audio/glossary/${label.toLowerCase()}.wav`.
 
-## Daftar 28 file yang diharapkan
+## Daftar 28 file (sudah tersedia)
 
 ```
-a.mp3    ba.mp3   ta.mp3   tsa.mp3  ja.mp3   hha.mp3  kho.mp3
-da.mp3   dza.mp3  ro.mp3   zay.mp3  sa.mp3   sya.mp3  sho.mp3
-dho.mp3  tho.mp3  zho.mp3  ain.mp3  gho.mp3  fa.mp3   qo.mp3
-ka.mp3   la.mp3   ma.mp3   na.mp3   ha.mp3   wa.mp3   ya.mp3
+a.wav    ba.wav   ta.wav   tsa.wav  ja.wav   hha.wav  kho.wav
+da.wav   dza.wav  ro.wav   zay.wav  sa.wav   sya.wav  sho.wav
+dho.wav  tho.wav  zho.wav  ain.wav  gho.wav  fa.wav   qo.wav
+ka.wav   la.wav   ma.wav   na.wav   ha.wav   wa.wav   ya.wav
 ```
 
 ## Catatan
 
-- File audio **belum tersedia**. Selama file belum ditaruh, tombol "Dengar
-  contoh" tetap muncul namun saat ditekan menampilkan pesan
-  "Contoh bacaan belum tersedia" (graceful, tidak crash).
-- Disarankan: WAV/MP3 mono, durasi pendek (1–2 detik), rekaman qari/ahli.
-- Setelah menambahkan file, jalankan `flutter pub get` lalu rebuild agar
+- File audio diisi dari rekaman **bacaan ahli** (folder `Bacaan ahli/`),
+  huruf hijaiyah harakat fathah, mono.
+- Jika suatu file belum ada, tombol "Dengar contoh" tetap muncul namun saat
+  ditekan menampilkan pesan "Contoh bacaan belum tersedia" (graceful, tidak crash).
+- Setelah menambah/mengubah file, jalankan `flutter pub get` lalu rebuild agar
   asset ter-bundle.
