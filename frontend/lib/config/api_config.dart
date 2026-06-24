@@ -23,7 +23,6 @@ class ApiConfig {
       '$apiUrl/lessons/jilids/$jilid/lessons/$lesson';
 
   // Evaluation endpoints
-  static const String submitEvaluation = '$apiUrl/evaluation/submit';
   static const String submitWord = '$apiUrl/evaluation/submit_word';
   static const String submitLessonResult = '$apiUrl/evaluation/submit_lesson_result';
   static const String transcribeFree = '$apiUrl/evaluation/transcribe_free';

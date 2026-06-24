@@ -157,6 +157,11 @@ Worst-case: HF cold start 55s + network ~5s = ~60s → Flutter 70s cukup menutup
 - Top-3 online **bergantung pada HF Space mengembalikan `words_topk`** (Railway tak punya model lokal). Token HF disimpan di `backend/.env` (`HF_TOKEN_ASR`/`HF_TOKEN_CLASSIFIER`, ter-ignore git).
 - `client wordEvalTimeout 70s` cukup untuk cold-start HF 55s.
 
+**Lanjutan — klarifikasi skor & pembersihan dead code:**
+- **Temuan:** alur latihan aktual (`lesson_screen` → `/submit_word` → `/submit_lesson_result`) **tidak** menghasilkan skor tajwid/makhraj. Ringkasan hanya menampilkan jumlah kata benar + persentase + grade. Field `makharijul/tajwid/kelancaran` di DB diisi **placeholder identik** (= overall) oleh `submit_lesson_result`.
+- Formula "skor" `wmr*90`/`wmr*85` ada di `evaluate_audio` (`/submit`) yang **hanya** dipakai `EvaluationScreen` — dan tak ada navigasi ke sana → **dead code**.
+- **Dihapus:** `EvaluationScreen` (+ route `/evaluation` & import di main.dart), `EvaluationProvider.submitEvaluation` + field terkait (`fetchHistory` tetap dipakai Riwayat/Jilid), const `submitEvaluation` di api_config; backend endpoint `/submit` (`submit_evaluation`), `evaluate_audio`, `_generate_feedback`, `_generate_phoneme_feedback`, `_tokenize_transliteration`, `_word_match_rate`, + import yatim (`random`/`uuid`/`re`/`Any`). `flutter analyze` bersih, backend `py_compile` OK. APK tak perlu rebuild (tanpa perubahan perilaku).
+
 
 
 **Yang dikerjakan (semua frontend, tanpa perubahan backend):**

@@ -13,7 +13,7 @@ from app.models.evaluation import Evaluation
 from app.models.progress import Progress
 from app.schemas.evaluation import EvaluationResponse
 from app.services.auth_service import get_current_user
-from app.services.ai_service import evaluate_audio, get_lesson, transcribe_word, transcribe_word_topk
+from app.services.ai_service import get_lesson, transcribe_word, transcribe_word_topk
 
 router = APIRouter(prefix="/api/evaluation", tags=["Evaluation"])
 
@@ -109,61 +109,6 @@ def _tokens_match_topk(expected_raw: list[str], asr_topk: list[list[str]]) -> bo
                 return False
     return True
 
-
-
-@router.post("/submit", response_model=EvaluationResponse)
-async def submit_evaluation(
-    jilid: int = Form(...),
-    lesson_number: int = Form(...),
-    audio: UploadFile = File(...),
-    db: AsyncSession = Depends(get_db),
-    current_user: User = Depends(get_current_user),
-):
-    """Submit an audio recording for AI evaluation."""
-    # Validate lesson exists
-    lesson = get_lesson(jilid, lesson_number)
-    if lesson is None:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Pelajaran tidak ditemukan.",
-        )
-
-    # Save audio file
-    os.makedirs(settings.UPLOAD_DIR, exist_ok=True)
-    file_ext = os.path.splitext(audio.filename)[1] if audio.filename else ".wav"
-    audio_filename = f"{current_user.id}_{jilid}_{lesson_number}_{uuid.uuid4().hex[:8]}{file_ext}"
-    audio_path = os.path.join(settings.UPLOAD_DIR, audio_filename)
-
-    with open(audio_path, "wb") as f:
-        content = await audio.read()
-        f.write(content)
-
-    # Run AI evaluation (currently mock)
-    eval_result = await evaluate_audio(audio_path, jilid, lesson_number)
-
-    # Save evaluation to database
-    evaluation = Evaluation(
-        user_id=current_user.id,
-        jilid=jilid,
-        lesson_number=lesson_number,
-        lesson_title=lesson["title"],
-        audio_path=audio_path,
-        overall_score=eval_result["overall_score"],
-        makharijul_huruf_score=eval_result["makharijul_huruf_score"],
-        tajwid_score=eval_result["tajwid_score"],
-        kelancaran_score=eval_result["kelancaran_score"],
-        feedback_json=eval_result["feedback_json"],
-        phoneme_details=eval_result["phoneme_details"],
-    )
-    db.add(evaluation)
-
-    # Update progress
-    await _update_progress(db, current_user.id, jilid, eval_result["overall_score"])
-
-    await db.commit()
-    await db.refresh(evaluation)
-
-    return EvaluationResponse.model_validate(evaluation)
 
 
 @router.post("/submit_word")

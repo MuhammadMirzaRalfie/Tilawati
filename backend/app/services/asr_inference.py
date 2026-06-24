@@ -1,6 +1,6 @@
 """
 ASR inference lokal — model ASR-EXP-03-E3 (CER 0.0382, WER 0.0712, Acc 92.75%)
-Dimuat sekali saat startup, dipakai oleh ai_service.evaluate_audio().
+Dimuat sekali saat startup, dipakai oleh ai_service.transcribe_word()/transcribe_word_topk().
 """
 
 import io

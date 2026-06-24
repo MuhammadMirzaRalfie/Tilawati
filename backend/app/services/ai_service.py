@@ -1,17 +1,10 @@
 """
-AI Service - Placeholder for Contrastive Learning & Forced Alignment
+AI Service — konten pelajaran Tilawati + transkripsi ASR.
 
-This module will eventually integrate:
-1. Forced Alignment: Phoneme-level alignment of recorded audio with reference text
-2. Contrastive Learning: Quality comparison between user's reading and reference readings
-
-For now, it generates mock evaluation scores for development purposes.
+Menyediakan data pelajaran (TILAWATI_CONTENT) dan wrapper inferensi ASR yang
+dipakai endpoint /submit_word: transcribe_word (top-1) & transcribe_word_topk
+(top-k per huruf untuk mode Top-3). Skor mock tajwid/makhraj sudah dihapus.
 """
-
-import random
-import uuid
-import re
-from typing import Any
 
 
 # Data konten Tilawati Jilid 1
@@ -515,21 +508,6 @@ def get_lesson(jilid: int, lesson_number: int) -> dict | None:
     return None
 
 
-def _tokenize_transliteration(text: str) -> list[str]:
-    """Extract hijaiyah word tokens from a transliteration string (uppercase words only)."""
-    return [w for w in re.split(r"[\s\n\r]+", text.upper()) if re.match(r"^[A-Z']+$", w)]
-
-
-def _word_match_rate(predicted: list[str], expected: list[str]) -> float:
-    """Compute token-level match rate (order-insensitive, caps-normalized)."""
-    if not expected:
-        return 0.0
-    pred_lower = [w.lower() for w in predicted]
-    exp_lower = [w.lower() for w in expected]
-    matched = sum(1 for w in exp_lower if w in pred_lower)
-    return matched / len(exp_lower)
-
-
 async def _call_asr_service(audio_path: str) -> list[str] | None:
     """
     Transkripsi audio menggunakan model ASR lokal (ASR-EXP-03-E3).
@@ -574,60 +552,6 @@ async def _call_asr_service(audio_path: str) -> list[str] | None:
     except Exception as e:
         print(f"[ai_service] HF Spaces ASR error: {e}", flush=True)
         return None
-
-
-async def evaluate_audio(audio_path: str, jilid: int, lesson_number: int) -> dict:
-    """
-    Evaluate audio recording using ASR-EXP-03-E3 model.
-    Calls HF Spaces /transcribe, compares result against expected transliteration.
-    Falls back to mock scores if ASR_SERVICE_URL is not configured.
-    """
-    lesson = get_lesson(jilid, lesson_number)
-    if lesson is None:
-        return {"error": "Lesson not found"}
-
-    expected_tokens = _tokenize_transliteration(lesson["transliteration"])
-    predicted_tokens = await _call_asr_service(audio_path)
-
-    if predicted_tokens is not None and expected_tokens:
-        wmr = _word_match_rate(predicted_tokens, expected_tokens)
-
-        n_pred = len(predicted_tokens)
-        n_exp = len(expected_tokens)
-        length_penalty = 1.0 - abs(n_pred - n_exp) / max(n_exp, 1)
-        length_penalty = max(0.0, min(1.0, length_penalty))
-
-        makharijul_huruf = round(wmr * 90, 1)
-        tajwid = round(wmr * 85, 1)
-        kelancaran = round(length_penalty * 100, 1)
-        overall = round(makharijul_huruf * 0.4 + tajwid * 0.35 + kelancaran * 0.25, 1)
-
-        phoneme_feedback = {
-            "asr_transcript": " ".join(predicted_tokens),
-            "expected": " ".join(expected_tokens),
-            "matched_tokens": [w for w in [t.lower() for t in expected_tokens]
-                               if w in [p.lower() for p in predicted_tokens]],
-        }
-    else:
-        # Fallback: mock scores when ASR service is unavailable
-        print("[ai_service] Using mock scores (ASR service not available)", flush=True)
-        base = random.uniform(60, 95)
-        makharijul_huruf = round(min(100, max(0, base + random.uniform(-10, 10))), 1)
-        tajwid = round(min(100, max(0, base + random.uniform(-15, 15))), 1)
-        kelancaran = round(min(100, max(0, base + random.uniform(-8, 8))), 1)
-        overall = round(makharijul_huruf * 0.4 + tajwid * 0.35 + kelancaran * 0.25, 1)
-        phoneme_feedback = {}
-
-    feedback = _generate_feedback(overall, makharijul_huruf, tajwid, kelancaran)
-
-    return {
-        "overall_score": overall,
-        "makharijul_huruf_score": makharijul_huruf,
-        "tajwid_score": tajwid,
-        "kelancaran_score": kelancaran,
-        "feedback_json": feedback,
-        "phoneme_details": phoneme_feedback,
-    }
 
 
 async def transcribe_word(audio_path: str) -> list[str] | None:
@@ -691,69 +615,3 @@ async def transcribe_word_topk(
     except Exception as e:
         print(f"[ai_service] HF Spaces top-k error: {e}", flush=True)
         return None, None
-
-
-def _generate_phoneme_feedback(arabic_text: str) -> dict:
-    """Generate mock phoneme-level feedback."""
-    phonemes = []
-    for i, char in enumerate(arabic_text):
-        if char.strip():
-            status = random.choices(
-                ["correct", "warning", "error"],
-                weights=[0.7, 0.2, 0.1],
-                k=1
-            )[0]
-            phonemes.append({
-                "index": i,
-                "character": char,
-                "status": status,
-                "confidence": round(random.uniform(0.6, 1.0), 2),
-            })
-
-    return {
-        "phonemes": phonemes,
-        "total_phonemes": len(phonemes),
-        "correct_count": sum(1 for p in phonemes if p["status"] == "correct"),
-        "warning_count": sum(1 for p in phonemes if p["status"] == "warning"),
-        "error_count": sum(1 for p in phonemes if p["status"] == "error"),
-    }
-
-
-def _generate_feedback(overall: float, makhraj: float, tajwid: float, kelancaran: float) -> dict:
-    """Generate feedback text based on scores."""
-    tips = []
-
-    if makhraj < 70:
-        tips.append("Perhatikan makhraj huruf, terutama pada huruf-huruf yang keluar dari tenggorokan.")
-    elif makhraj < 85:
-        tips.append("Makhraj huruf sudah cukup baik, terus latih konsistensi pengucapan.")
-
-    if tajwid < 70:
-        tips.append("Pelajari kembali hukum tajwid yang terkait dengan pelajaran ini.")
-    elif tajwid < 85:
-        tips.append("Tajwid sudah baik, perhatikan lagi panjang pendek bacaan.")
-
-    if kelancaran < 70:
-        tips.append("Tingkatkan kelancaran dengan lebih sering berlatih membaca.")
-    elif kelancaran < 85:
-        tips.append("Kelancaran bacaan sudah baik, pertahankan ritme bacaan.")
-
-    if overall >= 85:
-        grade = "Mumtaz (Sangat Baik)"
-        message = "Masya Allah! Bacaan Anda sangat baik. Pertahankan kualitas bacaan ini."
-    elif overall >= 70:
-        grade = "Jayyid Jiddan (Baik Sekali)"
-        message = "Bacaan Anda sudah bagus. Terus berlatih untuk kesempurnaan."
-    elif overall >= 55:
-        grade = "Jayyid (Baik)"
-        message = "Bacaan Anda cukup baik. Ada beberapa hal yang perlu diperbaiki."
-    else:
-        grade = "Maqbul (Cukup)"
-        message = "Terus berlatih ya! Perhatikan kembali poin-poin perbaikan di bawah."
-
-    return {
-        "grade": grade,
-        "message": message,
-        "tips": tips,
-        "overall_percentage": round(overall, 1),
-    }
