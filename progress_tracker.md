@@ -1,6 +1,6 @@
 # Progress Tracker — TilawatiApp (Tilawati Hijaiyah ASR)
 
-**Update Terakhir:** 2026-06-11  
+**Update Terakhir:** 2026-06-24  
 **Status Proyek:** Production LIVE ✅ — HF Spaces + Railway + APK semua running
 
 ---
@@ -63,8 +63,9 @@ Worst-case: HF cold start 55s + network ~5s = ~60s → Flutter 70s cukup menutup
 ### Core Features ✅
 - Authentication (register, login, JWT, logout)
 - Lessons: list jilid/lesson/halaman, rekam per kata, ASR → skor evaluasi
+- **Penilaian Top-3** (2026-06-24) — toggle di Profil; huruf benar bila masuk 3 besar confidence (memaafkan kesalahan serumpun makhraj). Default tetap konvensional.
 - Progress tracking: progress bar per jilid, riwayat evaluasi
-- Profil: edit nama, notifikasi toggle, FAQ, info app
+- Profil: edit nama, notifikasi toggle, **toggle Penilaian Top-3**, FAQ, info app
 - Glossary: list huruf hijaiyah + klasifikasi (lokal)
 
 ### UI/UX ✅
@@ -131,7 +132,32 @@ Worst-case: HF cold start 55s + network ~5s = ~60s → Flutter 70s cukup menutup
 
 ## Riwayat Sesi
 
-### Sesi 2026-06-11 — 4 Quick Wins: Offline UX, Dark Mode, Achievements, Notifikasi
+### Sesi 2026-06-24 — Fitur "Penilaian Top-3" (Tilawati v2) + deploy online
+
+**Latar:** user minta penilaian latihan lebih mudah benar — huruf dianggap benar bila masuk **3 besar confidence** ASR (mis. ucap "ha" terdeteksi "hha" tapi "ha" ada di top-3 → tetap benar).
+
+**Analisis offline dulu (sebelum sentuh app):**
+- Harness perbandingan `Model/evaluasi/eval_e3_top3_compare.py` pada TEST-SPLIT resmi (SEED=42, 393 grup).
+- Hasil: group-exact **81.4% → 95.2%** (top-3 mentah), letter-acc **92.8% → 97.8%**. Tapi dari 60 huruf yang "diselamatkan", **40 (67%) adalah pasangan serumpun makhraj** (tsa↔sa, dza↔zay, dho↔zho, hha↔ha, …) — trade-off pedagogis dicatat. Output di `Model/evaluasi/exp03_e3_top3_compare/`.
+
+**Implementasi (mode pilihan, default konvensional → v1 aman):**
+- Backend `asr_inference.py`: `transcribe_file(with_topk=True)` + `_decode_ctc_topk()` — top-k per posisi huruf di frame puncak (reuse 1 forward pass, tanpa biaya inferensi tambahan).
+- Backend `ai_service.py`: `transcribe_word_topk()` (lokal → fallback HF Space yang kini mengembalikan `words_topk`).
+- Backend `evaluation.py`: param `match_mode` (`conventional|top3`) di `/submit_word` + `_tokens_match_topk()` (panjang huruf tetap wajib sama; toleransi HA↔HHA & normalisasi label dipakai ulang).
+- Layanan ASR `Model/Deploy/api/inference.py`: `/transcribe` kini mengembalikan `words_topk` (kompatibel mundur).
+- Frontend: toggle **"Penilaian Top-3"** di Profil (`SharedPreferences` key `match_top3`); `lesson_screen.dart` kirim `match_mode`.
+- **Fix tampilan:** saat dinilai **benar**, hasil evaluasi menampilkan huruf yang benar (expected), bukan transkrip top-1 yang berbeda ("Sistem mendengar: TA", bukan "tho"). Saat salah tetap jujur menampilkan yang terdengar.
+
+**Deploy (semua online):**
+- HF Space ASR `XyroOne/tilawati-asr-exp03e3` di-redeploy via `_upload_to_hf.py --mode=space` → `words_topk` live (verified).
+- Backend Railway redeploy via push `implementation_ASR` → `match_mode` live di schema (verified).
+- APK release rebuild (91.4 MB, `--dart-define=...railway.app`) + terinstall di Xiaomi 24090RA29G (sempat `INSTALL_FAILED_USER_RESTRICTED`, sukses setelah retry).
+
+**Catatan operasional:**
+- Top-3 online **bergantung pada HF Space mengembalikan `words_topk`** (Railway tak punya model lokal). Token HF disimpan di `backend/.env` (`HF_TOKEN_ASR`/`HF_TOKEN_CLASSIFIER`, ter-ignore git).
+- `client wordEvalTimeout 70s` cukup untuk cold-start HF 55s.
+
+
 
 **Yang dikerjakan (semua frontend, tanpa perubahan backend):**
 1. **Offline/Error UX** — `_guard()` di `api_service.dart` mengubah `SocketException`/`TimeoutException` jadi pesan ramah; util `saveCache`/`loadCache` (SharedPreferences); `ErrorStateWidget` + `OfflineBanner` reusable (`widgets/error_state.dart`); fallback cache di dashboard progres & glossary; error state di Progres/Glosarium/Riwayat (sebelumnya silent fail → angka 0).

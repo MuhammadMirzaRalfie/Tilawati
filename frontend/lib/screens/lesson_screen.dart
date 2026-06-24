@@ -39,7 +39,14 @@ class _LessonScreenState extends State<LessonScreen> with TickerProviderStateMix
   bool _isEvaluatingWord = false;
   bool _allDone = false;
   String _lastTranscript = "";
+  String _lastExpected = "";
   bool _lastMatched = true;
+
+  // Teks yang ditampilkan sebagai hasil: bila benar, tampilkan huruf yang
+  // diharapkan (yang benar) — bukan transkrip top-1 yang bisa berbeda saat
+  // mode Top-3 atau toleransi HA↔HHA. Bila salah, tampilkan apa yang terdengar.
+  String get _heardDisplay =>
+      (_lastMatched && _lastExpected.isNotEmpty) ? _lastExpected : _lastTranscript;
   bool _showResultActions = false;
 
   // Mode penilaian dari halaman Profil: 'conventional' (top-1) atau 'top3'.
@@ -136,6 +143,7 @@ class _LessonScreenState extends State<LessonScreen> with TickerProviderStateMix
       _recordingSeconds = 0;
       _currentTokenIndex = 0;
       _lastTranscript = "";
+      _lastExpected = "";
       _lastMatched = true;
       _isEvaluatingWord = false;
       _showResultActions = false;
@@ -213,6 +221,7 @@ class _LessonScreenState extends State<LessonScreen> with TickerProviderStateMix
     setState(() {
       _tokenStatus[_currentTokenIndex] = matched ? _WordStatus.correct : _WordStatus.incorrect;
       _lastTranscript = transcript;
+      _lastExpected = expectedWord;
       _lastMatched = matched;
       _isEvaluatingWord = false;
       _recordingPath = null;
@@ -241,6 +250,7 @@ class _LessonScreenState extends State<LessonScreen> with TickerProviderStateMix
       _tokenStatus[idx] = _WordStatus.active;
       _showResultActions = false;
       _lastTranscript = "";
+      _lastExpected = "";
       _lastMatched = true;
       _recordingPath = null;
       _recordingSeconds = 0;
@@ -261,6 +271,7 @@ class _LessonScreenState extends State<LessonScreen> with TickerProviderStateMix
     setState(() {
       _showResultActions = false;
       _lastTranscript = "";
+      _lastExpected = "";
       _lastMatched = true;
       if (nextPending == null) {
         // Tidak ada kata pending tersisa → selesai.
@@ -278,6 +289,7 @@ class _LessonScreenState extends State<LessonScreen> with TickerProviderStateMix
     setState(() {
       _showResultActions = false;
       _lastTranscript = "";
+      _lastExpected = "";
       _lastMatched = true;
       _tokenStatus[_currentTokenIndex] = _WordStatus.active;
     });
@@ -522,7 +534,7 @@ class _LessonScreenState extends State<LessonScreen> with TickerProviderStateMix
               ),
               const SizedBox(height: 4),
               Text(
-                'Sistem mendengar: $_lastTranscript',
+                'Sistem mendengar: $_heardDisplay',
                 softWrap: true,
                 textAlign: TextAlign.center,
                 style: GoogleFonts.poppins(
@@ -707,7 +719,7 @@ class _LessonScreenState extends State<LessonScreen> with TickerProviderStateMix
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: Text(
-                      'Sistem mendengar: $_lastTranscript',
+                      'Sistem mendengar: $_heardDisplay',
                       softWrap: true,
                       textAlign: TextAlign.center,
                       style: GoogleFonts.poppins(
