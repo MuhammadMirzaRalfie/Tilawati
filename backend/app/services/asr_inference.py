@@ -103,10 +103,68 @@ def _decode_ctc(pred_ids: np.ndarray) -> str:
     return " ".join(words)
 
 
-def transcribe_file(audio_path: str) -> dict:
+def _decode_ctc_topk(logits_np: np.ndarray, k: int = 3) -> tuple[list[str], list[list[dict]]]:
+    """
+    Greedy CTC decode + top-k kandidat per posisi huruf.
+
+    Untuk tiap huruf yang ter-decode, ambil k label teratas di FRAME PUNCAK huruf
+    tersebut (frame dengan probabilitas tertinggi untuk huruf itu). Blank/pad dibuang.
+
+    logits_np: array [T, V] (satu sampel, sudah di-CPU).
+    Return: (words, words_topk)
+      words      : list[str]                       — urutan huruf (sama dgn _decode_ctc)
+      words_topk : list[list[{"label","conf"}]]    — k kandidat per posisi huruf
+    """
+    # softmax numerik-stabil pada [T, V]
+    shifted = logits_np - logits_np.max(axis=-1, keepdims=True)
+    exp = np.exp(shifted)
+    probs = exp / exp.sum(axis=-1, keepdims=True)
+    pred_ids = probs.argmax(axis=-1)
+
+    # Kelompokkan path argmax jadi segmen huruf (collapse: skip blank, gabung duplikat)
+    segments: list[tuple[int, list[int]]] = []
+    prev, cur = None, []
+    for t, idv in enumerate(pred_ids):
+        idv = int(idv)
+        if idv == PAD_ID:
+            if cur:
+                segments.append((prev, cur)); cur = []
+            prev = None
+            continue
+        if idv == prev:
+            cur.append(t)
+        else:
+            if cur:
+                segments.append((prev, cur))
+            cur = [t]; prev = idv
+    if cur:
+        segments.append((prev, cur))
+
+    words: list[str] = []
+    words_topk: list[list[dict]] = []
+    for idv, frames in segments:
+        if idv not in _id2word:
+            continue
+        words.append(_id2word[idv])
+        peak = max(frames, key=lambda f: probs[f, idv])
+        order = probs[peak].argsort()[::-1]
+        cand = []
+        for j in order:
+            j = int(j)
+            if j == PAD_ID or j not in _id2word:
+                continue
+            cand.append({"label": _id2word[j], "conf": round(float(probs[peak, j]), 4)})
+            if len(cand) == k:
+                break
+        words_topk.append(cand)
+    return words, words_topk
+
+
+def transcribe_file(audio_path: str, with_topk: bool = False, k: int = 3) -> dict:
     """
     Transkripsi file audio lokal.
     Return: {"transcript": str, "words": list[str], "word_count": int, "duration_ms": float}
+    Bila with_topk=True, tambah "words_topk": list[list[{"label","conf"}]] (top-k per huruf).
     """
     if _model is None:
         raise RuntimeError("ASR model belum dimuat.")
@@ -125,7 +183,20 @@ def transcribe_file(audio_path: str) -> dict:
     with torch.inference_mode():
         logits = _model(input_values, attention_mask=attention_mask).logits
 
-    pred_ids = torch.argmax(logits, dim=-1)[0].cpu().numpy()
+    logits_np = logits[0].cpu().numpy()
+
+    if with_topk:
+        words, words_topk = _decode_ctc_topk(logits_np, k=k)
+        transcript = " ".join(words)
+        return {
+            "transcript": transcript,
+            "words": words,
+            "words_topk": words_topk,
+            "word_count": len(words),
+            "duration_ms": duration_ms,
+        }
+
+    pred_ids = logits_np.argmax(axis=-1)
     transcript = _decode_ctc(pred_ids)
     words = transcript.split() if transcript else []
 

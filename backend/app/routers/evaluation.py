@@ -13,7 +13,7 @@ from app.models.evaluation import Evaluation
 from app.models.progress import Progress
 from app.schemas.evaluation import EvaluationResponse
 from app.services.auth_service import get_current_user
-from app.services.ai_service import evaluate_audio, get_lesson, transcribe_word
+from app.services.ai_service import evaluate_audio, get_lesson, transcribe_word, transcribe_word_topk
 
 router = APIRouter(prefix="/api/evaluation", tags=["Evaluation"])
 
@@ -65,7 +65,7 @@ def _normalize_token(tok: str) -> str:
 
 def _tokens_match(expected_raw: list[str], asr_tokens: list[str]) -> bool:
     """
-    Bandingkan token transliterasi dengan output ASR model.
+    Bandingkan token transliterasi dengan output ASR model (KONVENSIONAL / top-1).
     - Normalize expected ke format model.
     - 'HA' di transliterasi bisa cocok dengan 'HA' atau 'HHA' dari model
       (karena transliterasi tidak membedakan هَ dan حَ).
@@ -82,6 +82,30 @@ def _tokens_match(expected_raw: list[str], asr_tokens: list[str]) -> bool:
         else:
             normalized = _normalize_token(exp_upper)
             if normalized != asr_upper:
+                return False
+    return True
+
+
+def _tokens_match_topk(expected_raw: list[str], asr_topk: list[list[str]]) -> bool:
+    """
+    Pencocokan TOP-3 MENTAH: huruf dianggap benar bila huruf target ada di antara
+    kandidat top-k pada posisi tersebut. Jumlah huruf tetap WAJIB sama (kelebihan/
+    kurang huruf tetap salah) — yang dimaafkan hanya huruf yang tertukar.
+
+    asr_topk: list per posisi berisi label kandidat (UPPER), urut dari confidence
+    tertinggi. Normalisasi label & toleransi HA↔HHA dipakai ulang dari konvensional.
+    """
+    if len(expected_raw) != len(asr_topk):
+        return False
+    for exp_raw, alts in zip(expected_raw, asr_topk):
+        exp_upper = exp_raw.upper()
+        labels = [a.upper() for a in alts]
+        if exp_upper == "HA":
+            if not any(lab in _HA_ASR_VARIANTS for lab in labels):
+                return False
+        else:
+            normalized = _normalize_token(exp_upper)
+            if normalized not in labels:
                 return False
     return True
 
@@ -145,43 +169,66 @@ async def submit_evaluation(
 @router.post("/submit_word")
 async def submit_word_evaluation(
     expected_word: str = Form(...),
+    match_mode: str = Form("conventional"),
     audio: UploadFile = File(...),
     current_user: User = Depends(get_current_user),
 ):
-    """Evaluate a single-word audio recording. Returns matched/not-matched instantly."""
+    """Evaluate a single-word audio recording. Returns matched/not-matched instantly.
+
+    match_mode:
+      - "conventional" (default): huruf harus tepat (top-1 / exact). Perilaku v1.
+      - "top3"        : huruf benar bila masuk 3 besar confidence per posisi.
+                         Butuh model ASR lokal; bila tak tersedia, fallback ke konvensional.
+    """
     audio_bytes = await audio.read()
 
     with tempfile.NamedTemporaryFile(suffix=".wav", delete=False) as tmp:
         tmp.write(audio_bytes)
         tmp_path = tmp.name
 
+    expected = expected_word.strip().upper()
+    expected_tokens = expected.split()
+
+    asr_tokens = None
+    asr_text = ""
+    matched = False
+    effective_mode = match_mode
+
     try:
-        predicted_tokens = await transcribe_word(tmp_path)
+        if match_mode == "top3":
+            tokens, topk = await transcribe_word_topk(tmp_path)
+            if tokens is not None and topk is not None:
+                asr_tokens = tokens
+                asr_text = " ".join(tokens)
+                matched = _tokens_match_topk(expected_tokens, topk)
+            else:
+                # top-k tidak tersedia (mis. model lokal belum dimuat) → konvensional
+                effective_mode = "conventional"
+
+        if asr_tokens is None:
+            predicted_tokens = await transcribe_word(tmp_path)
+            if predicted_tokens is not None:
+                asr_tokens = [t.upper() for t in predicted_tokens]
+                asr_text = " ".join(asr_tokens)
+                matched = _tokens_match(expected_tokens, asr_tokens)
+            else:
+                # ASR unavailable — mock 70% match rate so demo works without model
+                matched = random.random() < 0.7
+                asr_text = expected if matched else ""
     finally:
         try:
             os.unlink(tmp_path)
         except OSError:
             pass
 
-    expected = expected_word.strip().upper()
-
-    if predicted_tokens is not None:
-        asr_tokens = [t.upper() for t in predicted_tokens]
-        asr_text = " ".join(asr_tokens)
-        expected_tokens = expected.split()
-        matched = _tokens_match(expected_tokens, asr_tokens)
-    else:
-        # ASR unavailable — mock 70% match rate so demo works without model
-        matched = random.random() < 0.7
-        asr_text = expected if matched else ""
-
     # Normalize expected untuk ditampilkan di frontend
-    normalized_expected = " ".join(_normalize_token(t) for t in expected.split())
+    normalized_expected = " ".join(_normalize_token(t) for t in expected_tokens)
     return JSONResponse({
         "matched": matched,
         "asr_transcript": asr_text,
         "expected": expected,
         "expected_normalized": normalized_expected,
+        "mode": effective_mode,
     })
 
 

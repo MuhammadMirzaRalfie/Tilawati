@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:record/record.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../config/theme.dart';
 import '../config/api_config.dart';
 import '../services/api_service.dart';
@@ -41,6 +42,9 @@ class _LessonScreenState extends State<LessonScreen> with TickerProviderStateMix
   bool _lastMatched = true;
   bool _showResultActions = false;
 
+  // Mode penilaian dari halaman Profil: 'conventional' (top-1) atau 'top3'.
+  String _matchMode = 'conventional';
+
   // Skor diturunkan langsung dari status tiap kata supaya rekam-ulang atau
   // loncat antar kata tidak menyebabkan salah hitung.
   int get _correctCount =>
@@ -65,6 +69,15 @@ class _LessonScreenState extends State<LessonScreen> with TickerProviderStateMix
       duration: const Duration(milliseconds: 1000),
       vsync: this,
     )..repeat(reverse: true);
+    _loadMatchMode();
+  }
+
+  Future<void> _loadMatchMode() async {
+    final prefs = await SharedPreferences.getInstance();
+    final top3 = prefs.getBool('match_top3') ?? false;
+    if (mounted) {
+      setState(() => _matchMode = top3 ? 'top3' : 'conventional');
+    }
   }
 
   @override
@@ -185,7 +198,7 @@ class _LessonScreenState extends State<LessonScreen> with TickerProviderStateMix
     try {
       final response = await ApiService.postMultipart(
         ApiConfig.submitWord,
-        fields: {'expected_word': expectedWord},
+        fields: {'expected_word': expectedWord, 'match_mode': _matchMode},
         filePath: _recordingPath!,
         fileField: 'audio',
         timeout: ApiService.wordEvalTimeout,

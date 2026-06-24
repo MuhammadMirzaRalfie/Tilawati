@@ -635,6 +635,64 @@ async def transcribe_word(audio_path: str) -> list[str] | None:
     return await _call_asr_service(audio_path)
 
 
+async def transcribe_word_topk(
+    audio_path: str, k: int = 3
+) -> tuple[list[str] | None, list[list[str]] | None]:
+    """
+    Transkripsi + top-k per posisi huruf, HANYA dari model ASR lokal.
+
+    Top-k tidak tersedia dari fallback HF Spaces, jadi bila model lokal belum
+    dimuat / error, kembalikan (None, None) supaya pemanggil bisa fallback ke
+    pencocokan konvensional.
+
+    Return: (tokens_upper, topk_labels_upper)
+      tokens_upper      : list[str]            — urutan huruf (UPPER)
+      topk_labels_upper : list[list[str]]      — label top-k per posisi huruf (UPPER)
+    """
+    import asyncio
+
+    # 1) Model lokal (top-k langsung dari logits)
+    try:
+        from app.services.asr_inference import transcribe_file
+        loop = asyncio.get_event_loop()
+        result = await asyncio.wait_for(
+            loop.run_in_executor(None, lambda: transcribe_file(audio_path, with_topk=True, k=k)),
+            timeout=8.0,
+        )
+        tokens = [w.upper() for w in result.get("words", [])]
+        topk = [[c["label"].upper() for c in pos] for pos in result.get("words_topk", [])]
+        return tokens, topk
+    except asyncio.TimeoutError:
+        print("[ai_service] Local ASR top-k timeout (>8s), coba HF Spaces.", flush=True)
+    except RuntimeError:
+        pass  # model lokal belum dimuat → coba HF Spaces
+    except Exception as e:
+        print(f"[ai_service] Local ASR top-k error: {e}", flush=True)
+
+    # 2) Fallback HF Spaces — butuh layanan yang menyediakan field `words_topk`
+    from app.config import settings
+    if not settings.ASR_SERVICE_URL:
+        return None, None
+    try:
+        import httpx
+        url = settings.ASR_SERVICE_URL.rstrip("/") + "/transcribe"
+        async with httpx.AsyncClient(timeout=55.0) as client:
+            with open(audio_path, "rb") as f:
+                response = await client.post(url, files={"audio": f})
+        response.raise_for_status()
+        data = response.json()
+        words_topk = data.get("words_topk")
+        if not words_topk:
+            # Layanan ASR versi lama (tanpa top-k) → biar pemanggil fallback ke konvensional
+            return None, None
+        tokens = [w.upper() for w in data.get("words", [])]
+        topk = [[str(c["label"]).upper() for c in pos] for pos in words_topk]
+        return tokens, topk
+    except Exception as e:
+        print(f"[ai_service] HF Spaces top-k error: {e}", flush=True)
+        return None, None
+
+
 def _generate_phoneme_feedback(arabic_text: str) -> dict:
     """Generate mock phoneme-level feedback."""
     phonemes = []

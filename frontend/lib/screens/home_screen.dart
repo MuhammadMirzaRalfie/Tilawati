@@ -631,11 +631,25 @@ class _ProfileTab extends StatefulWidget {
 
 class _ProfileTabState extends State<_ProfileTab> {
   bool _notificationsEnabled = true;
+  bool _matchTop3 = false;
 
   @override
   void initState() {
     super.initState();
     _loadNotificationPref();
+    _loadMatchModePref();
+  }
+
+  Future<void> _loadMatchModePref() async {
+    final prefs = await SharedPreferences.getInstance();
+    final top3 = prefs.getBool('match_top3') ?? false;
+    if (mounted) setState(() => _matchTop3 = top3);
+  }
+
+  Future<void> _saveMatchModePref(bool value) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('match_top3', value);
+    if (mounted) setState(() => _matchTop3 = value);
   }
 
   Future<void> _loadNotificationPref() async {
@@ -967,6 +981,7 @@ class _ProfileTabState extends State<_ProfileTab> {
               onTap: _showEditProfile,
             ),
             _buildDarkModeItem(),
+            _buildMatchModeItem(),
             _buildProfileMenuItem(
               icon: Icons.notifications_outlined,
               title: 'Notifikasi',
@@ -1049,6 +1064,48 @@ class _ProfileTabState extends State<_ProfileTab> {
         value: themeProvider.isDark,
         activeColor: AppColors.primaryLight,
         onChanged: (v) => themeProvider.toggle(v),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 4),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      ),
+    );
+  }
+
+  Widget _buildMatchModeItem() {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 8),
+      decoration: BoxDecoration(
+        color: context.cardBg,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.03),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: SwitchListTile(
+        secondary: Icon(
+          Icons.rule_rounded,
+          color: context.textPrimary,
+        ),
+        title: Text(
+          'Penilaian Top-3',
+          style: GoogleFonts.poppins(
+            fontSize: 15,
+            fontWeight: FontWeight.w500,
+            color: context.textPrimary,
+          ),
+        ),
+        subtitle: Text(
+          _matchTop3
+              ? 'Huruf benar bila masuk 3 besar tebakan (lebih mudah)'
+              : 'Konvensional — pengucapan harus tepat',
+          style: GoogleFonts.poppins(fontSize: 12, color: context.textSecondary),
+        ),
+        value: _matchTop3,
+        activeColor: AppColors.primaryLight,
+        onChanged: (v) => _saveMatchModePref(v),
         contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 4),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       ),
